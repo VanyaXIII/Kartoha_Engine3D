@@ -5,4 +5,5 @@ import graph.CanvasPanel;
 
 public interface Drawable {
     void pushToCanvas();
+    void updateDrawingInterpretation();
 }

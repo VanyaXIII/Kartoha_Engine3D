@@ -6,10 +6,11 @@ import geometry.objects3D.Vector3D;
 import geometry.polygonal.Sphere;
 import graph.Canvas;
 import graph.CanvasPanel;
+import limiters.Intersectional;
 import physics.Material;
 import physics.Space;
 
-public class PhysicalSphere implements Drawable {
+public class PhysicalSphere implements Drawable, Intersectional {
 
     private float x0, y0, z0;
     private final float r;
@@ -36,10 +37,45 @@ public class PhysicalSphere implements Drawable {
         pushToCanvas();
     }
 
+    public synchronized void update() {
+        changeSpeed();
+        x0 += v.x * space.getDT();
+        y0 += v.y * space.getDT();
+        z0 -= (v.z + v.z - space.getG() * space.getDT()) * space.getDT() / 2.0f;
+        updateDrawingInterpretation();
+    }
+
+    private synchronized void changeSpeed() {
+        v = new Vector3D(v.x, v.y, v.z + space.getG() * space.getDT());
+    }
+
+    public synchronized Point3D getPosition(boolean mode) {
+        float m = mode ? 1.0f : 0.0f;
+        return new Point3D(x0 + m * v.x * space.getDT(),
+                y0 + m * v.y * space.getDT(),
+                z0 - m * ((v.z + v.z + space.getG() * space.getDT()) * space.getDT() / 2.0f));
+    }
+
+    public float getR() {
+        return r;
+    }
+
+    public void setV(Vector3D v) {
+        this.v = v;
+    }
+
+    public void setW(Vector3D w) {
+        this.w = w;
+    }
+
     @Override
     public void pushToCanvas() {
         space.getCanvas().getPolygonals().add(drawableInterpretation);
     }
 
+    @Override
+    public void updateDrawingInterpretation() {
+        drawableInterpretation.setCenter(new Point3D(x0, y0, z0));
+    }
 
 }
