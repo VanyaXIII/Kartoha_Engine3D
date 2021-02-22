@@ -28,8 +28,8 @@ public class Space {
         DT = dt;
         G = g;
         this.canvas = canvas;
-        spheres.add(new PhysicalSphere(this, new Vector3D(-50, 0.01, 0.01), new Vector3D(1, 1, 1), +910, +50, -100, 100, Material.Constantin));
-        spheres.add(new PhysicalSphere(this, new Vector3D(50, 0.01, 0.01), new Vector3D(1, 1, 1), -910, -50, -100, 100, Material.Constantin));
+        spheres.add(new PhysicalSphere(this, new Vector3D(0.01, 0.01, 0.01), new Vector3D(1, 1, 1), 200, 200, 1000, 100, Material.Constantin));
+//        spheres.add(new PhysicalSphere(this, new Vector3D(0.01, 0.01, 0.01), new Vector3D(1, 1, 1), -910, -50, -100, 100, Material.Constantin));
         walls.add(new Wall(this,
            new Point3D(0,0,0), new Point3D(10000, 0, 0), new Point3D(0, 10000, 00), Material.Gold
         ));
@@ -71,6 +71,10 @@ public class Space {
 
     public ArrayList<PhysicalSphere> getSpheres() {
         return spheres;
+    }
+
+    public ArrayList<Wall> getWalls() {
+        return walls;
     }
 
     public CanvasPanel getCanvas() {

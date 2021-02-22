@@ -86,9 +86,13 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
             wall = (Wall) thing1;
         }
 
-        if (!new AABB(sphere, dynamicCollisionMode).isIntersectedWith(new AABB(Objects.requireNonNull(wall))))
+
+        if (!new AABB(sphere, dynamicCollisionMode).isIntersectedWith(new AABB(wall)))
             return false;
 
-        return false;
+        final Point3D spherePos = sphere.getPosition(dynamicCollisionMode);
+        final float distance = (float) wall.getPlane().distance(spherePos);
+
+        return distance <= sphere.getR();
     }
 }

@@ -54,4 +54,21 @@ public class AABB {
 
         return true;
     }
+
+    public boolean isPointIn(Point3D point){
+
+        if (this.max.x < point.x || this.min.x > point.x) return false;
+        if (this.max.y < point.y || this.min.y > point.y) return false;
+        if (this.max.z < point.z || this.min.z > point.z) return false;
+
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "AABB{" +
+                "min=" + min.x + " " + min.y + " " + min.z +
+                ", max=" + max.x + " " + max.y + " " + max.z +
+                '}';
+    }
 }

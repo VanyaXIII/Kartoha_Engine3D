@@ -11,10 +11,12 @@ import java.util.ConcurrentModificationException;
 public class PhysicsHandler {
 
     private final ArrayList<PhysicalSphere> spheres;
+    private final ArrayList<Wall> walls;
     private final int depth;
 
     PhysicsHandler(Space space, int depth) {
         spheres = space.getSpheres();
+        walls = space.getWalls();
         this.depth = depth;
     }
 
@@ -32,6 +34,13 @@ public class PhysicsHandler {
                     }
                 }
             }
+            spheres.forEach(sphere ->{
+                synchronized (sphere) {
+                    for (Wall wall : walls)
+                        if (new IntersectionalPair<>(sphere, wall).areIntersected())
+                            new CollisionalPair<>(sphere, wall).collide();
+                }
+            });
         });
 
         sphereThread.start();
