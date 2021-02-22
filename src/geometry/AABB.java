@@ -4,6 +4,7 @@ import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 import physical_objects.PhysicalSphere;
 import physical_objects.Wall;
+import utils.FloatComparator;
 
 import java.util.ArrayList;
 import java.util.Vector;
@@ -57,9 +58,12 @@ public class AABB {
 
     public boolean isPointIn(Point3D point){
 
-        if (this.max.x < point.x || this.min.x > point.x) return false;
-        if (this.max.y < point.y || this.min.y > point.y) return false;
-        if (this.max.z < point.z || this.min.z > point.z) return false;
+        if (FloatComparator.compare(this.max.x, point.x) == -1 || FloatComparator.compare(this.min.x, point.x) == 1)
+            return false;
+        if (FloatComparator.compare(this.max.y, point.y) == -1 || FloatComparator.compare(this.min.y, point.y) == 1)
+            return false;
+        if (FloatComparator.compare(this.max.z, point.z) == -1 || FloatComparator.compare(this.min.z, point.z) == 1)
+            return false;
 
         return true;
     }

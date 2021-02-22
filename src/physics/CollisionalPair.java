@@ -38,6 +38,14 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
         methodsMap.getElement(firstThing.getClass(), secondThing.getClass()).collide(firstThing, secondThing);
     }
 
+    /**
+     *This method processes collision between two <b>Spheres</b>;
+     * changes their velocity
+     * @param thing1 - first sphere
+     * @param thing2 - second sphere
+     *
+     */
+
     private static void sphereToSphere(Collisional thing1, Collisional thing2) {
         PhysicalSphere sphere1 = (PhysicalSphere) thing1;
         PhysicalSphere sphere2 = (PhysicalSphere) thing2;
@@ -76,6 +84,14 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
         final float r1 = sphere1.getR();
         final float r2 = sphere2.getR();
     }
+
+    /**
+     *This method processes collision between <b>Sphere</b> and <b>Wall</b>;
+     * changes <b>Sphere's</b> velocity
+     * @param thing1 - sphere or wall (PhysicalSphere or Wall)
+     * @param thing2 - sphere or wall (PhysicalSphere or Wall)
+     *
+     */
 
     private static void sphereToWall(Collisional thing1, Collisional thing2){
         PhysicalSphere sphere;
