@@ -6,11 +6,12 @@ import geometry.objects3D.Vector3D;
 import geometry.polygonal.Sphere;
 import graph.Canvas;
 import graph.CanvasPanel;
+import limiters.Collisional;
 import limiters.Intersectional;
 import physics.Material;
 import physics.Space;
 
-public class PhysicalSphere implements Drawable, Intersectional {
+public class PhysicalSphere implements Drawable, Intersectional, Collisional {
 
     private float x0, y0, z0;
     private final float r;
@@ -31,10 +32,10 @@ public class PhysicalSphere implements Drawable, Intersectional {
         this.v = v;
         this.w = w;
         this.material = material;
-        this.m = (4 * (float)Math.PI * r * r * r / 3f) * material.p;
+        this.m = (4 * (float) Math.PI * r * r * r / 3f) * material.p;
         J = 0.4f * m * r * r;
         drawableInterpretation = new Sphere(new Point3D(x0, y0, z0), r, 15, material.fillColor);
-        pushToCanvas();
+        pushToCanvas(space.getCanvas());
     }
 
     public synchronized void update() {
@@ -56,6 +57,11 @@ public class PhysicalSphere implements Drawable, Intersectional {
                 z0 - m * ((v.z + v.z + space.getG() * space.getDT()) * space.getDT() / 2.0f));
     }
 
+    public synchronized void applyStrikeImpulse(Vector3D s) {
+        s = s.multiply(1 / m);
+        v = new Vector3D(v.x + s.x, v.y + s.y, v.z + s.z);
+    }
+
     public float getR() {
         return r;
     }
@@ -68,14 +74,25 @@ public class PhysicalSphere implements Drawable, Intersectional {
         this.w = w;
     }
 
+    public float getM() {
+        return m;
+    }
+
+    public Material getMaterial() {
+        return material;
+    }
+
+    public Vector3D getV() {
+        return v;
+    }
+
     @Override
-    public void pushToCanvas() {
-        space.getCanvas().getPolygonals().add(drawableInterpretation);
+    public void pushToCanvas(CanvasPanel canvas) {
+        canvas.getPolygonals().add(drawableInterpretation);
     }
 
     @Override
     public void updateDrawingInterpretation() {
         drawableInterpretation.setCenter(new Point3D(x0, y0, z0));
     }
-
 }

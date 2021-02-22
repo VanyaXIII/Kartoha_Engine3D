@@ -1,7 +1,12 @@
 package geometry;
 
 import geometry.objects3D.Point3D;
+import geometry.objects3D.Vector3D;
 import physical_objects.PhysicalSphere;
+import physical_objects.Wall;
+
+import java.util.ArrayList;
+import java.util.Vector;
 
 public class AABB {
     private final Point3D min;
@@ -16,6 +21,29 @@ public class AABB {
         Point3D position = sphere.getPosition(mode);
         min = new Point3D(position.x - sphere.getR(), position.y - sphere.getR(), position.z - sphere.getR());
         max = new Point3D(position.x + sphere.getR(), position.y + sphere.getR(), position.z + sphere.getR());
+    }
+
+    public AABB(Wall wall){
+        ArrayList<Point3D> points = wall.getPoints();
+        float posXDeviation = 0f;
+        float posYDeviation = 0f;
+        float posZDeviation = 0f;
+        float negXDeviation = 0f;
+        float negYDeviation = 0f;
+        float negZDeviation = 0f;
+
+        for (int i = 1; i < points.size(); i++) {
+            Vector3D vectorToPoint = new Vector3D(points.get(0), points.get(i));
+            if (posXDeviation < vectorToPoint.x) posXDeviation = (float) vectorToPoint.x;
+            if (posYDeviation < vectorToPoint.y) posYDeviation = (float) vectorToPoint.y;
+            if (posZDeviation < vectorToPoint.z) posZDeviation = (float) vectorToPoint.z;
+            if (negXDeviation > vectorToPoint.x) negXDeviation = (float) vectorToPoint.x;
+            if (negYDeviation > vectorToPoint.y) negYDeviation = (float) vectorToPoint.y;
+            if (negZDeviation > vectorToPoint.z) negZDeviation = (float) vectorToPoint.z;
+        }
+
+        min = new Point3D(points.get(0).x + negXDeviation, points.get(0).y + negYDeviation, points.get(0).z + negZDeviation);
+        max = new Point3D(points.get(0).x + posXDeviation, points.get(0).y + posYDeviation, points.get(0).z + posZDeviation);
     }
 
     public boolean isIntersectedWith(AABB b){

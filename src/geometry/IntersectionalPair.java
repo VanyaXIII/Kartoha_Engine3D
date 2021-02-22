@@ -3,10 +3,21 @@ package geometry;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 import limiters.Intersectional;
+import org.jetbrains.annotations.NotNull;
 import physical_objects.PhysicalSphere;
+import physical_objects.Wall;
 import utils.TripleMap;
 
-public class IntersectionalPair<FirstThingType extends Intersectional, SecondThingType extends Intersectional> {
+import java.util.Objects;
+
+/**
+ *
+ * @param <FirstThingType>
+ * @param <SecondThingType>
+ * @author Ivan
+ */
+
+public final class IntersectionalPair<FirstThingType extends Intersectional, SecondThingType extends Intersectional> {
 
     private final FirstThingType firstThing;
     private final SecondThingType secondThing;
@@ -14,7 +25,7 @@ public class IntersectionalPair<FirstThingType extends Intersectional, SecondThi
     private final static boolean staticCollisionMode = false;
     private final static TripleMap<Class, Class, Intersecter> methodsMap;
 
-    public IntersectionalPair(FirstThingType firstThing, SecondThingType secondThing) {
+    public IntersectionalPair(@NotNull FirstThingType firstThing, @NotNull SecondThingType secondThing) {
         this.firstThing = firstThing;
         this.secondThing = secondThing;
     }
@@ -23,13 +34,24 @@ public class IntersectionalPair<FirstThingType extends Intersectional, SecondThi
         methodsMap = new TripleMap<>();
 
         methodsMap.addFirstKey(PhysicalSphere.class);
+        methodsMap.addFirstKey(Wall.class);
 
         methodsMap.putByFirstKey(PhysicalSphere.class, PhysicalSphere.class, IntersectionalPair::sphereToSphere);
+        methodsMap.putByFirstKey(PhysicalSphere.class, Wall.class, IntersectionalPair::sphereToWall);
+
+        methodsMap.putByFirstKey(Wall.class, PhysicalSphere.class, IntersectionalPair::sphereToWall);
     }
 
     public boolean areIntersected(){
         return methodsMap.getElement(firstThing.getClass(), secondThing.getClass()).areIntersected(firstThing, secondThing);
     }
+
+    /**
+     *
+     * @param thing1 - first thing to check intersection
+     * @param thing2 - second thing to check intersection
+     * @return - boolean statement(are things intersected)
+     */
 
     private static boolean sphereToSphere(Intersectional thing1, Intersectional thing2) {
 
@@ -46,6 +68,26 @@ public class IntersectionalPair<FirstThingType extends Intersectional, SecondThi
         if (distanceVector.getLength() <= (sphere1.getR() + sphere2.getR())){
             return !sphere2.equals(sphere1);
         }
+
+        return false;
+    }
+
+    private static boolean sphereToWall(Intersectional thing1, Intersectional thing2){
+
+        PhysicalSphere sphere;
+        Wall wall;
+
+        if (thing1 instanceof PhysicalSphere){
+            sphere = (PhysicalSphere) thing1;
+            wall = (Wall) thing2;
+        }
+        else {
+            sphere = (PhysicalSphere) thing2;
+            wall = (Wall) thing1;
+        }
+
+        if (!new AABB(sphere, dynamicCollisionMode).isIntersectedWith(new AABB(Objects.requireNonNull(wall))))
+            return false;
 
         return false;
     }

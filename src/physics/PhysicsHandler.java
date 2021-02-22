@@ -3,6 +3,7 @@ package physics;
 
 import geometry.IntersectionalPair;
 import physical_objects.PhysicalSphere;
+import physical_objects.Wall;
 
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
@@ -24,7 +25,7 @@ public class PhysicsHandler {
                     synchronized (spheres.get(i)) {
                         synchronized (spheres.get(j)) {
                             if (new IntersectionalPair<>(spheres.get(i), spheres.get(j)).areIntersected()) {
-                                System.out.println(1);
+                                new CollisionalPair<>(spheres.get(i), spheres.get(j)).collide();
                             }
 
                         }

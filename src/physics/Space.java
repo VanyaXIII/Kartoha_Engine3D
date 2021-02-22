@@ -1,8 +1,10 @@
 package physics;
 
+import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 import graph.CanvasPanel;
 import physical_objects.PhysicalSphere;
+import physical_objects.Wall;
 import utils.Tools;
 
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ import java.util.Collections;
 
 public class Space {
     private final ArrayList<PhysicalSphere> spheres;
+    private final ArrayList<Wall> walls;
     private final float DT;
     private final float G;
     private final CanvasPanel canvas;
@@ -17,6 +20,7 @@ public class Space {
 
     {
         spheres = new ArrayList<>();
+        walls = new ArrayList<>();
         physicsHandler = new PhysicsHandler(this, 1);
     }
 
@@ -24,8 +28,11 @@ public class Space {
         DT = dt;
         G = g;
         this.canvas = canvas;
-        spheres.add(new PhysicalSphere(this, new Vector3D(0.01, 0.01, 0.01), new Vector3D(1, 1, 1), -90, -50, -100, 100, Material.Constantin));
-        spheres.add(new PhysicalSphere(this, new Vector3D(0.01, 0.01, 0.01), new Vector3D(1, 1, 1), +90, -50, -100, 100, Material.Constantin));
+        spheres.add(new PhysicalSphere(this, new Vector3D(-50, 0.01, 0.01), new Vector3D(1, 1, 1), +910, +50, -100, 100, Material.Constantin));
+        spheres.add(new PhysicalSphere(this, new Vector3D(50, 0.01, 0.01), new Vector3D(1, 1, 1), -910, -50, -100, 100, Material.Constantin));
+        walls.add(new Wall(this,
+           new Point3D(0,0,0), new Point3D(10000, 0, 0), new Point3D(0, 10000, 00), Material.Gold
+        ));
     }
 
     public synchronized void changeTime() {
