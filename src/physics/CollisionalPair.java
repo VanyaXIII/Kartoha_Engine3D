@@ -39,11 +39,11 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
     }
 
     /**
-     *This method processes collision between two <b>Spheres</b>;
+     * This method processes collision between two <b>Spheres</b>;
      * changes their velocity
+     *
      * @param thing1 - first sphere
      * @param thing2 - second sphere
-     *
      */
 
     private static void sphereToSphere(Collisional thing1, Collisional thing2) {
@@ -64,21 +64,16 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
 
         final float v1x = (float) (sphere1.getV().scalarProduct(axisX) / axisXLen);
         final float v2x = (float) (sphere2.getV().scalarProduct(axisX) / axisXLen);
+        final float u1x = ((ratio - k) * v1x + (k + 1) * v2x) / (ratio + 1);
+        final float u2x = ((ratio * (k + 1)) * v1x + (1 - k * ratio) * v2x) / (ratio + 1);
         System.out.println(v2x);
         System.out.println(v1x);
         final float s = (m1 * m2) / (m1 + m2) * (1f + k) * Math.abs(v1x - v2x);
         System.out.println(s / m1);
 
-        sphere1.applyStrikeImpulse(new Vector3D(
-                axisX.x * s / axisXLen,
-                axisX.y * s / axisXLen,
-                axisX.z * s / axisXLen));
+        sphere1.applyStrikeImpulse(axisX.multiply(m1 * (u1x - v1x) / axisXLen));
 
-        sphere2.applyStrikeImpulse(new Vector3D(
-                -axisX.x * s / axisXLen,
-                -axisX.y * s / axisXLen,
-                -axisX.z * s / axisXLen));
-
+        sphere2.applyStrikeImpulse(axisX.multiply(m2 * (u2x - v2x) / axisXLen));
 
 
         final float r1 = sphere1.getR();
@@ -90,10 +85,9 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
      * changes <b>Sphere's</b> velocity
      * @param thing1 - sphere or wall (PhysicalSphere or Wall)
      * @param thing2 - sphere or wall (PhysicalSphere or Wall)
-     *
      */
 
-    private static void sphereToWall(Collisional thing1, Collisional thing2){
+    private static void sphereToWall(Collisional thing1, Collisional thing2) {
         PhysicalSphere sphere;
         Wall wall;
 
@@ -110,7 +104,7 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
 
         Vector3D axisY = wall.getPlane().vector;
         if (sphere.getV().scalarProduct(axisY) / axisY.getLength() > 0)
-            axisY = new Vector3D( -axisY.x, -axisY.y, -axisY.z);
+            axisY = new Vector3D(-axisY.x, -axisY.y, -axisY.z);
         final float axisYLen = (float) axisY.getLength();
 
 
@@ -118,10 +112,7 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
 
         final float s = (1f + k) * sphere.getM() * vy;
 
-        sphere.applyStrikeImpulse(new Vector3D(
-                axisY.x * s / axisYLen,
-                axisY.y * s / axisYLen,
-                axisY.z * s / axisYLen));
+        sphere.applyStrikeImpulse(axisY.multiply(s / axisYLen));
 
         System.out.println(s / sphere.getM());
         System.out.println(vy);
