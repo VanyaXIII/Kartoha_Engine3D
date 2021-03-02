@@ -1,5 +1,6 @@
 package physics;
 
+import exceptions.ImpossibleObjectException;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 import graph.CanvasPanel;
@@ -28,10 +29,14 @@ public class Space {
         DT = dt;
         G = g;
         this.canvas = canvas;
-        spheres.add(new PhysicalSphere(this, new Vector3D(0.01, 0.01, 0.01), new Vector3D(1, 1, 1), 200, 200, 1000, 100, Material.Constantin));
+        try {
+            spheres.add(new PhysicalSphere(this, new Vector3D(20, -20, 0), new Vector3D(1, 1, 1), 200, 200, 1000, 100, Material.Constantin));
+        } catch (ImpossibleObjectException e) {
+            e.printStackTrace();
+        }
 //        spheres.add(new PhysicalSphere(this, new Vector3D(0.01, 0.01, 0.01), new Vector3D(1, 1, 1), -910, -50, -100, 100, Material.Constantin));
         walls.add(new Wall(this,
-           new Point3D(0,0,0), new Point3D(10000, 0, 0), new Point3D(0, 10000, 00), Material.Gold
+           new Point3D(0,0,0), new Point3D(10000, 0, 0), new Point3D(0, 10000, 0), Material.Gold
         ));
     }
 

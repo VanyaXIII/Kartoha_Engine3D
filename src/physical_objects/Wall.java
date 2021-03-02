@@ -4,6 +4,8 @@ import drawing.Drawable;
 import geometry.objects3D.Plane3D;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Polygon3D;
+import geometry.objects3D.Vector3D;
+import geometry.polygonal.Polygonal;
 import graph.CanvasPanel;
 import limiters.Collisional;
 import limiters.Intersectional;
@@ -12,6 +14,7 @@ import physics.Material;
 import physics.Space;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 
 public class Wall implements Drawable, Collisional, Intersectional {
@@ -48,11 +51,18 @@ public class Wall implements Drawable, Collisional, Intersectional {
     @Override
     public void pushToCanvas(CanvasPanel canvas) {
 
-        canvas.getPolygonals().add(() ->
-        {
-            HashSet<Polygon3D> polygons = new HashSet<>();
-            polygons.add(new Polygon3D(a, b, c, material.fillColor));
-            return polygons;
+        canvas.getPolygonals().add(new Polygonal() {
+            @Override
+            public Collection<Polygon3D> getPolygons() {
+                HashSet<Polygon3D> polygons = new HashSet<>();
+                polygons.add(new Polygon3D(a, b, c, material.fillColor));
+                return polygons;
+            }
+
+            @Override
+            public void rotate(Vector3D vector3D, Point3D point3D) {
+
+            }
         });
 
     }

@@ -35,11 +35,9 @@ public class PhysicsHandler {
                 }
             }
             spheres.forEach(sphere ->{
-                synchronized (sphere) {
                     for (Wall wall : walls)
                         if (new IntersectionalPair<>(sphere, wall).areIntersected())
                             new CollisionalPair<>(sphere, wall).collide();
-                }
             });
         });
 

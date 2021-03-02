@@ -6,6 +6,7 @@ import limiters.Collisional;
 import org.jetbrains.annotations.NotNull;
 import physical_objects.PhysicalSphere;
 import physical_objects.Wall;
+import utils.FloatComparator;
 import utils.Tools;
 import utils.TripleMap;
 
@@ -81,8 +82,9 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
     }
 
     /**
-     *This method processes collision between <b>Sphere</b> and <b>Wall</b>;
+     * This method processes collision between <b>Sphere</b> and <b>Wall</b>;
      * changes <b>Sphere's</b> velocity
+     *
      * @param thing1 - sphere or wall (PhysicalSphere or Wall)
      * @param thing2 - sphere or wall (PhysicalSphere or Wall)
      */
@@ -101,20 +103,50 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
 
         final float k = Tools.countAverage(sphere.getMaterial().coefOfReduction, wall.getMaterial().coefOfReduction);
         final float fr = Tools.countAverage(sphere.getMaterial().coefOfFriction, wall.getMaterial().coefOfFriction);
+        final float m = sphere.getM();
+        final float J = sphere.getJ();
 
         Vector3D axisY = wall.getPlane().vector;
-        if (sphere.getV().scalarProduct(axisY) / axisY.getLength() > 0)
-            axisY = new Vector3D(-axisY.x, -axisY.y, -axisY.z);
+
+        if (sphere.getV().scalarProduct(axisY) > 0)
+            axisY = axisY.multiply(-1);
+
         final float axisYLen = (float) axisY.getLength();
 
+        final Point3D collisionPoint = axisY.multiply(-sphere.getR() / axisYLen).addToPoint(sphere.getPosition(true));
 
         final float vy = (float) Math.abs(sphere.getV().scalarProduct(axisY) / axisY.getLength());
-
         final float s = (1f + k) * sphere.getM() * vy;
 
-        sphere.applyStrikeImpulse(axisY.multiply(s / axisYLen));
 
-        System.out.println(s / sphere.getM());
-        System.out.println(vy);
+        Vector3D v = Tools.calcProjectionOfVectorOnPlane(sphere.getV(), wall.getPlane());
+        Vector3D angularVel = sphere.getAngularVelOfPoint(collisionPoint, true);
+
+        final Vector3D velOfCollisionPoint = v.add(angularVel);
+
+        System.out.println(sphere.getVelOfPoint(collisionPoint, true).getLength());
+
+        System.out.println(v.add(angularVel));
+
+
+        if (!FloatComparator.equals((float) velOfCollisionPoint.getLength(), 0)) {
+
+            Vector3D frictionImpulse1 = velOfCollisionPoint.multiply(-fr * Math.abs(s) / velOfCollisionPoint.getLength());
+            Vector3D frictionImpulse2 = velOfCollisionPoint.multiply(-1 / (1 / sphere.getM() + sphere.getR() * sphere.getR() / sphere.getJ()));
+
+            if (frictionImpulse1.getLength() < frictionImpulse2.getLength()) {
+                sphere.applyFriction(collisionPoint, frictionImpulse1);
+            } else {
+                System.out.println(222222);
+                sphere.applyFriction(collisionPoint, frictionImpulse2);
+            }
+
+
+            System.out.println(velOfCollisionPoint);
+            System.out.println(sphere.getVelOfPoint(collisionPoint, true));
+            sphere.applyStrikeImpulse(axisY.multiply(s / axisYLen));
+        }
+
+
     }
 }
