@@ -62,7 +62,7 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
         Point3D sphere1Pos = sphere1.getPosition(dynamicCollisionMode);
         Point3D sphere2Pos = sphere2.getPosition(dynamicCollisionMode);
 
-        Vector3D distanceVector = new Vector3D(sphere1Pos.x - sphere2Pos.x, sphere1Pos.y - sphere2Pos.y, sphere1Pos.z - sphere2Pos.z);
+        Vector3D distanceVector = new Vector3D(sphere1Pos, sphere2Pos);
         if (distanceVector.getLength() <= (sphere1.getR() + sphere2.getR())) {
             return !sphere2.equals(sphere1);
         }

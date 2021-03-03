@@ -64,7 +64,6 @@ public class PhysicalSphere implements Drawable, Intersectional, Collisional {
     }
 
 
-
     public synchronized void applyFriction(Point3D applicationPoint, Vector3D impulse) {
         applyStrikeImpulse(impulse);
         Vector3D radVector = new Vector3D(getPosition(false), applicationPoint);
@@ -78,11 +77,11 @@ public class PhysicalSphere implements Drawable, Intersectional, Collisional {
         return w.vectorProduct(radVector);
     }
 
-    public Vector3D getVelOfPoint(Point3D point, boolean mode){
+    public Vector3D getVelOfPoint(Point3D point, boolean mode) {
         return getAngularVelOfPoint(point, mode).add(v);
     }
 
-    private Vector3D getVelAfterCollision(Vector3D impulse){
+    private Vector3D getVelAfterCollision(Vector3D impulse) {
         impulse = impulse.multiply(1 / m);
         return new Vector3D(v.x + impulse.x, v.y + impulse.y, v.z + impulse.z);
     }
@@ -124,8 +123,6 @@ public class PhysicalSphere implements Drawable, Intersectional, Collisional {
     public void updateDrawingInterpretation() {
         drawableInterpretation.setCenter(new Point3D(x0, y0, z0));
 
-//        synchronized (space.getCanvas()) {
-//            drawableInterpretation.rotate(w.multiply(space.getDT()), getPosition(false));
-//        }
+//        drawableInterpretation.rotate(w.multiply(space.getDT()), getPosition(false));
     }
 }

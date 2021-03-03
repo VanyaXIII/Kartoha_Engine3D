@@ -30,14 +30,13 @@ public class Space {
         G = g;
         this.canvas = canvas;
         try {
-            spheres.add(new PhysicalSphere(this, new Vector3D(20, -20, 0), new Vector3D(1, 1, 1), 200, 200, 1000, 100, Material.Constantin));
+            spheres.add(new PhysicalSphere(this, new Vector3D(-40, 0, 0), new Vector3D(1, 1, 1), 500, -50, 50, 100, Material.Constantin));
+            spheres.add(new PhysicalSphere(this, new Vector3D(40, 0, 0), new Vector3D(1, 1, 1), -510, -50, 50, 100, Material.Constantin));
         } catch (ImpossibleObjectException e) {
             e.printStackTrace();
         }
-//        spheres.add(new PhysicalSphere(this, new Vector3D(0.01, 0.01, 0.01), new Vector3D(1, 1, 1), -910, -50, -100, 100, Material.Constantin));
-        walls.add(new Wall(this,
-           new Point3D(0,0,0), new Point3D(10000, 0, 0), new Point3D(0, 10000, 0), Material.Gold
-        ));
+//        walls.add(new Wall(this,
+//           new Point3D(0,0,0), new Point3D(10000, 0, 0), new Point3D(0, 10000, 0), Material.Gold;
     }
 
     public synchronized void changeTime() {

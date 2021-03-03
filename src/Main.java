@@ -28,7 +28,7 @@ public class Main {
         canvas.setResizable(true);
         canvas.setUndecorated(false);
         canvas.setVisible(true);
-        Space space = new Space(0.001f, 200f, canvas);
+        Space space = new Space(0.001f, 00f, canvas);
 
         new Thread(() -> {
             while (true) {
