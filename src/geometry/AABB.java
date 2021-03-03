@@ -7,7 +7,6 @@ import physical_objects.Wall;
 import utils.FloatComparator;
 
 import java.util.ArrayList;
-import java.util.Vector;
 
 public class AABB {
     private final Point3D min;
@@ -19,7 +18,7 @@ public class AABB {
     }
 
     public AABB(PhysicalSphere sphere, boolean mode){
-        Point3D position = sphere.getPosition(mode);
+        Point3D position = sphere.getPositionOfCentre(mode);
         min = new Point3D(position.x - sphere.getR(), position.y - sphere.getR(), position.z - sphere.getR());
         max = new Point3D(position.x + sphere.getR(), position.y + sphere.getR(), position.z + sphere.getR());
     }

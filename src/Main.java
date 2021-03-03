@@ -30,11 +30,9 @@ public class Main {
         canvas.setVisible(true);
         Space space = new Space(0.001f, 00f, canvas);
 
-        new Thread(() -> {
-            while (true) {
-                canvas.repaint();
-                space.changeTime();
-            }
-        }).start();
+        while (true) {
+            canvas.repaint();
+            space.changeTime();
+        }
     }
 }

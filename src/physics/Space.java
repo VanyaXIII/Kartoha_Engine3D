@@ -1,5 +1,6 @@
 package physics;
 
+import drawing.Drawable;
 import exceptions.ImpossibleObjectException;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;

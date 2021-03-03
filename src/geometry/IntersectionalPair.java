@@ -8,8 +8,6 @@ import physical_objects.PhysicalSphere;
 import physical_objects.Wall;
 import utils.TripleMap;
 
-import java.util.Objects;
-
 /**
  * @param <FirstThingType> - type of first thing, that can be intersected with others
  * @param <SecondThingType> - type of second thing, that can be intersected with others
@@ -59,8 +57,8 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
         if (!new AABB(sphere1, dynamicCollisionMode).isIntersectedWith(new AABB(sphere2, dynamicCollisionMode)))
             return false;
 
-        Point3D sphere1Pos = sphere1.getPosition(dynamicCollisionMode);
-        Point3D sphere2Pos = sphere2.getPosition(dynamicCollisionMode);
+        Point3D sphere1Pos = sphere1.getPositionOfCentre(dynamicCollisionMode);
+        Point3D sphere2Pos = sphere2.getPositionOfCentre(dynamicCollisionMode);
 
         Vector3D distanceVector = new Vector3D(sphere1Pos, sphere2Pos);
         if (distanceVector.getLength() <= (sphere1.getR() + sphere2.getR())) {
@@ -87,7 +85,7 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
         if (!new AABB(sphere, dynamicCollisionMode).isIntersectedWith(new AABB(wall)))
             return false;
 
-        final Point3D spherePos = sphere.getPosition(dynamicCollisionMode);
+        final Point3D spherePos = sphere.getPositionOfCentre(dynamicCollisionMode);
         final float distance = (float) wall.getPlane().distance(spherePos);
 
         if (distance <= sphere.getR()) {

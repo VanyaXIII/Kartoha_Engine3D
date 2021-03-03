@@ -52,7 +52,7 @@ public class PhysicalSphere implements Drawable, Intersectional, Collisional {
         v = new Vector3D(v.x, v.y, v.z + space.getG() * space.getDT());
     }
 
-    public synchronized Point3D getPosition(boolean mode) {
+    public synchronized Point3D getPositionOfCentre(boolean mode) {
         float m = mode ? 1.0f : 0.0f;
         return new Point3D(x0 + m * v.x * space.getDT(),
                 y0 + m * v.y * space.getDT(),
@@ -60,30 +60,24 @@ public class PhysicalSphere implements Drawable, Intersectional, Collisional {
     }
 
     public synchronized void applyStrikeImpulse(Vector3D impulse) {
-        v = getVelAfterCollision(impulse);
+        v = v.add(impulse.multiply(1 / m));
     }
-
 
     public synchronized void applyFriction(Point3D applicationPoint, Vector3D impulse) {
         applyStrikeImpulse(impulse);
-        Vector3D radVector = new Vector3D(getPosition(false), applicationPoint);
+        Vector3D radVector = new Vector3D(getPositionOfCentre(false), applicationPoint);
         radVector.multiply(r / radVector.getLength());
         w = w.add(radVector.vectorProduct(impulse).multiply(1 / J));
     }
 
     public Vector3D getAngularVelOfPoint(Point3D point, boolean mode) {
-        Vector3D radVector = new Vector3D(getPosition(mode), point);
+        Vector3D radVector = new Vector3D(getPositionOfCentre(mode), point);
         radVector = radVector.multiply(r / radVector.getLength());
         return w.vectorProduct(radVector);
     }
 
     public Vector3D getVelOfPoint(Point3D point, boolean mode) {
         return getAngularVelOfPoint(point, mode).add(v);
-    }
-
-    private Vector3D getVelAfterCollision(Vector3D impulse) {
-        impulse = impulse.multiply(1 / m);
-        return new Vector3D(v.x + impulse.x, v.y + impulse.y, v.z + impulse.z);
     }
 
     public synchronized float getR() {
@@ -123,6 +117,6 @@ public class PhysicalSphere implements Drawable, Intersectional, Collisional {
     public void updateDrawingInterpretation() {
         drawableInterpretation.setCenter(new Point3D(x0, y0, z0));
 
-//        drawableInterpretation.rotate(w.multiply(space.getDT()), getPosition(false));
+//        drawableInterpretation.rotate(w.multiply(space.getDT()), getPositionOfCentre(false));
     }
 }
