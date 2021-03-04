@@ -13,17 +13,17 @@ import physics.Space;
 
 public class PhysicalSphere implements Drawable, Intersectional, Collisional {
 
-    private float x0, y0, z0;
-    private final float r;
+    private double x0, y0, z0;
+    private final double r;
     private Vector3D v;
     private Vector3D w;
-    private final float J;
+    private final double J;
     private final Space space;
     private final Material material;
-    private final float m;
+    private final double m;
     private final Sphere drawableInterpretation;
 
-    public PhysicalSphere(Space space, Vector3D v, Vector3D w, float x0, float y0, float z0, float r, Material material) throws ImpossibleObjectException {
+    public PhysicalSphere(Space space, Vector3D v, Vector3D w, double x0, double y0, double z0, double r, Material material) throws ImpossibleObjectException {
         this.x0 = x0;
         this.r = r;
         this.y0 = y0;
@@ -32,12 +32,11 @@ public class PhysicalSphere implements Drawable, Intersectional, Collisional {
         this.v = v;
         this.w = w;
         this.material = material;
-        this.m = (4 * (float) Math.PI * r * r * r / 3f) * material.p;
+        this.m = (4 * Math.PI * r * r * r / 3f) * material.p;
         J = 0.4f * m * r * r;
         drawableInterpretation = new Sphere(new Point3D(x0, y0, z0), r, 15, material.fillColor);
         pushToCanvas(space.getCanvas());
-        if (m <= 0)
-            throw new ImpossibleObjectException("Impossible sphere; mass is null");
+        if (m <= 0) throw new ImpossibleObjectException("Impossible sphere; mass is null");
     }
 
     public synchronized void update() {
@@ -53,7 +52,7 @@ public class PhysicalSphere implements Drawable, Intersectional, Collisional {
     }
 
     public synchronized Point3D getPositionOfCentre(boolean mode) {
-        float m = mode ? 1.0f : 0.0f;
+        double m = mode ? 1.0f : 0.0f;
         return new Point3D(x0 + m * v.x * space.getDT(),
                 y0 + m * v.y * space.getDT(),
                 z0 - m * ((v.z + v.z + space.getG() * space.getDT()) * space.getDT() / 2.0f));
@@ -80,7 +79,7 @@ public class PhysicalSphere implements Drawable, Intersectional, Collisional {
         return getAngularVelOfPoint(point, mode).add(v);
     }
 
-    public synchronized float getR() {
+    public synchronized double getR() {
         return r;
     }
 
@@ -92,11 +91,11 @@ public class PhysicalSphere implements Drawable, Intersectional, Collisional {
         this.w = w;
     }
 
-    public synchronized float getM() {
+    public synchronized double getM() {
         return m;
     }
 
-    public synchronized float getJ() {
+    public synchronized double getJ() {
         return J;
     }
 

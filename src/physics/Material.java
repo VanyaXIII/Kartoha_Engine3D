@@ -4,12 +4,12 @@ import java.awt.*;
 
 public class Material {
 
-    public final float p;
+    public final double p;
     public final Color fillColor;
-    public final float coefOfReduction;
-    public final float coefOfFriction;
+    public final double coefOfReduction;
+    public final double coefOfFriction;
 
-    private Material(float p, Color fillColor, float coefOfReduction, float coefOfFriction) {
+    private Material(double p, Color fillColor, double coefOfReduction, double coefOfFriction) {
         this.p = p;
         this.coefOfReduction = coefOfReduction;
         this.coefOfFriction = coefOfFriction;

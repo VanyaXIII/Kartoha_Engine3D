@@ -15,8 +15,8 @@ import java.util.Collections;
 public class Space {
     private final ArrayList<PhysicalSphere> spheres;
     private final ArrayList<Wall> walls;
-    private final float DT;
-    private final float G;
+    private final double DT;
+    private final double G;
     private final CanvasPanel canvas;
     private final PhysicsHandler physicsHandler;
 
@@ -26,7 +26,7 @@ public class Space {
         physicsHandler = new PhysicsHandler(this, 1);
     }
 
-    public Space(float dt, float g, CanvasPanel canvas) {
+    public Space(double dt, double g, CanvasPanel canvas) {
         DT = dt;
         G = g;
         this.canvas = canvas;
@@ -49,15 +49,15 @@ public class Space {
         } catch (Exception ignored) {
         }
 
-        float cTime = (float) ((System.nanoTime() - time1) / 1000000.0);
-        float sleepTime = 0;
+        double cTime = (double) ((System.nanoTime() - time1) / 1000000.0);
+        double sleepTime = 0;
 
         if (DT * 1000.0 - cTime > 0) {
             sleepTime = DT * 1000.0f - cTime;
         }
 
         try {
-            Thread.sleep(Tools.transformFloat(sleepTime));
+            Thread.sleep(Tools.transformdouble(sleepTime));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -66,11 +66,11 @@ public class Space {
         Collections.shuffle(spheres);
     }
 
-    public float getDT() {
+    public double getDT() {
         return DT;
     }
 
-    public float getG() {
+    public double getG() {
         return G;
     }
 

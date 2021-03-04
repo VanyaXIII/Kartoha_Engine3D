@@ -1,6 +1,7 @@
 package geometry;
 
 import geometry.objects3D.Point3D;
+import geometry.objects3D.Polygon3D;
 import geometry.objects3D.Vector3D;
 
 public class Tetrahedron {
@@ -11,6 +12,13 @@ public class Tetrahedron {
         B = b;
         C = c;
         D = d;
+    }
+
+    public Tetrahedron(Point3D a, Polygon3D polygon){
+        A = a;
+        B = polygon.a1;
+        C = polygon.a2;
+        D = polygon.a3;
     }
 
     public Point3D getCentreOfMass(){
@@ -26,11 +34,11 @@ public class Tetrahedron {
 
     }
 
-    public float getVolume(){
+    public double getVolume(){
         final Vector3D a = new Vector3D(D, B);
         final Vector3D b = new Vector3D(D, A);
         final Vector3D c = new Vector3D(D, C);
 
-        return (float) ((1/6) * a.scalarProduct(b.vectorProduct(c)));
+        return (double) ((1/6) * a.scalarProduct(b.vectorProduct(c)));
     }
 }

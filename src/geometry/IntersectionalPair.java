@@ -86,7 +86,7 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
             return false;
 
         final Point3D spherePos = sphere.getPositionOfCentre(dynamicCollisionMode);
-        final float distance = (float) wall.getPlane().distance(spherePos);
+        final double distance = wall.getPlane().distance(spherePos);
 
         if (distance <= sphere.getR()) {
             Vector3D normalVector = wall.getPlane().vector;

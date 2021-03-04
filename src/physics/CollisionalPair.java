@@ -59,22 +59,22 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
         final Point3D secondSpherePos = sphere2.getPositionOfCentre(true);
         final Vector3D axisX = new Vector3D(firstSpherePos.x - secondSpherePos.x,
                 firstSpherePos.y - secondSpherePos.y, firstSpherePos.z - secondSpherePos.z);
-        final float axisXLen = (float) axisX.getLength();
+        final double axisXLen = (double) axisX.getLength();
 
-        final float m1 = sphere1.getM();
-        final float m2 = sphere2.getM();
-        final float ratio = m1 / m2;
-        final float k = Tools.countAverage(sphere1.getMaterial().coefOfReduction, sphere2.getMaterial().coefOfReduction);
-        final float fr = Tools.countAverage(sphere1.getMaterial().coefOfFriction, sphere2.getMaterial().coefOfFriction);
+        final double m1 = sphere1.getM();
+        final double m2 = sphere2.getM();
+        final double ratio = m1 / m2;
+        final double k = Tools.countAverage(sphere1.getMaterial().coefOfReduction, sphere2.getMaterial().coefOfReduction);
+        final double fr = Tools.countAverage(sphere1.getMaterial().coefOfFriction, sphere2.getMaterial().coefOfFriction);
 
-        final float r1 = sphere1.getR();
-        final float r2 = sphere2.getR();
+        final double r1 = sphere1.getR();
+        final double r2 = sphere2.getR();
 
-        final float v1x = (float) (sphere1.getV().scalarProduct(axisX) / axisXLen);
-        final float v2x = (float) (sphere2.getV().scalarProduct(axisX) / axisXLen);
-        final float u1x = ((ratio - k) * v1x + (k + 1) * v2x) / (ratio + 1);
-        final float u2x = ((ratio * (k + 1)) * v1x + (1 - k * ratio) * v2x) / (ratio + 1);
-        final float s = (m1 * m2) / (m1 + m2) * (1f + k) * Math.abs(v1x - v2x);
+        final double v1x = (double) (sphere1.getV().scalarProduct(axisX) / axisXLen);
+        final double v2x = (double) (sphere2.getV().scalarProduct(axisX) / axisXLen);
+        final double u1x = ((ratio - k) * v1x + (k + 1) * v2x) / (ratio + 1);
+        final double u2x = ((ratio * (k + 1)) * v1x + (1 - k * ratio) * v2x) / (ratio + 1);
+        final double s = (m1 * m2) / (m1 + m2) * (1f + k) * Math.abs(v1x - v2x);
 
 //        System.out.println(v1x);
 //        System.out.println(v2x);
@@ -129,22 +129,22 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
             sphere = (PhysicalSphere) thing2;
         }
 
-        final float k = Tools.countAverage(sphere.getMaterial().coefOfReduction, wall.getMaterial().coefOfReduction);
-        final float fr = Tools.countAverage(sphere.getMaterial().coefOfFriction, wall.getMaterial().coefOfFriction);
-        final float m = sphere.getM();
-        final float J = sphere.getJ();
+        final double k = Tools.countAverage(sphere.getMaterial().coefOfReduction, wall.getMaterial().coefOfReduction);
+        final double fr = Tools.countAverage(sphere.getMaterial().coefOfFriction, wall.getMaterial().coefOfFriction);
+        final double m = sphere.getM();
+        final double J = sphere.getJ();
 
         Vector3D axisY = wall.getPlane().vector;
 
         if (sphere.getV().scalarProduct(axisY) > 0)
             axisY = axisY.multiply(-1);
 
-        final float axisYLen = (float) axisY.getLength();
+        final double axisYLen = (double) axisY.getLength();
 
         final Point3D collisionPoint = axisY.multiply(-sphere.getR() / axisYLen).addToPoint(sphere.getPositionOfCentre(true));
 
-        final float vy = (float) Math.abs(sphere.getV().scalarProduct(axisY) / axisY.getLength());
-        final float s = (1f + k) * sphere.getM() * vy;
+        final double vy = (double) Math.abs(sphere.getV().scalarProduct(axisY) / axisY.getLength());
+        final double s = (1f + k) * sphere.getM() * vy;
 
 
         Vector3D v = Tools.calcProjectionOfVectorOnPlane(sphere.getV(), wall.getPlane());
