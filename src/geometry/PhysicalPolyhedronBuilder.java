@@ -1,8 +1,8 @@
 package geometry;
 
 import geometry.objects3D.Point3D;
-import geometry.objects3D.Polygon3D;
 import geometry.objects3D.Vector3D;
+import shapes.Shape;
 
 import java.util.ArrayList;
 
@@ -10,24 +10,28 @@ public class PhysicalPolyhedronBuilder {
 
     private ArrayList<Point3D> points;
     private final ArrayList<Tetrahedron> tetrahedrons;
-    private ArrayList<Polygon3D> polygons;
+    private ArrayList<Triangle> triangles;
 
     {
         points = new ArrayList<>();
-        polygons = new ArrayList<>();
+        triangles = new ArrayList<>();
         tetrahedrons = new ArrayList<>();
     }
 
-    public PhysicalPolyhedronBuilder(ArrayList<Point3D> points, ArrayList<Polygon3D> polygons){
+    public PhysicalPolyhedronBuilder(ArrayList<Point3D> points, ArrayList<Triangle> triangles){
         this.points = points;
-        this.polygons = polygons;
-        tetrahedral();
+        this.triangles = triangles;
+    }
+
+    public PhysicalPolyhedronBuilder(Shape shape){
+        this.points = shape.getPoints();
+        this.triangles = shape.getTriangles();
     }
 
 
     public void tetrahedral(){
         Point3D zeroPoint = points.get(0);
-        polygons.forEach(polygon -> tetrahedrons.add(new Tetrahedron(zeroPoint, polygon)));
+        triangles.forEach(triangle -> tetrahedrons.add(new Tetrahedron(zeroPoint, triangle)));
     }
 
     public double getVolume(){

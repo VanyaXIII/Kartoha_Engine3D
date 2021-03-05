@@ -2,7 +2,7 @@ package utils;
 
 import java.lang.Math;
 
-public final class doubleComparator {
+public final class FloatComparator {
 
     private final static double epsilon = 0.001f;
 
@@ -10,9 +10,6 @@ public final class doubleComparator {
         return (Math.abs(a - b) < epsilon);
     }
 
-    public static int compare(double a, double b){
-        return compare((double) a, (double) b);
-    }
 
     public static int compare(double a, double b) {
         if (Math.abs(a - b) < epsilon)

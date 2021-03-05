@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class FlatShape {
 
     private ArrayList<Point3D> points;
-    private ArrayList<Triangle> triangles;
+    private final ArrayList<Triangle> triangles;
 
     {
         points = new ArrayList<>();

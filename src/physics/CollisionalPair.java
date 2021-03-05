@@ -91,9 +91,10 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
         Vector3D relativeVel2 = relativeVel1.multiply(-1);
 
         Vector3D firstSphereFriction1 = relativeVel2.multiply(fr * s / relativeVel2.getLength());
-        Vector3D firstSphereFriction2 = relativeVel2.multiply(m1 + m2 / 3.5);
+        Vector3D firstSphereFriction2 = relativeVel2.multiply(m1 * m2 / (3.5 * (m1+m2)));
 
         if (firstSphereFriction1.getLength() < firstSphereFriction2.getLength()){
+            System.out.println(1234);
             sphere1.applyFriction(collisionPoint1, firstSphereFriction1);
             sphere2.applyFriction(collisionPoint2, firstSphereFriction1.multiply(-1));
         }

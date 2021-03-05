@@ -21,6 +21,13 @@ public class Tetrahedron {
         D = polygon.a3;
     }
 
+    public Tetrahedron(Point3D a, Triangle triangle){
+        A = a;
+        B = triangle.A;
+        C = triangle.B;
+        D = triangle.C;
+    }
+
     public Point3D getCentreOfMass(){
 
         Point3D zeroPoint = new Point3D(0, 0, 0);

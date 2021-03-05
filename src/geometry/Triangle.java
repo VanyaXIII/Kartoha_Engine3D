@@ -1,15 +1,24 @@
 package geometry;
 
 import geometry.objects3D.Point3D;
+import geometry.objects3D.Polygon3D;
 import geometry.objects3D.Vector3D;
 
+import java.awt.*;
+
 public class Triangle {
-    private final Point3D A, B, C;
+    public final Point3D A, B, C;
 
     public Triangle(Point3D a, Point3D b, Point3D c) {
         A = a;
         B = b;
         C = c;
+    }
+
+    public Triangle(Polygon3D polygon) {
+        A = polygon.a1;
+        B = polygon.a2;
+        C = polygon.a3;
     }
 
     public double getSquare() {
@@ -37,5 +46,8 @@ public class Triangle {
         return (getSquare() / 36d) * (side1 * side1 + side2 * side2 + side3 * side3);
     }
 
+    public Polygon3D toPolygon(Color color) {
+        return new Polygon3D(A, B, C, color);
+    }
 
 }

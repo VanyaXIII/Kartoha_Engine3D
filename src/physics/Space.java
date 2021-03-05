@@ -66,6 +66,14 @@ public class Space {
         Collections.shuffle(spheres);
     }
 
+    public void addSphere(Vector3D v, Vector3D w, double x0, double y0, double z0, double r, Material material) throws ImpossibleObjectException {
+        spheres.add(new PhysicalSphere(this, v, w, x0, y0, z0, r, material));
+    }
+
+    public void addSphere(Vector3D v, Vector3D w, double x0, double y0, double z0, double r) throws ImpossibleObjectException {
+        addSphere(v,w,x0, y0, z0, r, Material.Constantin);
+    }
+
     public double getDT() {
         return DT;
     }

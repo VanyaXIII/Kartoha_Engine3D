@@ -4,7 +4,8 @@ import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 import physical_objects.PhysicalSphere;
 import physical_objects.Wall;
-import utils.doubleComparator;
+import utils.FloatComparator;
+
 
 import java.util.ArrayList;
 
@@ -34,12 +35,12 @@ public class AABB {
 
         for (int i = 1; i < points.size(); i++) {
             Vector3D vectorToPoint = new Vector3D(points.get(0), points.get(i));
-            if (posXDeviation < vectorToPoint.x) posXDeviation = (double) vectorToPoint.x;
-            if (posYDeviation < vectorToPoint.y) posYDeviation = (double) vectorToPoint.y;
-            if (posZDeviation < vectorToPoint.z) posZDeviation = (double) vectorToPoint.z;
-            if (negXDeviation > vectorToPoint.x) negXDeviation = (double) vectorToPoint.x;
-            if (negYDeviation > vectorToPoint.y) negYDeviation = (double) vectorToPoint.y;
-            if (negZDeviation > vectorToPoint.z) negZDeviation = (double) vectorToPoint.z;
+            if (posXDeviation < vectorToPoint.x) posXDeviation = vectorToPoint.x;
+            if (posYDeviation < vectorToPoint.y) posYDeviation = vectorToPoint.y;
+            if (posZDeviation < vectorToPoint.z) posZDeviation = vectorToPoint.z;
+            if (negXDeviation > vectorToPoint.x) negXDeviation = vectorToPoint.x;
+            if (negYDeviation > vectorToPoint.y) negYDeviation = vectorToPoint.y;
+            if (negZDeviation > vectorToPoint.z) negZDeviation = vectorToPoint.z;
         }
 
         min = new Point3D(points.get(0).x + negXDeviation, points.get(0).y + negYDeviation, points.get(0).z + negZDeviation);
@@ -57,11 +58,11 @@ public class AABB {
 
     public boolean isPointIn(Point3D point){
 
-        if (doubleComparator.compare(this.max.x, point.x) == -1 || doubleComparator.compare(this.min.x, point.x) == 1)
+        if (FloatComparator.compare(this.max.x, point.x) == -1 || FloatComparator.compare(this.min.x, point.x) == 1)
             return false;
-        if (doubleComparator.compare(this.max.y, point.y) == -1 || doubleComparator.compare(this.min.y, point.y) == 1)
+        if (FloatComparator.compare(this.max.y, point.y) == -1 || FloatComparator.compare(this.min.y, point.y) == 1)
             return false;
-        if (doubleComparator.compare(this.max.z, point.z) == -1 || doubleComparator.compare(this.min.z, point.z) == 1)
+        if (FloatComparator.compare(this.max.z, point.z) == -1 || FloatComparator.compare(this.min.z, point.z) == 1)
             return false;
 
         return true;

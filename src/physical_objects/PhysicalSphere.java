@@ -1,5 +1,6 @@
 package physical_objects;
 
+import com.google.gson.Gson;
 import drawing.Drawable;
 import exceptions.ImpossibleObjectException;
 import geometry.objects3D.Point3D;
