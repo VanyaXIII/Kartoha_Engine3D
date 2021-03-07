@@ -1,6 +1,5 @@
 package physical_objects;
 
-import com.google.gson.Gson;
 import drawing.Drawable;
 import exceptions.ImpossibleObjectException;
 import geometry.objects3D.Point3D;
@@ -12,51 +11,18 @@ import limiters.Intersectional;
 import physics.Material;
 import physics.Space;
 
-public class PhysicalSphere implements Drawable, Intersectional, Collisional {
+public class PhysicalSphere extends AbstractBody implements Intersectional, Collisional {
 
-    private double x0, y0, z0;
     private final double r;
-    private Vector3D v;
-    private Vector3D w;
     private final double J;
-    private final Space space;
-    private final Material material;
-    private final double m;
     private final Sphere drawableInterpretation;
 
     public PhysicalSphere(Space space, Vector3D v, Vector3D w, double x0, double y0, double z0, double r, Material material) throws ImpossibleObjectException {
-        this.x0 = x0;
+        super(space, x0, y0, z0, v, w, material, (4 * Math.PI * r * r * r / 3d) * material.p);
         this.r = r;
-        this.y0 = y0;
-        this.z0 = z0;
-        this.space = space;
-        this.v = v;
-        this.w = w;
-        this.material = material;
-        this.m = (4 * Math.PI * r * r * r / 3f) * material.p;
-        J = 0.4f * m * r * r;
+        J = 0.4d * m * r * r;
         drawableInterpretation = new Sphere(new Point3D(x0, y0, z0), r, 15, material.fillColor);
         pushToCanvas(space.getCanvas());
-        if (m <= 0) throw new ImpossibleObjectException("Impossible sphere; mass is null");
-    }
-
-    public synchronized void update() {
-        changeSpeed();
-        x0 += v.x * space.getDT();
-        y0 += v.y * space.getDT();
-        z0 -= (v.z + v.z - space.getG() * space.getDT()) * space.getDT() / 2.0f;
-        updateDrawingInterpretation();
-    }
-
-    private synchronized void changeSpeed() {
-        v = new Vector3D(v.x, v.y, v.z + space.getG() * space.getDT());
-    }
-
-    public synchronized Point3D getPositionOfCentre(boolean mode) {
-        double m = mode ? 1.0f : 0.0f;
-        return new Point3D(x0 + m * v.x * space.getDT(),
-                y0 + m * v.y * space.getDT(),
-                z0 - m * ((v.z + v.z + space.getG() * space.getDT()) * space.getDT() / 2.0f));
     }
 
     public synchronized void applyStrikeImpulse(Vector3D impulse) {
@@ -84,28 +50,8 @@ public class PhysicalSphere implements Drawable, Intersectional, Collisional {
         return r;
     }
 
-    public synchronized void setV(Vector3D v) {
-        this.v = v;
-    }
-
-    public synchronized void setW(Vector3D w) {
-        this.w = w;
-    }
-
-    public synchronized double getM() {
-        return m;
-    }
-
-    public synchronized double getJ() {
+    public double getJ() {
         return J;
-    }
-
-    public synchronized Material getMaterial() {
-        return material;
-    }
-
-    public synchronized Vector3D getV() {
-        return v;
     }
 
     @Override
@@ -116,7 +62,6 @@ public class PhysicalSphere implements Drawable, Intersectional, Collisional {
     @Override
     public void updateDrawingInterpretation() {
         drawableInterpretation.setCenter(new Point3D(x0, y0, z0));
-
-//        drawableInterpretation.rotate(w.multiply(space.getDT()), getPositionOfCentre(false));
+        drawableInterpretation.rotate(w.multiply(space.getDT()), getPositionOfCentre(false));
     }
 }

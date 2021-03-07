@@ -21,11 +21,20 @@ public class PhysicalPolyhedronBuilder {
     public PhysicalPolyhedronBuilder(ArrayList<Point3D> points, ArrayList<Triangle> triangles){
         this.points = points;
         this.triangles = triangles;
+        tetrahedral();
     }
 
-    public PhysicalPolyhedronBuilder(Shape shape){
-        this.points = shape.getPoints();
-        this.triangles = shape.getTriangles();
+    public PhysicalPolyhedronBuilder(Shape shape, Point3D zero){
+
+        shape.getPoints().forEach(point -> points.add(point.from(zero)));
+
+        shape.getTriangles().forEach(triangle -> {
+            triangles.add(new Triangle(triangle.A.from(zero),
+                    triangle.B.from(zero),
+                    triangle.C.from(zero)));
+        });
+
+        tetrahedral();
     }
 
 
@@ -57,4 +66,7 @@ public class PhysicalPolyhedronBuilder {
         return points;
     }
 
+    public ArrayList<Triangle> getTriangles() {
+        return triangles;
+    }
 }

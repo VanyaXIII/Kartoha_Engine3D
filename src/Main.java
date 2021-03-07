@@ -34,7 +34,7 @@ public class Main {
         canvas.setResizable(true);
         canvas.setUndecorated(false);
         canvas.setVisible(true);
-        Space space = new Space(0.001f, 00f, canvas);
+        Space space = new Space(0.01f, 00f, canvas);
 
 //        Gson gson = new Gson();
 //
@@ -62,13 +62,30 @@ public class Main {
 //
 //        Shape shape = new Shape(points, triangles);
 
-        Shape shape = new ShapeReader("src\\shapes\\assets\\tetrahedron.json").read();
-        for(Point3D point : shape.getPoints()) System.out.println(point);
-
-        while (true) {
-            canvas.repaint();
-            space.changeTime();
-        }
+//        Shape shape = new ShapeReader("src\\shapes\\assets\\tetrahedron.json").read();
+//        for(Point3D point : shape.getPoints()) System.out.println(point);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    synchronized (canvas) {
+                        canvas.repaint();
+                        space.changeTime();
+                    }
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+//        while (true) {
+//            synchronized (canvas) {
+//                canvas.repaint();
+//                space.changeTime();
+//            }
+//        }
 
 
     }

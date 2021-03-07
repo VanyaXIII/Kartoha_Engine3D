@@ -27,7 +27,6 @@ public class PhysicsHandler {
                     synchronized (spheres.get(i)) {
                         synchronized (spheres.get(j)) {
                             if (new IntersectionalPair<>(spheres.get(i), spheres.get(j)).areIntersected()) {
-                                System.out.println(1234);
                                 new CollisionalPair<>(spheres.get(i), spheres.get(j)).collide();
                             }
 

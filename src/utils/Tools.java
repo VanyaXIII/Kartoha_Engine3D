@@ -23,7 +23,6 @@ public final class Tools {
 
     public static Vector3D calcProjectionOfVectorOnPlane(Vector3D vector, Plane3D plane){
         final double projection = (double) (vector.scalarProduct(plane.vector) / plane.vector.getLength());
-        System.out.println(projection);
         return vector.add(plane.vector.multiply(-projection/plane.vector.getLength()));
     }
 

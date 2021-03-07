@@ -1,19 +1,24 @@
 package physics;
 
-import drawing.Drawable;
 import exceptions.ImpossibleObjectException;
+import geometry.PhysicalPolyhedronBuilder;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 import graph.CanvasPanel;
+import physical_objects.PhysicalPolyhedron;
 import physical_objects.PhysicalSphere;
 import physical_objects.Wall;
+import shapes.ShapeReader;
 import utils.Tools;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class Space {
+
     private final ArrayList<PhysicalSphere> spheres;
+    private final ArrayList<PhysicalPolyhedron> polyhedrons;
     private final ArrayList<Wall> walls;
     private final double DT;
     private final double G;
@@ -21,6 +26,7 @@ public class Space {
     private final PhysicsHandler physicsHandler;
 
     {
+        polyhedrons = new ArrayList<>();
         spheres = new ArrayList<>();
         walls = new ArrayList<>();
         physicsHandler = new PhysicsHandler(this, 1);
@@ -31,9 +37,11 @@ public class Space {
         G = g;
         this.canvas = canvas;
         try {
-            spheres.add(new PhysicalSphere(this, new Vector3D(-40, 0, 0), new Vector3D(1, 1, 1), 500, -50, 50, 100, Material.Constantin));
-            spheres.add(new PhysicalSphere(this, new Vector3D(40, 0, 0), new Vector3D(1, 1, 1), -510, -50, 50, 100, Material.Constantin));
-        } catch (ImpossibleObjectException e) {
+            spheres.add(new PhysicalSphere(this, new Vector3D(-140, 0, 0), new Vector3D(1, 1, 1), 500, -50, 50, 100, Material.Constantin));
+            spheres.add(new PhysicalSphere(this, new Vector3D(140, 0, 0), new Vector3D(1, 1, 1), -510, -50, 50, 100, Material.Constantin));
+            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0,0,0), new Vector3D(0,0,0),
+                    new PhysicalPolyhedronBuilder(new ShapeReader("src\\shapes\\assets\\tetrahedron.json").read(), Point3D.ZERO), Material.Constantin));
+        } catch (ImpossibleObjectException | IOException e) {
             e.printStackTrace();
         }
 //        walls.add(new Wall(this,

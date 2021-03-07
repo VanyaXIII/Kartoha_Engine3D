@@ -59,7 +59,7 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
         final Point3D secondSpherePos = sphere2.getPositionOfCentre(true);
         final Vector3D axisX = new Vector3D(firstSpherePos.x - secondSpherePos.x,
                 firstSpherePos.y - secondSpherePos.y, firstSpherePos.z - secondSpherePos.z);
-        final double axisXLen = (double) axisX.getLength();
+        final double axisXLen = axisX.getLength();
 
         final double m1 = sphere1.getM();
         final double m2 = sphere2.getM();
@@ -70,14 +70,11 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
         final double r1 = sphere1.getR();
         final double r2 = sphere2.getR();
 
-        final double v1x = (double) (sphere1.getV().scalarProduct(axisX) / axisXLen);
-        final double v2x = (double) (sphere2.getV().scalarProduct(axisX) / axisXLen);
+        final double v1x =  (sphere1.getV().scalarProduct(axisX) / axisXLen);
+        final double v2x =  (sphere2.getV().scalarProduct(axisX) / axisXLen);
         final double u1x = ((ratio - k) * v1x + (k + 1) * v2x) / (ratio + 1);
         final double u2x = ((ratio * (k + 1)) * v1x + (1 - k * ratio) * v2x) / (ratio + 1);
         final double s = (m1 * m2) / (m1 + m2) * (1f + k) * Math.abs(v1x - v2x);
-
-//        System.out.println(v1x);
-//        System.out.println(v2x);
 
         final Plane3D frictionPlane = new Plane3D(axisX, firstSpherePos);
 
@@ -88,21 +85,22 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
         final Vector3D vel2 = Tools.calcProjectionOfVectorOnPlane(sphere2.getVelOfPoint(collisionPoint2, true), frictionPlane);
 
         Vector3D relativeVel1 = vel1.subtract(vel2);
-        Vector3D relativeVel2 = relativeVel1.multiply(-1);
+        Vector3D relativeVel2 = vel2.subtract(vel1);
 
         Vector3D firstSphereFriction1 = relativeVel2.multiply(fr * s / relativeVel2.getLength());
         Vector3D firstSphereFriction2 = relativeVel2.multiply(m1 * m2 / (3.5 * (m1+m2)));
 
         if (firstSphereFriction1.getLength() < firstSphereFriction2.getLength()){
             System.out.println(1234);
-            sphere1.applyFriction(collisionPoint1, firstSphereFriction1);
-            sphere2.applyFriction(collisionPoint2, firstSphereFriction1.multiply(-1));
+            sphere1.applyFriction(collisionPoint1, firstSphereFriction1.multiply(-1));
+            sphere2.applyFriction(collisionPoint1, firstSphereFriction1);
         }
 
         else {
             sphere1.applyFriction(collisionPoint1, firstSphereFriction2);
             sphere2.applyFriction(collisionPoint2, firstSphereFriction2.multiply(-1));
         }
+
 
 
 
@@ -140,7 +138,7 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
         if (sphere.getV().scalarProduct(axisY) > 0)
             axisY = axisY.multiply(-1);
 
-        final double axisYLen = (double) axisY.getLength();
+        final double axisYLen = axisY.getLength();
 
         final Point3D collisionPoint = axisY.multiply(-sphere.getR() / axisYLen).addToPoint(sphere.getPositionOfCentre(true));
 
@@ -159,7 +157,7 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
 
 
         Vector3D frictionImpulse1 = velOfCollisionPoint.multiply(-fr * Math.abs(s) / velOfCollisionPoint.getLength());
-        Vector3D frictionImpulse2 = velOfCollisionPoint.multiply(-1 / (1 / sphere.getM() + sphere.getR() * sphere.getR() / sphere.getJ()));
+        Vector3D frictionImpulse2 = velOfCollisionPoint.multiply(-m / 3.5d);
 
         if (frictionImpulse1.getLength() < frictionImpulse2.getLength()) {
             sphere.applyFriction(collisionPoint, frictionImpulse1);
