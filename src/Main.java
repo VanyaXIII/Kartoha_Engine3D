@@ -35,42 +35,31 @@ public class Main {
         canvas.setResizable(true);
         canvas.setUndecorated(false);
         canvas.setVisible(true);
-        Space space = new Space(0.01f, 00f, canvas);
+        Space space = new Space(0.01d, 300d, canvas);
 
-        Gson gson = new Gson();
-//
         Point3D A = new Point3D(0,0,0),
                 B = new Point3D(200,200,0),
                 C = new Point3D(200,0,0),
-                D = new Point3D(0,200,0);
-
-        Point3D A1 = new Point3D(0,0,200),
-                B1 = new Point3D(200,200,200),
-                C1 = new Point3D(200,0,200),
-                D1 = new Point3D(0,200,200);
+                D = new Point3D(0,200,0),
+                E = new Point3D(100, 100, 173),
+                F = new Point3D(100, 100, -173);
 //
         ArrayList<Point3D> points = new ArrayList<>();
         points.add(A);
         points.add(B);
         points.add(C);
         points.add(D);
-        points.add(A1);
-        points.add(B1);
-        points.add(C1);
-        points.add(D1);
+        points.add(E);
+        points.add(F);
 
-        Triangle t1 = new Triangle(A,B,C),
-                t2 = new Triangle(A,B,D),
-                t3 = new Triangle(B, C, C1),
-                t5 = new Triangle(B, B1, C1),
-                t4 = new Triangle(A, C, C1),
-                t7 = new Triangle(A, A1, C1),
-                t6 = new Triangle(B, D, D1),
-                t8 = new Triangle(B, B1, D1),
-                t9 = new Triangle(A, D, D1),
-                t10 = new Triangle(A, A1, D1),
-                t11 = new Triangle(A1,B1,C1),
-                t12 = new Triangle(A1,B1,D1);
+        Triangle t1 = new Triangle(F, A, C),
+                t2 = new Triangle(F, B, C),
+                t3 = new Triangle(E, A, C),
+                t5 = new Triangle(E, B, C),
+                t4 = new Triangle(E, A, D),
+                t6 = new Triangle(B, D, E),
+                t7 = new Triangle(F, A, D),
+                t8 = new Triangle(B, D, F);
 
         ArrayList<Triangle> triangles = new ArrayList<>();
         triangles.add(t1);
@@ -81,14 +70,10 @@ public class Main {
         triangles.add(t6);
         triangles.add(t7);
         triangles.add(t8);
-        triangles.add(t9);
-        triangles.add(t10);
-        triangles.add(t11);
-        triangles.add(t12);
 //
         Shape shape = new Shape(points, triangles);
 
-//        shape.toJson("src\\shapes\\assets\\cube.json");
+//        shape.toJson("src\\shapes\\assets\\octahedron.json");
 
 //        Shape shape = new ShapeReader("src\\shapes\\assets\\tetrahedron.json").read();
 //        for(Point3D point : shape.getPoints()) System.out.println(point);

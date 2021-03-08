@@ -8,6 +8,7 @@ import graph.CanvasPanel;
 import physical_objects.PhysicalPolyhedron;
 import physical_objects.PhysicalSphere;
 import physical_objects.Wall;
+import shapes.Shape;
 import shapes.ShapeReader;
 import utils.Tools;
 
@@ -40,7 +41,7 @@ public class Space {
             spheres.add(new PhysicalSphere(this, new Vector3D(-140, 0, 0), new Vector3D(1, 1, 1), 500, -50, 50, 100, Material.Constantin));
             spheres.add(new PhysicalSphere(this, new Vector3D(140, 0, 0), new Vector3D(1, 1, 1), -510, -50, 50, 100, Material.Constantin));
             polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(110,110,110), new Vector3D(0,0,1),
-                    new PhysicalPolyhedronBuilder(new ShapeReader("src\\shapes\\assets\\cube.json").read(), Point3D.ZERO), Material.Constantin));
+                    new PhysicalPolyhedronBuilder(new ShapeReader("src\\shapes\\assets\\octahedron.json").read(), Point3D.ZERO), Material.Constantin));
         } catch (ImpossibleObjectException | IOException e) {
             e.printStackTrace();
         }
@@ -82,7 +83,21 @@ public class Space {
         addSphere(v,w,x0, y0, z0, r, Material.Constantin);
     }
 
+    public void addPolyhedron(Vector3D v, Vector3D w, PhysicalPolyhedronBuilder builder, Material material) throws ImpossibleObjectException{
+        polyhedrons.add(new PhysicalPolyhedron(this, v, w, builder, material));
+    }
 
+    public void addPolyhedron(Vector3D v, Vector3D w, PhysicalPolyhedronBuilder builder) throws ImpossibleObjectException{
+        polyhedrons.add(new PhysicalPolyhedron(this, v, w, builder, Material.Constantin));
+    }
+
+    public void addPolyhedron(Vector3D v, Vector3D w, Shape shape, Point3D zero, Material material) throws ImpossibleObjectException{
+        polyhedrons.add(new PhysicalPolyhedron(this, v, w, new PhysicalPolyhedronBuilder(shape, zero), material));
+    }
+
+    public void addPolyhedron(Vector3D v, Vector3D w, Shape shape, Point3D zero) throws ImpossibleObjectException{
+        polyhedrons.add(new PhysicalPolyhedron(this, v, w, new PhysicalPolyhedronBuilder(shape, zero), Material.Constantin));
+    }
 
     public double getDT() {
         return DT;

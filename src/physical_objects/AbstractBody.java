@@ -42,7 +42,7 @@ public abstract class AbstractBody implements Drawable{
         v = new Vector3D(v.x, v.y, v.z + space.getG() * space.getDT());
     }
 
-    public synchronized Point3D getPositionOfCentre(boolean mode) {
+    public final synchronized Point3D getPositionOfCentre(boolean mode) {
         double m = mode ? 1.0f : 0.0f;
         return new Point3D(x0 + m * v.x * space.getDT(),
                 y0 + m * v.y * space.getDT(),

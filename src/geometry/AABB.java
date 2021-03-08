@@ -2,6 +2,7 @@ package geometry;
 
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
+import physical_objects.PhysicalPolyhedron;
 import physical_objects.PhysicalSphere;
 import physical_objects.Wall;
 import utils.FloatComparator;
@@ -10,8 +11,8 @@ import utils.FloatComparator;
 import java.util.ArrayList;
 
 public class AABB {
-    private final Point3D min;
-    private final Point3D max;
+    private Point3D min;
+    private Point3D max;
 
     public AABB(Point3D min, Point3D max) {
         this.min = min;
@@ -25,7 +26,14 @@ public class AABB {
     }
 
     public AABB(Wall wall){
-        ArrayList<Point3D> points = wall.getPoints();
+        new AABB(wall.getPoints());
+    }
+
+    public AABB(PhysicalPolyhedron polyhedron, boolean mode){
+        new AABB(polyhedron.getPoints(mode));
+    }
+
+    public AABB(ArrayList<Point3D> points){
         double posXDeviation = 0f;
         double posYDeviation = 0f;
         double posZDeviation = 0f;

@@ -69,6 +69,14 @@ public class FlatShape {
         double d = line.distance(getCentreOfMass());
         return getJDivDensity() + getSquare() * d * d;
     }
+
+    @Override
+    public String toString() {
+        return "FlatShape{" +
+                "points=" + points +
+                ", triangles=" + triangles +
+                '}';
+    }
 }
 
 

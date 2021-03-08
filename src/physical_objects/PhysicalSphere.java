@@ -26,14 +26,14 @@ public class PhysicalSphere extends AbstractBody implements Intersectional, Coll
     }
 
     public synchronized void applyStrikeImpulse(Vector3D impulse) {
-        v = v.add(impulse.multiply(1 / m));
+        v = v.add(impulse.multiply(1d / m));
     }
 
     public synchronized void applyFriction(Point3D applicationPoint, Vector3D impulse) {
         applyStrikeImpulse(impulse);
         Vector3D radVector = new Vector3D(getPositionOfCentre(false), applicationPoint);
         radVector.multiply(r / radVector.getLength());
-        w = w.add(radVector.vectorProduct(impulse).multiply(1 / J));
+        w = w.add(radVector.vectorProduct(impulse).multiply(1d / J));
     }
 
     public Vector3D getAngularVelOfPoint(Point3D point, boolean mode) {

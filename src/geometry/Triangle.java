@@ -52,10 +52,14 @@ public class Triangle {
         return new Polygon3D(A, B, C, color);
     }
 
-    public void move(Vector3D movement){
-        A = movement.addToPoint(A);
-        B = movement.addToPoint(B);
-        C = movement.addToPoint(C);
+
+
+    public Triangle move(Vector3D movement){
+        Point3D a = movement.addToPoint(A),
+                b = movement.addToPoint(B),
+                c = movement.addToPoint(C);
+
+        return new Triangle(a,b,c);
     }
 
     public boolean contains(Point3D point){
