@@ -71,8 +71,8 @@ public class AABB {
     @Override
     public String toString() {
         return "AABB{" +
-                "min=" + min.x + " " + min.y + " " + min.z +
-                ", max=" + max.x + " " + max.y + " " + max.z +
+                "min=" + min +
+                ", max=" + max +
                 '}';
     }
 }

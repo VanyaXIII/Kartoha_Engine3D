@@ -1,13 +1,15 @@
 package geometry;
 
+import geometry.objects3D.Plane3D;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Polygon3D;
 import geometry.objects3D.Vector3D;
+import utils.FloatComparator;
 
 import java.awt.*;
 
 public class Triangle {
-    public final Point3D A, B, C;
+    public Point3D A, B, C;
 
     public Triangle(Point3D a, Point3D b, Point3D c) {
         A = a;
@@ -50,4 +52,27 @@ public class Triangle {
         return new Polygon3D(A, B, C, color);
     }
 
+    public void move(Vector3D movement){
+        A = movement.addToPoint(A);
+        B = movement.addToPoint(B);
+        C = movement.addToPoint(C);
+    }
+
+    public boolean contains(Point3D point){
+        double s1 = new Triangle(point, A, B).getSquare();
+        double s2 = new Triangle(point, A, C).getSquare();
+        double s3 = new Triangle(point, B, C).getSquare();
+
+        return FloatComparator.equals(getSquare(), s1 + s2 + s3) &&
+                FloatComparator.equals(new Plane3D(A, B, C).distance(point), 0d);
+    }
+
+    @Override
+    public String toString() {
+        return "Triangle{" +
+                "A=" + A +
+                ", B=" + B +
+                ", C=" + C +
+                '}';
+    }
 }

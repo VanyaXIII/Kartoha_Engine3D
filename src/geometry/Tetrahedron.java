@@ -46,7 +46,19 @@ public class Tetrahedron {
         final Vector3D a = new Vector3D(D, B);
         final Vector3D b = new Vector3D(D, A);
         final Vector3D c = new Vector3D(D, C);
-        
-        return (1d/6d) * a.scalarProduct(b.vectorProduct(c));
+
+
+        return Math.abs((1d/6d) * a.scalarProduct(b.vectorProduct(c)));
+
+    }
+
+    @Override
+    public String toString() {
+        return "Tetrahedron{" +
+                "A=" + A +
+                ", B=" + B +
+                ", C=" + C +
+                ", D=" + D +
+                '}';
     }
 }

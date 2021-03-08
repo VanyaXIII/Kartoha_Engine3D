@@ -39,8 +39,8 @@ public class Space {
         try {
             spheres.add(new PhysicalSphere(this, new Vector3D(-140, 0, 0), new Vector3D(1, 1, 1), 500, -50, 50, 100, Material.Constantin));
             spheres.add(new PhysicalSphere(this, new Vector3D(140, 0, 0), new Vector3D(1, 1, 1), -510, -50, 50, 100, Material.Constantin));
-            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0,0,0), new Vector3D(0,0,0),
-                    new PhysicalPolyhedronBuilder(new ShapeReader("src\\shapes\\assets\\tetrahedron.json").read(), Point3D.ZERO), Material.Constantin));
+            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(110,110,110), new Vector3D(0,0,1),
+                    new PhysicalPolyhedronBuilder(new ShapeReader("src\\shapes\\assets\\cube.json").read(), Point3D.ZERO), Material.Constantin));
         } catch (ImpossibleObjectException | IOException e) {
             e.printStackTrace();
         }
@@ -57,7 +57,7 @@ public class Space {
         } catch (Exception ignored) {
         }
 
-        double cTime = (double) ((System.nanoTime() - time1) / 1000000.0);
+        double cTime = ((System.nanoTime() - time1) / 1000000.0);
         double sleepTime = 0;
 
         if (DT * 1000.0 - cTime > 0) {
@@ -82,6 +82,8 @@ public class Space {
         addSphere(v,w,x0, y0, z0, r, Material.Constantin);
     }
 
+
+
     public double getDT() {
         return DT;
     }
@@ -92,6 +94,10 @@ public class Space {
 
     public ArrayList<PhysicalSphere> getSpheres() {
         return spheres;
+    }
+
+    public ArrayList<PhysicalPolyhedron> getPolyhedrons() {
+        return polyhedrons;
     }
 
     public ArrayList<Wall> getWalls() {

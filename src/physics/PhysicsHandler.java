@@ -2,6 +2,9 @@ package physics;
 
 
 import geometry.IntersectionalPair;
+import geometry.polygonal.Polyhedron;
+import physical_objects.AbstractBody;
+import physical_objects.PhysicalPolyhedron;
 import physical_objects.PhysicalSphere;
 import physical_objects.Wall;
 
@@ -12,11 +15,13 @@ public class PhysicsHandler {
 
     private final ArrayList<PhysicalSphere> spheres;
     private final ArrayList<Wall> walls;
+    private final ArrayList<PhysicalPolyhedron> polyhedrons;
     private final int depth;
 
     PhysicsHandler(Space space, int depth) {
         spheres = space.getSpheres();
         walls = space.getWalls();
+        polyhedrons = space.getPolyhedrons();
         this.depth = depth;
     }
 
@@ -41,8 +46,14 @@ public class PhysicsHandler {
             });
         });
 
+        Thread polyhedronThread = new Thread(() -> {
+            polyhedrons.forEach(AbstractBody::update);
+        });
+
         sphereThread.start();
+        polyhedronThread.start();
         sphereThread.join();
+        polyhedronThread.join();
 
         sphereThread = new Thread(() -> {
             synchronized (spheres) {

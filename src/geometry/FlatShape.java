@@ -1,5 +1,6 @@
 package geometry;
 
+import geometry.objects3D.Line3D;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 
@@ -62,6 +63,11 @@ public class FlatShape {
         }
 
         return J;
+    }
+
+    public double getRelativeJ(Line3D line){
+        double d = line.distance(getCentreOfMass());
+        return getJDivDensity() + getSquare() * d * d;
     }
 }
 

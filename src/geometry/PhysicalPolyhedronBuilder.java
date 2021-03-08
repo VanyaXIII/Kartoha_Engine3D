@@ -57,7 +57,7 @@ public class PhysicalPolyhedronBuilder {
         double volume = getVolume();
 
         for (Tetrahedron tetrahedron : tetrahedrons)
-            radVector.add(new Vector3D(zeroPoint, tetrahedron.getCentreOfMass()).multiply(tetrahedron.getVolume() / volume));
+            radVector = radVector.add(new Vector3D(zeroPoint, tetrahedron.getCentreOfMass()).multiply(tetrahedron.getVolume() / volume));
 
         return new Point3D(radVector.x, radVector.y, radVector.z);
     }
