@@ -1,14 +1,16 @@
 package geometry;
 
+import geometry.objects3D.Line3D;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 import physical_objects.PhysicalPolyhedron;
 import physical_objects.PhysicalSphere;
 import physical_objects.Wall;
 import utils.FloatComparator;
+import utils.Tools;
 
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class AABB {
     private Point3D min;
@@ -26,11 +28,11 @@ public class AABB {
     }
 
     public AABB(Wall wall){
-        new AABB(wall.getPoints());
+        this(wall.getPoints());
     }
 
     public AABB(PhysicalPolyhedron polyhedron, boolean mode){
-        new AABB(polyhedron.getPoints(mode));
+        this(polyhedron.getPoints(mode));
     }
 
     public AABB(ArrayList<Point3D> points){
@@ -51,8 +53,8 @@ public class AABB {
             if (negZDeviation > vectorToPoint.z) negZDeviation = vectorToPoint.z;
         }
 
-        min = new Point3D(points.get(0).x + negXDeviation, points.get(0).y + negYDeviation, points.get(0).z + negZDeviation);
-        max = new Point3D(points.get(0).x + posXDeviation, points.get(0).y + posYDeviation, points.get(0).z + posZDeviation);
+        this.min = new Point3D(points.get(0).x + negXDeviation, points.get(0).y + negYDeviation, points.get(0).z + negZDeviation);
+        this.max = new Point3D(points.get(0).x + posXDeviation, points.get(0).y + posYDeviation, points.get(0).z + posZDeviation);
     }
 
     public boolean isIntersectedWith(AABB b){
@@ -74,6 +76,30 @@ public class AABB {
             return false;
 
         return true;
+    }
+
+    public ArrayList<Point3D> getAllPoints(){
+        ArrayList<Point3D> points = new ArrayList<>();
+        points.add(min);
+        points.add(max);
+        points.add(new Point3D(max.x, min.y, min.z));
+        points.add(new Point3D(max.x, max.y, min.z));
+        points.add(new Point3D(min.x, max.y, min.z));
+        points.add(new Point3D(max.x, min.y, max.z));
+        points.add(new Point3D(min.x, min.y, max.z));
+        points.add(new Point3D(min.x, max.y, max.z));
+        return points;
+    }
+
+    public Segment countProjectionOnLine(Line3D line){
+        ArrayList<Point3D> points = new ArrayList<>();
+        getAllPoints().forEach(point -> points.add(Tools.countProjectionOfPoint(point, line)));
+        SortedMap<Double, Point3D> distances = new TreeMap<>();
+        points.forEach(point -> distances.put(new Vector3D(Point3D.ZERO, point).getLength(), point));
+        System.out.println(distances.firstKey());
+        System.out.println(distances.lastKey());
+        System.out.println(new Line3D(distances.get(distances.firstKey()), distances.get(distances.lastKey())));
+        return new Segment(distances.get(distances.firstKey()), distances.get(distances.lastKey()));
     }
 
     @Override

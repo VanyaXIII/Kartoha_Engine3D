@@ -8,38 +8,36 @@ import java.util.ArrayList;
 
 public class FlatShape {
 
-    private ArrayList<Point3D> points;
+    private final ArrayList<Segment> segments;
     private final ArrayList<Triangle> triangles;
 
     {
-        points = new ArrayList<>();
         triangles = new ArrayList<>();
     }
 
-    public FlatShape(ArrayList<Point3D> points){
-        this.points = points;
+    public FlatShape(ArrayList<Segment> segments){
+        this.segments = segments;
         triangulate();
     }
 
     public void triangulate(){
-        for (int i = 2; i < points.size(); i++) {
-            triangles.add(new Triangle(points.get(0), points.get(i - 1), points.get(i)));
-        }
+        Point3D zeroPoint = segments.get(0).point1;
+        for (Segment segment : segments) triangles.add(new Triangle(zeroPoint, segment));
     }
 
     public Point3D getCentreOfMass() {
         Vector3D rC = new Vector3D(0,0,0);
-        double s = 0f;
+        double s = 0d;
 
         for (Triangle triangle : triangles) {
             Vector3D rCOfTriangle = new Vector3D(Point3D.ZERO, triangle.getCentroid());
-            rCOfTriangle.multiply(triangle.getSquare());
+            rCOfTriangle = rCOfTriangle.multiply(triangle.getSquare());
 
             s += triangle.getSquare();
-            rC.add(rCOfTriangle);
+            rC = rC.add(rCOfTriangle);
         }
 
-        rC.multiply(1d / s);
+        rC = rC.multiply(1d / s);
 
         return new Point3D(rC.x, rC.y, rC.z);
     }
@@ -54,12 +52,11 @@ public class FlatShape {
 
     public double getJDivDensity() {
         Point3D c = getCentreOfMass();
-        double J = 0f;
+        double J = 0d;
 
         for (Triangle triangle : triangles){
             double d = new Vector3D(c, triangle.getCentroid()).getLength();
-            d *= d;
-            J += triangle.getJDivDensity() + triangle.getSquare() * d;
+            J += triangle.getJDivDensity() + triangle.getSquare() * d * d;
         }
 
         return J;
@@ -73,7 +70,7 @@ public class FlatShape {
     @Override
     public String toString() {
         return "FlatShape{" +
-                "points=" + points +
+                "segments=" + segments +
                 ", triangles=" + triangles +
                 '}';
     }

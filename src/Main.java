@@ -5,16 +5,13 @@ import com.google.gson.Gson;
 import geometry.Triangle;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
-import geometry.polygonal.Sphere;
 import graph.Camera;
 import graph.CanvasPanel;
 import graph.Screen;
 import physics.Space;
 import shapes.Shape;
-import shapes.ShapeReader;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,7 +32,7 @@ public class Main {
         canvas.setResizable(true);
         canvas.setUndecorated(false);
         canvas.setVisible(true);
-        Space space = new Space(0.01d, 300d, canvas);
+        Space space = new Space(0.01d, 00d, canvas);
 
         Point3D A = new Point3D(0,0,0),
                 B = new Point3D(200,200,0),
@@ -78,8 +75,6 @@ public class Main {
 //        Shape shape = new ShapeReader("src\\shapes\\assets\\tetrahedron.json").read();
 //        for(Point3D point : shape.getPoints()) System.out.println(point);
 
-        Date date = new Date();
-        date.getTime();
 
         System.currentTimeMillis();
 
@@ -98,13 +93,6 @@ public class Main {
                 }
             }
         }).start();
-//        while (true) {
-//            synchronized (canvas) {
-//                canvas.repaint();
-//                space.changeTime();
-//            }
-//        }
-
 
     }
 }

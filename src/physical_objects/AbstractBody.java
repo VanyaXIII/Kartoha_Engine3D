@@ -46,7 +46,7 @@ public abstract class AbstractBody implements Drawable{
         double m = mode ? 1.0f : 0.0f;
         return new Point3D(x0 + m * v.x * space.getDT(),
                 y0 + m * v.y * space.getDT(),
-                z0 - m * ((v.z + v.z + space.getG() * space.getDT()) * space.getDT() / 2.0f));
+                z0 + m * v.z * space.getDT() - m * space.getG() * space.getDT() * space.getDT() / 2d);
     }
 
     public double getM() {

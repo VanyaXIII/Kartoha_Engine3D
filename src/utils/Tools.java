@@ -1,10 +1,14 @@
 package utils;
 
+import geometry.objects3D.Line3D;
 import geometry.objects3D.Plane3D;
+import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 
 import java.awt.*;
+import java.util.Optional;
 import java.util.Random;
+import java.util.function.Supplier;
 
 public final class Tools {
 
@@ -35,6 +39,11 @@ public final class Tools {
         float g = random.nextFloat();
         float b = random.nextFloat();
         return new Color(r,g,b);
+    }
+
+    public static Point3D countProjectionOfPoint(Point3D point, Line3D line){
+        Plane3D plane = new Plane3D(line.vector, point);
+        return line.getIntersection(plane).get();
     }
 
 }
