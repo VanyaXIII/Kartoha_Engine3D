@@ -4,6 +4,7 @@ import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 import limiters.Intersectional;
 import org.jetbrains.annotations.NotNull;
+import physical_objects.PhysicalPolyhedron;
 import physical_objects.PhysicalSphere;
 import physical_objects.Wall;
 import utils.TripleMap;
@@ -32,11 +33,50 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
 
         methodsMap.addFirstKey(PhysicalSphere.class);
         methodsMap.addFirstKey(Wall.class);
+        methodsMap.addFirstKey(PhysicalPolyhedron.class);
 
         methodsMap.putByFirstKey(PhysicalSphere.class, PhysicalSphere.class, IntersectionalPair::sphereToSphere);
         methodsMap.putByFirstKey(PhysicalSphere.class, Wall.class, IntersectionalPair::sphereToWall);
+        methodsMap.putByFirstKey(PhysicalSphere.class, PhysicalPolyhedron.class, IntersectionalPair::sphereToPolyhedron);
 
         methodsMap.putByFirstKey(Wall.class, PhysicalSphere.class, IntersectionalPair::sphereToWall);
+        methodsMap.putByFirstKey(Wall.class, PhysicalPolyhedron.class, IntersectionalPair::polyhedronToWall);
+
+        methodsMap.putByFirstKey(PhysicalPolyhedron.class, Wall.class, IntersectionalPair::polyhedronToWall);
+        methodsMap.putByFirstKey(PhysicalPolyhedron.class, PhysicalSphere.class, IntersectionalPair::sphereToPolyhedron);
+        methodsMap.putByFirstKey(PhysicalPolyhedron.class, PhysicalPolyhedron.class, IntersectionalPair::polyhedronToPolyhedron);
+    }
+
+    private static boolean polyhedronToPolyhedron(Intersectional intersectional, Intersectional intersectional1) {
+        return false;
+    }
+
+    private static boolean polyhedronToWall(Intersectional thing1, Intersectional thing2) {
+        PhysicalPolyhedron polyhedron;
+        Wall wall;
+
+        if (thing1 instanceof PhysicalPolyhedron) {
+            polyhedron = (PhysicalPolyhedron) thing1;
+            wall = (Wall) thing2;
+        } else {
+            polyhedron = (PhysicalPolyhedron) thing2;
+            wall = (Wall) thing1;
+        }
+
+        if (!new AABB(polyhedron, dynamicCollisionMode).isIntersectedWith(new AABB(wall)))
+            return false;
+
+        boolean intersected = false;
+
+        for (Point3D point : polyhedron.getPoints(dynamicCollisionMode))
+            if (wall.getTriangle().isIntersectedWithSegment(new Segment(point, polyhedron.getPositionOfCentre(dynamicCollisionMode))))
+                intersected = true;
+
+        return intersected;
+    }
+
+    private static boolean sphereToPolyhedron(Intersectional intersectional, Intersectional intersectional1) {
+        return false;
     }
 
     public boolean areIntersected() {

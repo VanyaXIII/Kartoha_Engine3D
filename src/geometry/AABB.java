@@ -31,6 +31,15 @@ public class AABB {
         this(wall.getPoints());
     }
 
+    public AABB(Segment segment){
+        ArrayList<Point3D> points = new ArrayList<>();
+        points.add(segment.point1);
+        points.add(segment.point2);
+        AABB aabb = new AABB(points);
+        this.min = aabb.getMin();
+        this.max = aabb.getMax();
+    }
+
     public AABB(PhysicalPolyhedron polyhedron, boolean mode){
         this(polyhedron.getPoints(mode));
     }
@@ -100,6 +109,14 @@ public class AABB {
         System.out.println(distances.lastKey());
         System.out.println(new Line3D(distances.get(distances.firstKey()), distances.get(distances.lastKey())));
         return new Segment(distances.get(distances.firstKey()), distances.get(distances.lastKey()));
+    }
+
+    public Point3D getMin() {
+        return min;
+    }
+
+    public Point3D getMax() {
+        return max;
     }
 
     @Override

@@ -60,12 +60,14 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
         currentPoint = projectionVector.addToPoint(currentPoint);
         Plane3D plane = new Plane3D(projectionVector, currentPoint);
 
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 20; i++) {
 
             for (Triangle triangle : triangles){
                 ArrayList<Point3D> intersectionPoints = triangle.getIntersectionWithPlane(plane);
                 if (intersectionPoints.size() > 1)
-                    segments.add(new Segment(intersectionPoints.get(0), intersectionPoints.get(1)));
+                    try {
+                        segments.add(new Segment(intersectionPoints.get(0), intersectionPoints.get(1)));
+                    } catch (Exception ignored){}
             }
 //            double len = 0d;
 //            System.out.println("---------------------");
@@ -75,16 +77,17 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
 ////            System.out.println(new FlatShape(segments).getJDivDensity() * material.p * movement);
 //
 //            System.out.println("---------------------");
-//
-            FlatShape shape = new FlatShape(segments);
+            if (segments.size() != 0) {
+                FlatShape shape = new FlatShape(segments);
 //
 //            System.out.println(shape.getCentreOfMass());
 //
-            J += shape.getRelativeJ(line) * material.p * movement;
+                J += shape.getRelativeJ(line) * material.p * movement;
 //
 //            System.out.println("+++++++++++++++++++++");
 
-            if (i == 8)  J += shape.getRelativeJ(line) * material.p * movement;
+                if (i == 19) J += shape.getRelativeJ(line) * material.p * movement;
+            }
 
             segments.clear();
 //            System.out.println(currentPoint);

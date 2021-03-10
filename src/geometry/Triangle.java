@@ -101,6 +101,17 @@ public class Triangle {
         return lines;
     }
 
+    public boolean isIntersectedWithSegment(Segment segment){
+        try {
+            Point3D intersectionPoint = getPlane().getIntersection(segment).get();
+            return new AABB(segment).isPointIn(intersectionPoint) && contains(intersectionPoint);
+        }
+        catch (Exception exception){
+            return false;
+        }
+
+    }
+
     @Override
     public String toString() {
         return "Triangle{" +

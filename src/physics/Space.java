@@ -43,7 +43,7 @@ public class Space {
             spheres.add(new PhysicalSphere(this, new Vector3D(140, 0, 0), new Vector3D(1, 1, 1), -510, -50, 50, 100, Material.Constantin));
             polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0,0,0), new Vector3D(0,0,1),
                     new PhysicalPolyhedronBuilder(new ShapeReader("src\\shapes\\assets\\cube.json").read(), Point3D.ZERO), Material.Constantin));
-            Vector3D vector3D = new Vector3D(0, 0 , 10);
+            Vector3D vector3D = new Vector3D(10, 0 , 0);
             Line3D line = new Line3D(polyhedrons.get(0).getPositionOfCentre(false), vector3D);
             System.out.println(polyhedrons.get(0).getPositionOfCentre(false));
             System.out.println(polyhedrons.get(0).getM());

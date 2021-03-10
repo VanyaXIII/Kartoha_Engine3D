@@ -1,6 +1,7 @@
 package physical_objects;
 
 import drawing.Drawable;
+import geometry.Triangle;
 import geometry.objects3D.Plane3D;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Polygon3D;
@@ -32,15 +33,19 @@ public class Wall implements Drawable, Collisional, Intersectional {
         pushToCanvas(space.getCanvas());
     }
 
-    public Plane3D getPlane(){
+    public Plane3D getPlane() {
         return new Plane3D(a, b, c);
+    }
+
+    public Triangle getTriangle() {
+        return new Triangle(a, b, c);
     }
 
     public Material getMaterial() {
         return material;
     }
 
-    public ArrayList<Point3D> getPoints(){
+    public ArrayList<Point3D> getPoints() {
         ArrayList<Point3D> points = new ArrayList<>();
         points.add(a);
         points.add(b);
@@ -68,5 +73,6 @@ public class Wall implements Drawable, Collisional, Intersectional {
     }
 
     @Override
-    public void updateDrawingInterpretation() {}
+    public void updateDrawingInterpretation() {
+    }
 }
