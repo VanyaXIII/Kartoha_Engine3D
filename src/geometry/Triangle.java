@@ -101,6 +101,13 @@ public class Triangle {
         return lines;
     }
 
+    public Triangle rotate(Vector3D vector, Point3D point){
+        Point3D a = A.rotate(vector, point);
+        Point3D b = B.rotate(vector, point);
+        Point3D c = C.rotate(vector, point);
+        return new Triangle(a,b,c);
+    }
+
     public boolean isIntersectedWithSegment(Segment segment){
         try {
             Point3D intersectionPoint = getPlane().getIntersection(segment).get();

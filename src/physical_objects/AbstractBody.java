@@ -32,14 +32,14 @@ public abstract class AbstractBody implements Drawable{
 
     public synchronized void update() {
         changeSpeed();
+        updateDrawingInterpretation();
         x0 += v.x * space.getDT();
         y0 += v.y * space.getDT();
-        z0 -= (v.z + v.z - space.getG() * space.getDT()) * space.getDT() / 2.0f;
-        updateDrawingInterpretation();
+        z0 += v.z * space.getDT() - space.getDT() * space.getDT() * space.getG() / 2d;
     }
 
     private synchronized void changeSpeed() {
-        v = new Vector3D(v.x, v.y, v.z + space.getG() * space.getDT());
+        v = new Vector3D(v.x, v.y, v.z - space.getG() * space.getDT());
     }
 
     public final synchronized Point3D getPositionOfCentre(boolean mode) {

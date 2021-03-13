@@ -32,7 +32,7 @@ public class Main {
         canvas.setResizable(true);
         canvas.setUndecorated(false);
         canvas.setVisible(true);
-        Space space = new Space(0.01d, 00d, canvas);
+        Space space = new Space(0.01d, 300d, canvas);
 
         Point3D A = new Point3D(0,0,0),
                 B = new Point3D(200,200,0),

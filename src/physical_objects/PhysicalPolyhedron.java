@@ -38,15 +38,24 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
     @Override
     public synchronized void update() {
         super.update();
+
         Vector3D movement = new Vector3D(v.x * space.getDT(),
                 v.y * space.getDT(),
                 +v.z * space.getDT() - space.getDT() * space.getDT() * space.getG() / 2d);
+
+        for (int i =0; i < points.size(); i++)
+            points.set(i, points.get(i).rotate(w.multiply(space.getDT()), getPositionOfCentre(false)));
+
+        for (int i = 0; i < triangles.size(); i++)
+            triangles.set(i, triangles.get(i).rotate(w.multiply(space.getDT()), getPositionOfCentre(false)));
 
         for (int i = 0; i < points.size(); i++)
             points.set(i, movement.addToPoint(points.get(i)));
 
         for (int i = 0; i < triangles.size(); i++)
             triangles.set(i, triangles.get(i).move(movement));
+
+
     }
 
     public Segment getProjectionOnLine(Line3D line, boolean mode){
@@ -129,7 +138,7 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
                     +v.z * space.getDT() - space.getDT() * space.getDT() * space.getG() / 2d);
 
             for (int i = 0; i < points.size(); i++)
-                newPoints.add(i, movement.addToPoint(points.get(i)));
+                newPoints.add(i, movement.addToPoint(points.get(i)).rotate(w.multiply(space.getDT()), getPositionOfCentre(true)));
 
             return newPoints;
         }
@@ -147,13 +156,20 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
                     +v.z * space.getDT() - space.getDT() * space.getDT() * space.getG() / 2d);
 
             for (int i = 0; i < triangles.size(); i++)
-                newTriangles.add(i, triangles.get(i).move(movement));
+                newTriangles.add(i, triangles.get(i).move(movement).rotate(w.multiply(space.getDT()), getPositionOfCentre(true)));
 
             return newTriangles;
 
         }
     }
 
+    public Vector3D getVelOfPoint(Point3D point, boolean mode){
+        return v.add(getAngularVelOfPoint(point, mode));
+    }
+
+    public Vector3D getAngularVelOfPoint(Point3D point, boolean mode){
+        return w.vectorProduct(new Vector3D(getPositionOfCentre(mode), point));
+    }
 
     @Override
     public void pushToCanvas(CanvasPanel canvas) {

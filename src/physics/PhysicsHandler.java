@@ -51,8 +51,8 @@ public class PhysicsHandler {
             polyhedrons.forEach(polyhedron -> {
                 for (Wall wall : walls)
                     if (new IntersectionalPair<>(polyhedron, wall).areIntersected()) {
-                        polyhedron.setV(new Vector3D(0, 0, 0));
-                        System.out.println(1111);
+                        System.out.println(11111111);
+                        new CollisionalPair<>(polyhedron, wall).collide();
                     }
             });
         });
