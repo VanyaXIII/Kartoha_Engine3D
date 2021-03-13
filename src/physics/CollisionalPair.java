@@ -151,9 +151,9 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
 
         final Vector3D velOfCollisionPoint = v.add(angularVel);
 
-        System.out.println(sphere.getVelOfPoint(collisionPoint, true).getLength());
+//        System.out.println(sphere.getVelOfPoint(collisionPoint, true).getLength());
 
-        System.out.println(v.add(angularVel));
+//        System.out.println(v.add(angularVel));
 
 
         Vector3D frictionImpulse1 = velOfCollisionPoint.multiply(-fr * Math.abs(s) / velOfCollisionPoint.getLength());

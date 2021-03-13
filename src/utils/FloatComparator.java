@@ -4,7 +4,7 @@ import java.lang.Math;
 
 public final class FloatComparator {
 
-    private final static double epsilon = 0.001f;
+    private final static double epsilon = 0.01d;
 
     public static boolean equals(double a, double b) {
         return (Math.abs(a - b) < epsilon);

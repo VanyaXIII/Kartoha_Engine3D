@@ -41,19 +41,14 @@ public class Space {
         try {
             spheres.add(new PhysicalSphere(this, new Vector3D(-140, 0, 0), new Vector3D(1, 1, 1), 500, -50, 50, 100, Material.Constantin));
             spheres.add(new PhysicalSphere(this, new Vector3D(140, 0, 0), new Vector3D(1, 1, 1), -510, -50, 50, 100, Material.Constantin));
-            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0,0,0), new Vector3D(0,0,1),
-                    new PhysicalPolyhedronBuilder(new ShapeReader("src\\shapes\\assets\\cube.json").read(), Point3D.ZERO), Material.Constantin));
-            Vector3D vector3D = new Vector3D(10, 0 , 0);
-            Line3D line = new Line3D(polyhedrons.get(0).getPositionOfCentre(false), vector3D);
-            System.out.println(polyhedrons.get(0).getPositionOfCentre(false));
-            System.out.println(polyhedrons.get(0).getM());
-            System.out.println(polyhedrons.get(0).getJ(line, false));
+            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0,0,-100), new Vector3D(0,0,1),
+                    new PhysicalPolyhedronBuilder(new ShapeReader("src\\shapes\\assets\\pyramid.json").read(), new Point3D(0,0,000)), Material.Constantin));
 
         } catch (ImpossibleObjectException | IOException e) {
             e.printStackTrace();
         }
 //        walls.add(new Wall(this,
-//           new Point3D(0,0,0), new Point3D(10000, 0, 0), new Point3D(0, 10000, 0), Material.Gold;
+//           new Point3D(0,0,0), new Point3D(10000, 0, 0), new Point3D(0, 10000, 0), Material.Gold));
     }
 
     public synchronized void changeTime() {
@@ -62,6 +57,11 @@ public class Space {
 
         try {
             physicsHandler.update();
+            Vector3D vector3D = new Vector3D(0, 0 , 10);
+            Line3D line = new Line3D(polyhedrons.get(0).getPositionOfCentre(false), vector3D);
+            System.out.println(polyhedrons.get(0).getPositionOfCentre(false));
+            System.out.println(polyhedrons.get(0).getM());
+            System.out.println(polyhedrons.get(0).getJ(line, false));
         } catch (Exception ignored) {
         }
 

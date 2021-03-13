@@ -105,9 +105,6 @@ public class AABB {
         getAllPoints().forEach(point -> points.add(Tools.countProjectionOfPoint(point, line)));
         SortedMap<Double, Point3D> distances = new TreeMap<>();
         points.forEach(point -> distances.put(new Vector3D(Point3D.ZERO, point).getLength(), point));
-        System.out.println(distances.firstKey());
-        System.out.println(distances.lastKey());
-        System.out.println(new Line3D(distances.get(distances.firstKey()), distances.get(distances.lastKey())));
         return new Segment(distances.get(distances.firstKey()), distances.get(distances.lastKey()));
     }
 

@@ -37,6 +37,8 @@ public class FlatShape {
             rC = rC.add(rCOfTriangle);
         }
 
+        if (s == 0.0) s = 0.01;
+
         rC = rC.multiply(1d / s);
 
         return new Point3D(rC.x, rC.y, rC.z);

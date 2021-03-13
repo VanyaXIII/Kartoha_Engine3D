@@ -32,7 +32,7 @@ public class Triangle {
         double side2 = new Vector3D(A, C).getLength();
         double side3 = new Vector3D(B, C).getLength();
         double p = (side1 + side3 + side2) / 2.0d;
-        return Math.sqrt(p * (p - side1) * (p - side2) * (p - side3));
+        return Math.sqrt(Math.abs(p * (p - side1) * (p - side2) * (p - side3)));
     }
 
     public Point3D getCentroid() {

@@ -2,6 +2,7 @@ package physics;
 
 
 import geometry.IntersectionalPair;
+import geometry.objects3D.Vector3D;
 import geometry.polygonal.Polyhedron;
 import physical_objects.AbstractBody;
 import physical_objects.PhysicalPolyhedron;
@@ -47,7 +48,13 @@ public class PhysicsHandler {
         });
 
         Thread polyhedronThread = new Thread(() -> {
-            polyhedrons.forEach(AbstractBody::update);
+            polyhedrons.forEach(polyhedron -> {
+                for (Wall wall : walls)
+                    if (new IntersectionalPair<>(polyhedron, wall).areIntersected()) {
+                        polyhedron.setV(new Vector3D(0, 0, 0));
+                        System.out.println(1111);
+                    }
+            });
         });
 
         sphereThread.start();
@@ -61,8 +68,16 @@ public class PhysicsHandler {
             }
         });
 
+        polyhedronThread = new Thread(() -> {
+            synchronized (polyhedrons) {
+                polyhedrons.forEach(PhysicalPolyhedron::update);
+            }
+        });
+
 
         sphereThread.start();
+        polyhedronThread.start();
+        polyhedronThread.join();
         sphereThread.join();
     }
 
