@@ -1,10 +1,8 @@
 package physics;
 
 
+import exceptions.ImpossiblePairException;
 import geometry.IntersectionalPair;
-import geometry.objects3D.Vector3D;
-import geometry.polygonal.Polyhedron;
-import physical_objects.AbstractBody;
 import physical_objects.PhysicalPolyhedron;
 import physical_objects.PhysicalSphere;
 import physical_objects.Wall;
@@ -26,14 +24,18 @@ public class PhysicsHandler {
         this.depth = depth;
     }
 
-    public void update() throws InterruptedException, ConcurrentModificationException {
+    public void update() throws InterruptedException, ConcurrentModificationException{
         Thread sphereThread = new Thread(() -> {
             for (int i = 0; i < spheres.size() - 1; i++) {
                 for (int j = i + 1; j < spheres.size(); j++) {
                     synchronized (spheres.get(i)) {
                         synchronized (spheres.get(j)) {
-                            if (new IntersectionalPair<>(spheres.get(i), spheres.get(j)).areIntersected()) {
-                                new CollisionalPair<>(spheres.get(i), spheres.get(j)).collide();
+                            try {
+                                if (new IntersectionalPair<>(spheres.get(i), spheres.get(j)).areIntersected()) {
+                                    new CollisionalPair<>(spheres.get(i), spheres.get(j)).collide();
+                                }
+                            } catch (ImpossiblePairException e) {
+                                e.printStackTrace();
                             }
 
                         }
@@ -41,21 +43,29 @@ public class PhysicsHandler {
                 }
             }
             spheres.forEach(sphere ->{
-                    for (Wall wall : walls)
-                        if (new IntersectionalPair<>(sphere, wall).areIntersected())
-                            new CollisionalPair<>(sphere, wall).collide();
+                    for (Wall wall : walls) {
+                        try {
+                            if (new IntersectionalPair<>(sphere, wall).areIntersected())
+                                new CollisionalPair<>(sphere, wall).collide();
+                        } catch (ImpossiblePairException e) {
+                            e.printStackTrace();
+                        }
+                    }
             });
         });
 
-        Thread polyhedronThread = new Thread(() -> {
-            polyhedrons.forEach(polyhedron -> {
-                for (Wall wall : walls)
+        Thread polyhedronThread = new Thread(() -> polyhedrons.forEach(polyhedron -> {
+            for (Wall wall : walls) {
+                try {
                     if (new IntersectionalPair<>(polyhedron, wall).areIntersected()) {
                         System.out.println(11111111);
                         new CollisionalPair<>(polyhedron, wall).collide();
                     }
-            });
-        });
+                } catch (ImpossiblePairException e) {
+                    e.printStackTrace();
+                }
+            }
+        }));
 
         sphereThread.start();
         polyhedronThread.start();

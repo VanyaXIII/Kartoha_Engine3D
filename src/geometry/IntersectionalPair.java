@@ -1,5 +1,7 @@
 package geometry;
 
+import exceptions.ImpossiblePairException;
+import geometry.objects3D.Line3D;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 import limiters.Intersectional;
@@ -23,9 +25,11 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
     private final static boolean staticCollisionMode = false;
     private final static TripleMap<Class, Class, Intersecter> methodsMap;
 
-    public IntersectionalPair(@NotNull FirstThingType firstThing, @NotNull SecondThingType secondThing) {
+    public IntersectionalPair(@NotNull FirstThingType firstThing, @NotNull SecondThingType secondThing) throws ImpossiblePairException {
         this.firstThing = firstThing;
         this.secondThing = secondThing;
+        if (firstThing instanceof Wall && secondThing instanceof Wall)
+            throw new ImpossiblePairException("Trying to check wall to wall intersection");
     }
 
     static {
@@ -130,9 +134,9 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
 
         if (distance <= sphere.getR()) {
             Vector3D normalVector = wall.getPlane().vector;
-            Point3D intersectionPoint = normalVector.multiply(-distance / normalVector.getLength()).addToPoint(spherePos);
+            Point3D intersectionPoint = wall.getPlane().getIntersection(new Line3D(spherePos, normalVector)).get();
 
-            if (new AABB(wall).isPointIn(intersectionPoint))
+            if (wall.getTriangle().contains(intersectionPoint))
                 return true;
             else {
                 for (Point3D point : wall.getPoints())

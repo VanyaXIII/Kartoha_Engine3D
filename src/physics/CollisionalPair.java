@@ -1,5 +1,6 @@
 package physics;
 
+import exceptions.ImpossiblePairException;
 import geometry.Segment;
 import geometry.objects3D.Line3D;
 import geometry.objects3D.Plane3D;
@@ -21,9 +22,11 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
     private final SecondThingType secondThing;
     private final static TripleMap<Class, Class, Collider> methodsMap;
 
-    public CollisionalPair(@NotNull FirstThingType firstThing, @NotNull SecondThingType secondThing) {
+    public CollisionalPair(@NotNull FirstThingType firstThing, @NotNull SecondThingType secondThing) throws ImpossiblePairException {
         this.firstThing = firstThing;
         this.secondThing = secondThing;
+        if (firstThing instanceof Wall && secondThing instanceof Wall)
+            throw new ImpossiblePairException("Trying to collide wall to wall");
     }
 
 
@@ -65,6 +68,7 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
         for (Point3D point : polyhedron.getPoints(true)) {
             if (wall.getTriangle().isIntersectedWithSegment(new Segment(point, polyhedron.getPositionOfCentre(true)))) {
                 collisionPoints.add(point);
+                break;
             }
         }
 
@@ -76,7 +80,7 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
             Vector3D axisY = wall.getPlane().vector;
 
             if (vel.scalarProduct(axisY) > 0)
-                axisY = axisY.multiply(-1);
+                axisY = axisY.multiply(-1d);
 
             axisY = axisY.normalize();
 

@@ -23,11 +23,11 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
     private final static long depth = 30;
 
 
-    public PhysicalPolyhedron(Space space, Vector3D v, Vector3D w, PhysicalPolyhedronBuilder builder, Material material) throws ImpossibleObjectException {
+    public PhysicalPolyhedron(Space space, Vector3D v, Vector3D w, Vector3D a, PhysicalPolyhedronBuilder builder, Material material) throws ImpossibleObjectException {
 
         super(space,
                 builder.getCentreOfMass().x, builder.getCentreOfMass().y, builder.getCentreOfMass().z,
-                v, w, material, builder.getVolume() * material.p);
+                v, w, a, material, builder.getVolume() * material.p);
 
         this.points = builder.getPoints();
         this.triangles = builder.getTriangles();
@@ -39,9 +39,7 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
     public synchronized void update() {
         super.update();
 
-        Vector3D movement = new Vector3D(v.x * space.getDT(),
-                v.y * space.getDT(),
-                +v.z * space.getDT() - space.getDT() * space.getDT() * space.getG() / 2d);
+        Vector3D movement = getMovement();
 
         for (int i =0; i < points.size(); i++)
             points.set(i, points.get(i).rotate(w.multiply(space.getDT()), getPositionOfCentre(false)));
@@ -133,9 +131,7 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
         else {
             ArrayList<Point3D> newPoints = new ArrayList<>();
 
-            Vector3D movement = new Vector3D(v.x * space.getDT(),
-                    v.y * space.getDT(),
-                    +v.z * space.getDT() - space.getDT() * space.getDT() * space.getG() / 2d);
+            Vector3D movement = getMovement();
 
             for (int i = 0; i < points.size(); i++)
                 newPoints.add(i, movement.addToPoint(points.get(i)).rotate(w.multiply(space.getDT()), getPositionOfCentre(true)));
@@ -151,9 +147,7 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
         else {
             ArrayList<Triangle> newTriangles = new ArrayList<>();
 
-            Vector3D movement = new Vector3D(v.x * space.getDT(),
-                    v.y * space.getDT(),
-                    +v.z * space.getDT() - space.getDT() * space.getDT() * space.getG() / 2d);
+            Vector3D movement = getMovement();
 
             for (int i = 0; i < triangles.size(); i++)
                 newTriangles.add(i, triangles.get(i).move(movement).rotate(w.multiply(space.getDT()), getPositionOfCentre(true)));
@@ -161,6 +155,12 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
             return newTriangles;
 
         }
+    }
+
+    private Vector3D getMovement() {
+        return new Vector3D(v.x * space.getDT() + a.x * space.getDT() * space.getDT() / 2d,
+                v.y * space.getDT() + a.y * space.getDT() * space.getDT() / 2d,
+                v.z * space.getDT() + a.z * space.getDT() * space.getDT() / 2d);
     }
 
     public Vector3D getVelOfPoint(Point3D point, boolean mode){
@@ -183,9 +183,7 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
     public void updateDrawingInterpretation() {
         drawableInterpretation.rotate(w.multiply(space.getDT()), getPositionOfCentre(false));
         Point3D oldZero = drawableInterpretation.getZero();
-        Vector3D movement = new Vector3D(v.x * space.getDT(),
-                v.y * space.getDT(),
-                +v.z * space.getDT() - space.getDT() * space.getDT() * space.getG() / 2d);
+        Vector3D movement = getMovement();
         drawableInterpretation.setZero(movement.addToPoint(oldZero));
 
     }

@@ -17,8 +17,8 @@ public class PhysicalSphere extends AbstractBody implements Intersectional, Coll
     private final double J;
     private final Sphere drawableInterpretation;
 
-    public PhysicalSphere(Space space, Vector3D v, Vector3D w, double x0, double y0, double z0, double r, Material material) throws ImpossibleObjectException {
-        super(space, x0, y0, z0, v, w, material, (4 * Math.PI * r * r * r / 3d) * material.p);
+    public PhysicalSphere(Space space, Vector3D v, Vector3D w, Vector3D a,  double x0, double y0, double z0, double r, Material material) throws ImpossibleObjectException {
+        super(space, x0, y0, z0, v, w, a, material, (4 * Math.PI * r * r * r / 3d) * material.p);
         this.r = r;
         J = 0.4d * m * r * r;
         drawableInterpretation = new Sphere(new Point3D(x0, y0, z0), r, 15, material.fillColor);

@@ -2,7 +2,6 @@ package physics;
 
 import exceptions.ImpossibleObjectException;
 import geometry.PhysicalPolyhedronBuilder;
-import geometry.objects3D.Line3D;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 import graph.CanvasPanel;
@@ -41,14 +40,14 @@ public class Space {
         try {
 //            spheres.add(new PhysicalSphere(this, new Vector3D(-140, 0, 0), new Vector3D(1, 1, 1), 500, -50, 50, 100, Material.Constantin));
 //            spheres.add(new PhysicalSphere(this, new Vector3D(140, 0, 0), new Vector3D(1, 1, 1), -510, -50, 50, 100, Material.Constantin));
-            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0,0,0), new Vector3D(0,1,1),
-                    new PhysicalPolyhedronBuilder(new ShapeReader("src\\shapes\\assets\\cube.json").read(), new Point3D(110,110,1000)), Material.Constantin));
+            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0.01, 0.01, 0.01), getG(),
+                    new PhysicalPolyhedronBuilder(new ShapeReader("src\\shapes\\assets\\cube.json").read(), new Point3D(510, 510, 1000)), Material.CONSTANTIN));
 
         } catch (ImpossibleObjectException | IOException e) {
             e.printStackTrace();
         }
         walls.add(new Wall(this,
-           new Point3D(0,0,0), new Point3D(10000, 0, 0), new Point3D(0, 10000, 0), Material.Gold));
+                new Point3D(0, 0, 0), new Point3D(10000, 0, 00), new Point3D(0, 10000, 00), Material.GOLD));
     }
 
     public synchronized void changeTime() {
@@ -77,36 +76,36 @@ public class Space {
         Collections.shuffle(spheres);
     }
 
-    public void addSphere(Vector3D v, Vector3D w, double x0, double y0, double z0, double r, Material material) throws ImpossibleObjectException {
-        spheres.add(new PhysicalSphere(this, v, w, x0, y0, z0, r, material));
+    public void addSphere(Vector3D v, Vector3D w, Vector3D a, double x0, double y0, double z0, double r, Material material) throws ImpossibleObjectException {
+        spheres.add(new PhysicalSphere(this, v, w, a, x0, y0, z0, r, material));
     }
 
-    public void addSphere(Vector3D v, Vector3D w, double x0, double y0, double z0, double r) throws ImpossibleObjectException {
-        addSphere(v,w,x0, y0, z0, r, Material.Constantin);
+    public void addSphere(Vector3D v, Vector3D w, Vector3D a, double x0, double y0, double z0, double r) throws ImpossibleObjectException {
+        addSphere(v, w, a, x0, y0, z0, r, Material.CONSTANTIN);
     }
 
-    public void addPolyhedron(Vector3D v, Vector3D w, PhysicalPolyhedronBuilder builder, Material material) throws ImpossibleObjectException{
-        polyhedrons.add(new PhysicalPolyhedron(this, v, w, builder, material));
+    public void addPolyhedron(Vector3D v, Vector3D w, Vector3D a, PhysicalPolyhedronBuilder builder, Material material) throws ImpossibleObjectException {
+        polyhedrons.add(new PhysicalPolyhedron(this, v, w, a, builder, material));
     }
 
-    public void addPolyhedron(Vector3D v, Vector3D w, PhysicalPolyhedronBuilder builder) throws ImpossibleObjectException{
-        polyhedrons.add(new PhysicalPolyhedron(this, v, w, builder, Material.Constantin));
+    public void addPolyhedron(Vector3D v, Vector3D w, Vector3D a,  PhysicalPolyhedronBuilder builder) throws ImpossibleObjectException {
+        polyhedrons.add(new PhysicalPolyhedron(this, v, w, a, builder, Material.CONSTANTIN));
     }
 
-    public void addPolyhedron(Vector3D v, Vector3D w, Shape shape, Point3D zero, Material material) throws ImpossibleObjectException{
-        polyhedrons.add(new PhysicalPolyhedron(this, v, w, new PhysicalPolyhedronBuilder(shape, zero), material));
+    public void addPolyhedron(Vector3D v, Vector3D w, Vector3D a, Shape shape, Point3D zero, Material material) throws ImpossibleObjectException {
+        polyhedrons.add(new PhysicalPolyhedron(this, v, w, a, new PhysicalPolyhedronBuilder(shape, zero), material));
     }
 
-    public void addPolyhedron(Vector3D v, Vector3D w, Shape shape, Point3D zero) throws ImpossibleObjectException{
-        polyhedrons.add(new PhysicalPolyhedron(this, v, w, new PhysicalPolyhedronBuilder(shape, zero), Material.Constantin));
+    public void addPolyhedron(Vector3D v, Vector3D w, Vector3D a, Shape shape, Point3D zero) throws ImpossibleObjectException {
+        polyhedrons.add(new PhysicalPolyhedron(this, v, w, a, new PhysicalPolyhedronBuilder(shape, zero), Material.CONSTANTIN));
     }
 
     public double getDT() {
         return DT;
     }
 
-    public double getG() {
-        return G;
+    public Vector3D getG() {
+        return new Vector3D(0,0, -G);
     }
 
     public ArrayList<PhysicalSphere> getSpheres() {
