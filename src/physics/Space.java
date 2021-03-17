@@ -40,14 +40,14 @@ public class Space {
         try {
 //            spheres.add(new PhysicalSphere(this, new Vector3D(-140, 0, 0), new Vector3D(1, 1, 1), 500, -50, 50, 100, Material.Constantin));
 //            spheres.add(new PhysicalSphere(this, new Vector3D(140, 0, 0), new Vector3D(1, 1, 1), -510, -50, 50, 100, Material.Constantin));
-            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0.01, 0.01, 0.01), getG(),
+            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(1, 1, 0.01), getG(),
                     new PhysicalPolyhedronBuilder(new ShapeReader("src\\shapes\\assets\\cube.json").read(), new Point3D(510, 510, 1000)), Material.CONSTANTIN));
 
         } catch (ImpossibleObjectException | IOException e) {
             e.printStackTrace();
         }
         walls.add(new Wall(this,
-                new Point3D(0, 0, 0), new Point3D(10000, 0, 00), new Point3D(0, 10000, 00), Material.GOLD));
+                new Point3D(0, 0, 0), new Point3D(10000, 0, 000), new Point3D(0, 10000, 000), Material.GOLD));
     }
 
     public synchronized void changeTime() {

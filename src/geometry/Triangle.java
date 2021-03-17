@@ -1,12 +1,13 @@
 package geometry;
 
 import geometry.objects3D.*;
+import limiters.Intersectional;
 import utils.FloatComparator;
 
 import java.awt.*;
 import java.util.ArrayList;
 
-public class Triangle {
+public class Triangle implements Intersectional {
     public Point3D A, B, C;
 
     public Triangle(Point3D a, Point3D b, Point3D c) {
@@ -80,7 +81,7 @@ public class Triangle {
     public ArrayList<Point3D> getIntersectionWithPlane(Plane3D plane){
         ArrayList<Point3D> intersectionPoints = new ArrayList<>();
 
-        for (Line3D triangleLine : getLines()) {
+        for (Line3D triangleLine : getSegments()) {
             try {
                 Point3D intersectionPoint = plane.getIntersection(triangleLine).get();
                 if (contains(intersectionPoint)) {
@@ -93,12 +94,12 @@ public class Triangle {
         return intersectionPoints;
     }
 
-    public ArrayList<Line3D> getLines(){
-        ArrayList<Line3D> lines = new ArrayList<>();
-        lines.add(new Line3D(A, B));
-        lines.add(new Line3D(C, B));
-        lines.add(new Line3D(A, C));
-        return lines;
+    public ArrayList<Segment> getSegments(){
+        ArrayList<Segment> segments = new ArrayList<>();
+        segments.add(new Segment(A, B));
+        segments.add(new Segment(C, B));
+        segments.add(new Segment(A, C));
+        return segments;
     }
 
     public Triangle rotate(Vector3D vector, Point3D point){
@@ -117,6 +118,14 @@ public class Triangle {
             return false;
         }
 
+    }
+
+    public ArrayList<Point3D> getPoints(){
+        ArrayList<Point3D> points = new ArrayList<>();
+        points.add(A);
+        points.add(B);
+        points.add(C);
+        return points;
     }
 
     @Override

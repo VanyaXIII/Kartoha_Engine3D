@@ -103,7 +103,6 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
 
             segments.clear();
 //            System.out.println(currentPoint);
-//            System.out.println(plane);
             currentPoint = projectionVector.addToPoint(currentPoint);
             plane = new Plane3D(projectionVector, currentPoint);
 

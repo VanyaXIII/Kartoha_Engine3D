@@ -2,6 +2,7 @@ package geometry;
 
 import exceptions.ImpossiblePairException;
 import geometry.objects3D.Line3D;
+import geometry.objects3D.Plane3D;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 import limiters.Intersectional;
@@ -36,17 +37,17 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
         methodsMap = new TripleMap<>();
 
         methodsMap.addFirstKey(PhysicalSphere.class);
-        methodsMap.addFirstKey(Wall.class);
+        methodsMap.addFirstKey(Triangle.class);
         methodsMap.addFirstKey(PhysicalPolyhedron.class);
 
         methodsMap.putByFirstKey(PhysicalSphere.class, PhysicalSphere.class, IntersectionalPair::sphereToSphere);
-        methodsMap.putByFirstKey(PhysicalSphere.class, Wall.class, IntersectionalPair::sphereToWall);
+        methodsMap.putByFirstKey(PhysicalSphere.class, Wall.class, IntersectionalPair::sphereToTriangle);
         methodsMap.putByFirstKey(PhysicalSphere.class, PhysicalPolyhedron.class, IntersectionalPair::sphereToPolyhedron);
 
-        methodsMap.putByFirstKey(Wall.class, PhysicalSphere.class, IntersectionalPair::sphereToWall);
-        methodsMap.putByFirstKey(Wall.class, PhysicalPolyhedron.class, IntersectionalPair::polyhedronToWall);
+        methodsMap.putByFirstKey(Triangle.class, PhysicalSphere.class, IntersectionalPair::sphereToTriangle);
+        methodsMap.putByFirstKey(Triangle.class, PhysicalPolyhedron.class, IntersectionalPair::polyhedronToTriangle);
 
-        methodsMap.putByFirstKey(PhysicalPolyhedron.class, Wall.class, IntersectionalPair::polyhedronToWall);
+        methodsMap.putByFirstKey(PhysicalPolyhedron.class, Triangle.class, IntersectionalPair::polyhedronToTriangle);
         methodsMap.putByFirstKey(PhysicalPolyhedron.class, PhysicalSphere.class, IntersectionalPair::sphereToPolyhedron);
         methodsMap.putByFirstKey(PhysicalPolyhedron.class, PhysicalPolyhedron.class, IntersectionalPair::polyhedronToPolyhedron);
     }
@@ -55,25 +56,25 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
         return false;
     }
 
-    private static boolean polyhedronToWall(Intersectional thing1, Intersectional thing2) {
+    private static boolean polyhedronToTriangle(Intersectional thing1, Intersectional thing2) {
         PhysicalPolyhedron polyhedron;
-        Wall wall;
+        Triangle triangle;
 
         if (thing1 instanceof PhysicalPolyhedron) {
             polyhedron = (PhysicalPolyhedron) thing1;
-            wall = (Wall) thing2;
+            triangle = (Triangle) thing2;
         } else {
             polyhedron = (PhysicalPolyhedron) thing2;
-            wall = (Wall) thing1;
+            triangle = (Triangle) thing1;
         }
 
-        if (!new AABB(polyhedron, dynamicCollisionMode).isIntersectedWith(new AABB(wall)))
+        if (!new AABB(polyhedron, dynamicCollisionMode).isIntersectedWith(new AABB(triangle)))
             return false;
 
         boolean intersected = false;
 
         for (Point3D point : polyhedron.getPoints(dynamicCollisionMode))
-            if (wall.getTriangle().isIntersectedWithSegment(new Segment(point, polyhedron.getPositionOfCentre(dynamicCollisionMode))))
+            if (triangle.isIntersectedWithSegment(new Segment(point, polyhedron.getPositionOfCentre(dynamicCollisionMode))))
                 intersected = true;
 
         return intersected;
@@ -112,34 +113,43 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
         return false;
     }
 
-    private static boolean sphereToWall(Intersectional thing1, Intersectional thing2) {
+    private static boolean sphereToTriangle(Intersectional thing1, Intersectional thing2) {
 
         PhysicalSphere sphere;
-        Wall wall;
+        Triangle triangle;
 
         if (thing1 instanceof PhysicalSphere) {
             sphere = (PhysicalSphere) thing1;
-            wall = (Wall) thing2;
+            triangle = (Triangle) thing2;
         } else {
             sphere = (PhysicalSphere) thing2;
-            wall = (Wall) thing1;
+            triangle = (Triangle) thing1;
         }
 
 
-        if (!new AABB(sphere, dynamicCollisionMode).isIntersectedWith(new AABB(wall)))
+        if (!new AABB(sphere, dynamicCollisionMode).isIntersectedWith(new AABB(triangle)))
             return false;
 
         final Point3D spherePos = sphere.getPositionOfCentre(dynamicCollisionMode);
-        final double distance = wall.getPlane().distance(spherePos);
+        final double distance = triangle.getPlane().distance(spherePos);
 
         if (distance <= sphere.getR()) {
-            Vector3D normalVector = wall.getPlane().vector;
-            Point3D intersectionPoint = wall.getPlane().getIntersection(new Line3D(spherePos, normalVector)).get();
+            Vector3D normalVector = triangle.getPlane().vector;
+            Point3D intersectionPoint = triangle.getPlane().getIntersection(new Line3D(spherePos, normalVector)).get();
 
-            if (wall.getTriangle().contains(intersectionPoint))
+            if (triangle.contains(intersectionPoint))
                 return true;
             else {
-                for (Point3D point : wall.getPoints())
+
+                for (Segment segment : triangle.getSegments()){
+                    if (segment.distance(spherePos) <= sphere.getR()){
+                        Point3D point = new Plane3D(segment.vector, spherePos).getIntersection(segment).get();
+                        if (new AABB(segment).isPointIn(point))
+                            return true;
+                    }
+                }
+
+                for (Point3D point : triangle.getPoints())
                     if (new Vector3D(point, spherePos).getLength() <= sphere.getR())
                         return true;
             }

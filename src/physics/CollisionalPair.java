@@ -89,6 +89,11 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
                     collisionPoint,
                     axisY.addToPoint(collisionPoint));
 
+            Plane3D frictionPlane = wall.getPlane();
+
+            Vector3D vel1 = Tools.calcProjectionOfVectorOnPlane(vel, frictionPlane);
+
+
             Vector3D r = new Vector3D(polyhedron.getPositionOfCentre(true), collisionPoint);
 
             double J = polyhedron.getJ(new Line3D(polyhedron.getPositionOfCentre(true), collisionPlane.vector), true);
@@ -100,6 +105,29 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
 
             double w2 = (J * w1 + rx * m * (-k * vy - vc)) / (J + rx * rx * m);
             double s = Math.abs(J * (w2 - w1) / rx);
+
+            Vector3D normalizedVel1= vel1.normalize();
+
+            double r1 = r.subtract(normalizedVel1.multiply(normalizedVel1.scalarProduct(r))).getLength();
+
+
+
+
+            Plane3D frictionAndRadPlane = new Plane3D(collisionPoint,
+                    r.addToPoint(collisionPoint),
+                    vel1.addToPoint(collisionPoint));
+
+            double J1 = polyhedron.getJ(new Line3D(polyhedron.getPositionOfCentre(true), frictionAndRadPlane.vector),
+                    true);
+
+            Vector3D friction1 = normalizedVel1.multiply(-1d * Math.abs(fr * s));
+            Vector3D friction2 = vel1.multiply(-1d * (1d / (1d / m + r1 * r1 / J1 )));
+
+            if (friction1.getLength() > friction2.getLength())
+                polyhedron.applyImpulse(friction2, collisionPoint, true);
+            else
+                polyhedron.applyImpulse(friction1, collisionPoint, true);
+
 
             polyhedron.applyImpulse(axisY.multiply(s), collisionPoint, true);
 

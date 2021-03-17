@@ -13,8 +13,8 @@ import utils.Tools;
 import java.util.*;
 
 public class AABB {
-    private Point3D min;
-    private Point3D max;
+    private final Point3D min;
+    private final Point3D max;
 
     public AABB(Point3D min, Point3D max) {
         this.min = min;
@@ -30,6 +30,8 @@ public class AABB {
     public AABB(Wall wall){
         this(wall.getPoints());
     }
+
+    public AABB(Triangle triangle){this(triangle.getPoints());}
 
     public AABB(Segment segment){
         ArrayList<Point3D> points = new ArrayList<>();

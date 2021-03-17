@@ -45,7 +45,7 @@ public class PhysicsHandler {
             spheres.forEach(sphere ->{
                     for (Wall wall : walls) {
                         try {
-                            if (new IntersectionalPair<>(sphere, wall).areIntersected())
+                            if (new IntersectionalPair<>(sphere, wall.getTriangle()).areIntersected())
                                 new CollisionalPair<>(sphere, wall).collide();
                         } catch (ImpossiblePairException e) {
                             e.printStackTrace();
@@ -57,7 +57,7 @@ public class PhysicsHandler {
         Thread polyhedronThread = new Thread(() -> polyhedrons.forEach(polyhedron -> {
             for (Wall wall : walls) {
                 try {
-                    if (new IntersectionalPair<>(polyhedron, wall).areIntersected()) {
+                    if (new IntersectionalPair<>(polyhedron, wall.getTriangle()).areIntersected()) {
                         System.out.println(11111111);
                         new CollisionalPair<>(polyhedron, wall).collide();
                     }
