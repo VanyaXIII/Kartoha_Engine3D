@@ -32,7 +32,7 @@ public class Main {
         canvas.setResizable(true);
         canvas.setUndecorated(false);
         canvas.setVisible(true);
-        Space space = new Space(0.008d, 300d, canvas);
+        Space space = new Space(0.008d, 00d, canvas);
 
         Point3D A = new Point3D(0,0,0),
                 B = new Point3D(200,200,0),
@@ -87,7 +87,7 @@ public class Main {
                     space.changeTime();
                 }
                 try {
-                    Thread.sleep(10);
+                    Thread.sleep(8);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

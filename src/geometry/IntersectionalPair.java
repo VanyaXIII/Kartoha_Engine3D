@@ -41,7 +41,7 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
         methodsMap.addFirstKey(PhysicalPolyhedron.class);
 
         methodsMap.putByFirstKey(PhysicalSphere.class, PhysicalSphere.class, IntersectionalPair::sphereToSphere);
-        methodsMap.putByFirstKey(PhysicalSphere.class, Wall.class, IntersectionalPair::sphereToTriangle);
+        methodsMap.putByFirstKey(PhysicalSphere.class, Triangle.class, IntersectionalPair::sphereToTriangle);
         methodsMap.putByFirstKey(PhysicalSphere.class, PhysicalPolyhedron.class, IntersectionalPair::sphereToPolyhedron);
 
         methodsMap.putByFirstKey(Triangle.class, PhysicalSphere.class, IntersectionalPair::sphereToTriangle);
@@ -80,8 +80,31 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
         return intersected;
     }
 
-    private static boolean sphereToPolyhedron(Intersectional intersectional, Intersectional intersectional1) {
-        return false;
+    private static boolean sphereToPolyhedron(Intersectional thing1, Intersectional thing2) {
+        PhysicalSphere sphere;
+        PhysicalPolyhedron polyhedron;
+
+        if (thing1 instanceof PhysicalSphere) {
+            sphere = (PhysicalSphere) thing1;
+            polyhedron = (PhysicalPolyhedron) thing2;
+        } else {
+            sphere = (PhysicalSphere) thing2;
+            polyhedron = (PhysicalPolyhedron) thing1;
+        }
+
+        if (!new AABB(polyhedron, dynamicCollisionMode).isIntersectedWith(new AABB(sphere, dynamicCollisionMode)))
+            return false;
+        boolean intersected = false;
+        for (Triangle triangle : polyhedron.getTriangles(dynamicCollisionMode)) {
+            try {
+                if (new IntersectionalPair<>(sphere, triangle).areIntersected())
+                    intersected = true;
+
+            } catch (ImpossiblePairException e) {
+                e.printStackTrace();
+            }
+        }
+        return intersected;
     }
 
     public boolean areIntersected() {

@@ -3,6 +3,7 @@ package physics;
 
 import exceptions.ImpossiblePairException;
 import geometry.IntersectionalPair;
+import geometry.objects3D.Vector3D;
 import physical_objects.PhysicalPolyhedron;
 import physical_objects.PhysicalSphere;
 import physical_objects.Wall;
@@ -60,6 +61,16 @@ public class PhysicsHandler {
                     if (new IntersectionalPair<>(polyhedron, wall.getTriangle()).areIntersected()) {
                         System.out.println(11111111);
                         new CollisionalPair<>(polyhedron, wall).collide();
+                    }
+                } catch (ImpossiblePairException e) {
+                    e.printStackTrace();
+                }
+            }
+            for (PhysicalSphere sphere : spheres){
+                try {
+                    if (new IntersectionalPair<>(polyhedron, sphere).areIntersected()){
+                        sphere.setV(new Vector3D(0,0,0));
+                        polyhedron.setV(new Vector3D(0,0,0));
                     }
                 } catch (ImpossiblePairException e) {
                     e.printStackTrace();
