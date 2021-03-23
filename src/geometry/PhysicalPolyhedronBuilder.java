@@ -2,10 +2,8 @@ package geometry;
 
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
-import shapes.Shape;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class PhysicalPolyhedronBuilder {
 

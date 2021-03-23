@@ -13,6 +13,8 @@ import limiters.Intersectional;
 import org.jetbrains.annotations.NotNull;
 import physics.Material;
 import physics.Space;
+import utils.Pair;
+import utils.Tools;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,13 +25,23 @@ public class Wall implements Drawable, Collisional, Intersectional {
     private final Point3D a;
     private final Point3D b;
     private final Point3D c;
+    private final Point3D d;
     private final Material material;
+    private final ArrayList<Triangle> triangles;
 
-    public Wall(@NotNull Space space, Point3D a, Point3D b, Point3D c, Material material) {
+    {
+        triangles = new ArrayList<>(2);
+    }
+
+    public Wall(@NotNull Space space, Point3D a, Point3D b, Point3D c, Point3D d, Material material) {
         this.a = a;
         this.b = b;
         this.c = c;
+        this.d = d;
         this.material = material;
+        Pair<Polygon3D, Polygon3D> polygonPair = Polygon3D.getPolygons(Tools.getRandomColor(), a, b, c, d);
+        triangles.add(new Triangle(polygonPair.first));
+        triangles.add(new Triangle(polygonPair.second));
         pushToCanvas(space.getCanvas());
     }
 
@@ -37,8 +49,8 @@ public class Wall implements Drawable, Collisional, Intersectional {
         return new Plane3D(a, b, c);
     }
 
-    public Triangle getTriangle() {
-        return new Triangle(a, b, c);
+    public ArrayList<Triangle> getTriangles() {
+        return triangles;
     }
 
     public Material getMaterial() {
@@ -60,7 +72,8 @@ public class Wall implements Drawable, Collisional, Intersectional {
             @Override
             public Collection<Polygon3D> getPolygons() {
                 HashSet<Polygon3D> polygons = new HashSet<>();
-                polygons.add(new Polygon3D(a, b, c, material.fillColor));
+                polygons.add(new Polygon3D(triangles.get(0).A, triangles.get(0).B, triangles.get(0).C, material.fillColor));
+                polygons.add(new Polygon3D(triangles.get(1).A, triangles.get(1).B, triangles.get(1).C, material.fillColor));
                 return polygons;
             }
 

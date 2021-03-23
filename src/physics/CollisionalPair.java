@@ -2,6 +2,7 @@ package physics;
 
 import exceptions.ImpossiblePairException;
 import geometry.Segment;
+import geometry.Triangle;
 import geometry.objects3D.Line3D;
 import geometry.objects3D.Plane3D;
 import geometry.objects3D.Point3D;
@@ -66,7 +67,8 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
 
 
         for (Point3D point : polyhedron.getPoints(true)) {
-            if (wall.getTriangle().isIntersectedWithSegment(new Segment(point, polyhedron.getPositionOfCentre(true)))) {
+            for (Triangle triangle : wall.getTriangles())
+            if (triangle.isIntersectedWithSegment(new Segment(point, polyhedron.getPositionOfCentre(true)))) {
                 collisionPoints.add(point);
                 break;
             }

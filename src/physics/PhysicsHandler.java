@@ -3,6 +3,7 @@ package physics;
 
 import exceptions.ImpossiblePairException;
 import geometry.IntersectionalPair;
+import geometry.Triangle;
 import geometry.objects3D.Vector3D;
 import physical_objects.PhysicalPolyhedron;
 import physical_objects.PhysicalSphere;
@@ -25,7 +26,7 @@ public class PhysicsHandler {
         this.depth = depth;
     }
 
-    public void update() throws InterruptedException, ConcurrentModificationException{
+    public void update() throws InterruptedException, ConcurrentModificationException {
         Thread sphereThread = new Thread(() -> {
             for (int i = 0; i < spheres.size() - 1; i++) {
                 for (int j = i + 1; j < spheres.size(); j++) {
@@ -43,22 +44,24 @@ public class PhysicsHandler {
                     }
                 }
             }
-            spheres.forEach(sphere ->{
-                    for (Wall wall : walls) {
-                        try {
-                            if (new IntersectionalPair<>(sphere, wall.getTriangle()).areIntersected())
+            spheres.forEach(sphere -> {
+                for (Wall wall : walls) {
+                    try {
+                        for (Triangle triangle : wall.getTriangles())
+                            if (new IntersectionalPair<>(sphere, triangle).areIntersected())
                                 new CollisionalPair<>(sphere, wall).collide();
-                        } catch (ImpossiblePairException e) {
-                            e.printStackTrace();
-                        }
+                    } catch (ImpossiblePairException e) {
+                        e.printStackTrace();
                     }
+                }
             });
         });
 
         Thread polyhedronThread = new Thread(() -> polyhedrons.forEach(polyhedron -> {
             for (Wall wall : walls) {
                 try {
-                    if (new IntersectionalPair<>(polyhedron, wall.getTriangle()).areIntersected()) {
+                    for (Triangle triangle : wall.getTriangles())
+                    if (new IntersectionalPair<>(polyhedron, triangle).areIntersected()) {
                         System.out.println(11111111);
                         new CollisionalPair<>(polyhedron, wall).collide();
                     }
@@ -66,11 +69,11 @@ public class PhysicsHandler {
                     e.printStackTrace();
                 }
             }
-            for (PhysicalSphere sphere : spheres){
+            for (PhysicalSphere sphere : spheres) {
                 try {
-                    if (new IntersectionalPair<>(polyhedron, sphere).areIntersected()){
-                        sphere.setV(new Vector3D(0,0,0));
-                        polyhedron.setV(new Vector3D(0,0,0));
+                    if (new IntersectionalPair<>(polyhedron, sphere).areIntersected()) {
+                        sphere.setV(new Vector3D(0, 0, 0));
+                        polyhedron.setV(new Vector3D(0, 0, 0));
                     }
                 } catch (ImpossiblePairException e) {
                     e.printStackTrace();

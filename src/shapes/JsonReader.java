@@ -4,15 +4,15 @@ import com.google.gson.Gson;
 
 import java.io.*;
 
-public final class ShapeReader {
+public final class JsonReader{
 
     private final String path;
 
-    public ShapeReader(String path){
+    public JsonReader(String path){
         this.path = path;
     }
 
-    public Shape read() throws IOException {
+    public Object read(Class type) throws IOException {
 
         File gsonFile = new File(path);
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(gsonFile)));
@@ -26,7 +26,7 @@ public final class ShapeReader {
         String jsonString = sb.toString();
         Gson gson = new Gson();
 
-        return gson.fromJson(jsonString, Shape.class);
+        return gson.fromJson(jsonString, type);
     }
 
 }

@@ -19,11 +19,11 @@ public abstract class AbstractBody implements Drawable{
     protected final double m;
     protected final Space space;
 
-    protected AbstractBody(Space space, double x0, double y0, double z0, Vector3D v, Vector3D w, Vector3D a, Material material, double m) throws ImpossibleObjectException {
+    protected AbstractBody(Space space, double x0, double y0, double z0, Vector3D v, Vector3D w, Material material, double m) throws ImpossibleObjectException {
         this.space = space;
         this.v = v;
         this.w = w;
-        this.a = a;
+        this.a = space.getG(this);
         this.x0 = x0;
         this.y0 = y0;
         this.z0 = z0;
@@ -33,7 +33,7 @@ public abstract class AbstractBody implements Drawable{
     }
 
     protected AbstractBody(Space space, double x0, double y0, double z0, Material material, double m) throws ImpossibleObjectException {
-        this(space, x0, y0, z0, new Vector3D(0,0,0), new Vector3D(0,0,0), new Vector3D(0,0,0), material, m);
+        this(space, x0, y0, z0, new Vector3D(0,0,0), new Vector3D(0,0,0), material, m);
     }
 
     public synchronized void update() {
@@ -42,6 +42,7 @@ public abstract class AbstractBody implements Drawable{
         x0 += v.x * space.getDT() + a.x * space.getDT() * space.getDT() / 2d;
         y0 += v.y * space.getDT() + a.y * space.getDT() * space.getDT() / 2d;
         z0 += v.z * space.getDT() + a.z * space.getDT() * space.getDT() / 2d;
+        a = space.getG(this);
     }
 
     private synchronized void changeSpeed() {

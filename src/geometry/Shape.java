@@ -1,4 +1,4 @@
-package shapes;
+package geometry;
 
 import com.google.gson.Gson;
 import geometry.Triangle;

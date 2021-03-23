@@ -23,11 +23,11 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
     private final static long depth = 30;
 
 
-    public PhysicalPolyhedron(Space space, Vector3D v, Vector3D w, Vector3D a, PhysicalPolyhedronBuilder builder, Material material) throws ImpossibleObjectException {
+    public PhysicalPolyhedron(Space space, Vector3D v, Vector3D w, PhysicalPolyhedronBuilder builder, Material material) throws ImpossibleObjectException {
 
         super(space,
                 builder.getCentreOfMass().x, builder.getCentreOfMass().y, builder.getCentreOfMass().z,
-                v, w, a, material, builder.getVolume() * material.p);
+                v, w, material, builder.getVolume() * material.p);
 
         this.points = builder.getPoints();
         this.triangles = builder.getTriangles();

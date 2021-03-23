@@ -1,7 +1,6 @@
 
 
 import com.aparapi.Kernel;
-import com.google.gson.Gson;
 import geometry.Triangle;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
@@ -9,12 +8,11 @@ import graph.Camera;
 import graph.CanvasPanel;
 import graph.Screen;
 import physics.Space;
-import shapes.Shape;
+import geometry.Shape;
 
 import javax.swing.*;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class Main {
 
