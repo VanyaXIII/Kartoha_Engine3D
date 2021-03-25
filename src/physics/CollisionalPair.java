@@ -1,6 +1,7 @@
 package physics;
 
 import exceptions.ImpossiblePairException;
+import geometry.IntersectionalPair;
 import geometry.Segment;
 import geometry.Triangle;
 import geometry.objects3D.Line3D;
@@ -9,6 +10,7 @@ import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 import limiters.Collisional;
 import org.jetbrains.annotations.NotNull;
+import physical_objects.GravityPlate;
 import physical_objects.PhysicalPolyhedron;
 import physical_objects.PhysicalSphere;
 import physical_objects.Wall;
@@ -18,8 +20,8 @@ import utils.TripleMap;
 import java.util.ArrayList;
 
 public final class CollisionalPair<FirstThingType extends Collisional, SecondThingType extends Collisional> {
-
     private final FirstThingType firstThing;
+
     private final SecondThingType secondThing;
     private final static TripleMap<Class, Class, Collider> methodsMap;
 
@@ -43,6 +45,7 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
         methodsMap.putByFirstKey(PhysicalSphere.class, PhysicalSphere.class, CollisionalPair::sphereToSphere);
         methodsMap.putByFirstKey(PhysicalSphere.class, Wall.class, CollisionalPair::sphereToWall);
         methodsMap.putByFirstKey(PhysicalSphere.class, GravityPlate.class, CollisionalPair::sphereToWall);
+        methodsMap.putByFirstKey(PhysicalSphere.class, PhysicalPolyhedron.class, CollisionalPair::sphereToPolyhedron);
 
         methodsMap.putByFirstKey(Wall.class, PhysicalSphere.class, CollisionalPair::sphereToWall);
         methodsMap.putByFirstKey(Wall.class, PhysicalPolyhedron.class, CollisionalPair::polyhedronToWall);
@@ -51,6 +54,78 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
 
         methodsMap.putByFirstKey(PhysicalPolyhedron.class, Wall.class, CollisionalPair::polyhedronToWall);
         methodsMap.putByFirstKey(PhysicalPolyhedron.class, GravityPlate.class, CollisionalPair::polyhedronToWall);
+        methodsMap.putByFirstKey(PhysicalPolyhedron.class, PhysicalSphere.class, CollisionalPair::sphereToPolyhedron);
+    }
+
+    /**
+     * Main method that dispatches all collisions
+     */
+
+    public void collide() {
+        methodsMap.getElement(firstThing.getClass(), secondThing.getClass()).collide(firstThing, secondThing);
+    }
+
+    private static void sphereToPolyhedron(Collisional thing1, Collisional thing2) {
+        PhysicalPolyhedron polyhedron;
+        PhysicalSphere sphere;
+
+        if (thing1 instanceof PhysicalPolyhedron) {
+            polyhedron = (PhysicalPolyhedron) thing1;
+            sphere = (PhysicalSphere) thing2;
+        } else {
+            sphere = (PhysicalSphere) thing1;
+            polyhedron = (PhysicalPolyhedron) thing2;
+        }
+
+        Plane3D edgePlane = null;
+
+        try {
+            for (Triangle triangle : polyhedron.getTriangles(true))
+                if (new IntersectionalPair<>(sphere, triangle).areIntersected())
+                    edgePlane = triangle.getPlane();
+        } catch (Exception ignored) {
+        }
+
+        if (edgePlane != null) {
+            Vector3D axisX = edgePlane.vector.normalize();
+
+            Plane3D collisionPlane = new Plane3D(sphere.getPositionOfCentre(true),
+                    polyhedron.getPositionOfCentre(true),
+                    axisX.addToPoint(sphere.getPositionOfCentre(true)));
+
+            final double k = Tools.countAverage(polyhedron.getMaterial().coefOfReduction, polyhedron.getMaterial().coefOfReduction);
+            final double fr = Tools.countAverage(polyhedron.getMaterial().coefOfFriction, polyhedron.getMaterial().coefOfFriction);
+            final double m2 = polyhedron.getM();
+            final double m1 = sphere.getM();
+            final double ratio = m1 / m2;
+            final double J1 = sphere.getJ();
+            final double J2 = polyhedron.getJ(new Line3D(polyhedron.getPositionOfCentre(true), collisionPlane.vector), true);
+
+            Line3D collisionLine = new Line3D(sphere.getPositionOfCentre(true), axisX);
+            Point3D collisionPoint2 = collisionLine.getIntersection(edgePlane).get();
+            Point3D collisionPoint1 = new Vector3D(sphere.getPositionOfCentre(true), collisionPoint2)
+                    .normalize()
+                    .multiply(sphere.getR())
+                    .addToPoint(sphere.getPositionOfCentre(true));
+
+            Vector3D pRadV = new Vector3D(polyhedron.getPositionOfCentre(true), collisionPoint2);
+
+            double ry = pRadV.subtract(axisX.multiply(axisX.scalarProduct(pRadV))).getLength();
+            double v1cx = sphere.getV().scalarProduct(axisX);
+            double v2x = polyhedron.getVelOfPoint(collisionPoint2, true).scalarProduct(axisX);
+            double wr2 = polyhedron.getAngularVelOfPoint(collisionPoint2, true).scalarProduct(axisX);
+
+            double u1cx = ((ratio - k) * v1cx + v2x * (1 + k) + wr2 + (m1 * ry * ry * v1cx) / J2) / (1d + ratio + m1 * ry * ry / J2);
+            double s = m1 * (u1cx - v1cx);
+
+            Vector3D sphereImpulse = new Vector3D(sphere.getPositionOfCentre(true), collisionPoint1).normalize().multiply(-s);
+
+            sphere.applyStrikeImpulse(new Vector3D(sphere.getPositionOfCentre(true), collisionPoint1).normalize().multiply(-s));
+            polyhedron.applyImpulse(sphereImpulse.multiply(-1d), collisionPoint2, true);
+
+        }
+
+
     }
 
     private static void polyhedronToWall(Collisional thing1, Collisional thing2) {
@@ -138,14 +213,6 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
 
     }
 
-
-    /**
-     * Main method that dispatches all collisions
-     */
-
-    public void collide() {
-        methodsMap.getElement(firstThing.getClass(), secondThing.getClass()).collide(firstThing, secondThing);
-    }
 
     /**
      * This method processes collision between two <b>Spheres</b>;

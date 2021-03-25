@@ -26,7 +26,13 @@ public class PhysicsHandler {
         this.depth = depth;
     }
 
-    public void update() throws InterruptedException, ConcurrentModificationException {
+    public void update() throws InterruptedException {
+        for (int i = 0; i< depth; i++){
+            handlePhysics();
+        }
+    }
+
+    private void handlePhysics() throws InterruptedException, ConcurrentModificationException {
         Thread sphereThread = new Thread(() -> {
             for (int i = 0; i < spheres.size() - 1; i++) {
                 for (int j = i + 1; j < spheres.size(); j++) {
@@ -48,8 +54,10 @@ public class PhysicsHandler {
                 for (Wall wall : walls) {
                     try {
                         for (Triangle triangle : wall.getTriangles())
-                            if (new IntersectionalPair<>(sphere, triangle).areIntersected())
+                            if (new IntersectionalPair<>(sphere, triangle).areIntersected()) {
                                 new CollisionalPair<>(sphere, wall).collide();
+                                break;
+                            }
                     } catch (ImpossiblePairException e) {
                         e.printStackTrace();
                     }
@@ -63,6 +71,7 @@ public class PhysicsHandler {
                     for (Triangle triangle : wall.getTriangles())
                         if (new IntersectionalPair<>(polyhedron, triangle).areIntersected()) {
                             new CollisionalPair<>(polyhedron, wall).collide();
+                            break;
                         }
                 } catch (ImpossiblePairException e) {
                     e.printStackTrace();
@@ -70,9 +79,9 @@ public class PhysicsHandler {
             }
             for (PhysicalSphere sphere : spheres) {
                 try {
-                    if (new IntersectionalPair<>(polyhedron, sphere).areIntersected()) {
-                        sphere.setV(new Vector3D(0, 0, 0));
-                        polyhedron.setV(new Vector3D(0, 0, 0));
+                    if (new IntersectionalPair<>(polyhedron, sphere).areIntersected()){
+                        System.out.println(11111111);
+                        new CollisionalPair<>(polyhedron, sphere).collide();
                     }
                 } catch (ImpossiblePairException e) {
                     e.printStackTrace();

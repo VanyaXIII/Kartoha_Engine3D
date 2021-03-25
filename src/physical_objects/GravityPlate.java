@@ -1,11 +1,12 @@
-package physics;
+package physical_objects;
 
 import geometry.Triangle;
 import geometry.objects3D.Line3D;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 import org.jetbrains.annotations.NotNull;
-import physical_objects.Wall;
+import physics.Material;
+import physics.Space;
 
 public class GravityPlate extends Wall {
 

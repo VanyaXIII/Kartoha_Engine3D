@@ -5,13 +5,9 @@ import geometry.PhysicalPolyhedronBuilder;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 import graph.CanvasPanel;
-import org.jetbrains.annotations.NotNull;
-import physical_objects.AbstractBody;
-import physical_objects.PhysicalPolyhedron;
-import physical_objects.PhysicalSphere;
-import physical_objects.Wall;
+import physical_objects.*;
 import geometry.Shape;
-import shapes.JsonReader;
+import shapes.Primitive;
 import utils.Tools;
 
 import java.io.IOException;
@@ -42,20 +38,20 @@ public class Space {
         G = g;
         this.canvas = canvas;
         try {
-            spheres.add(new PhysicalSphere(this, new Vector3D(-140, 0, 0), new Vector3D(1, 1, 1), 1550, 550, 1000, 100, Material.CONSTANTIN));
+//            spheres.add(new PhysicalSphere(this, new Vector3D(-240, 0, 0), new Vector3D(1, 1, 1), 1550, 550, 1000, 100, Material.CONSTANTIN));
 //            spheres.add(new PhysicalSphere(this, new Vector3D(140, 0, 0), new Vector3D(1, 1, 1), -510, -50, 50, 100, Material.Constantin));
-            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0.01, 0.01, 0.01),
-                    new PhysicalPolyhedronBuilder((Shape) new JsonReader("src\\shapes\\assets\\cube.json").read(Shape.class), new Point3D(510, 510, 1000)), Material.CONSTANTIN));
+            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0.001, 0.001, 0.001),
+                    new PhysicalPolyhedronBuilder(Primitive.OCTAHEDRON.get(), new Point3D(410, 410, 900)), Material.CONSTANTIN));
 
         } catch (ImpossibleObjectException | IOException e) {
             e.printStackTrace();
         }
         addGravityPlate(this,
                 new Point3D(0, 0, 0),
-                new Point3D(10000, 0, 000),
-                new Point3D(0, 10000, 000),
+                new Point3D(10000, 0, 0),
+                new Point3D(0, 10000, 0),
                 new Point3D(10000, 10000, 0),
-                500,
+                550,
                 Material.GOLD);
     }
 

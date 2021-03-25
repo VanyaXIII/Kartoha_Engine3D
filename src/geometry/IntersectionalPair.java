@@ -94,11 +94,14 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
 
         if (!new AABB(polyhedron, dynamicCollisionMode).isIntersectedWith(new AABB(sphere, dynamicCollisionMode)))
             return false;
+
         boolean intersected = false;
         for (Triangle triangle : polyhedron.getTriangles(dynamicCollisionMode)) {
             try {
-                if (new IntersectionalPair<>(sphere, triangle).areIntersected())
+                if (new IntersectionalPair<>(sphere, triangle).areIntersected()) {
                     intersected = true;
+                    break;
+                }
 
             } catch (ImpossiblePairException e) {
                 e.printStackTrace();
