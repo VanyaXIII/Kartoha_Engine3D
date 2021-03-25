@@ -5,6 +5,7 @@ import geometry.PhysicalPolyhedronBuilder;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 import graph.CanvasPanel;
+import org.jetbrains.annotations.NotNull;
 import physical_objects.AbstractBody;
 import physical_objects.PhysicalPolyhedron;
 import physical_objects.PhysicalSphere;
@@ -49,8 +50,13 @@ public class Space {
         } catch (ImpossibleObjectException | IOException e) {
             e.printStackTrace();
         }
-        walls.add(new Wall(this,
-                new Point3D(0, 0, 0), new Point3D(10000, 0, 000), new Point3D(0, 10000, 000), new Point3D(10000, 10000, 0), Material.GOLD));
+        addGravityPlate(this,
+                new Point3D(0, 0, 0),
+                new Point3D(10000, 0, 000),
+                new Point3D(0, 10000, 000),
+                new Point3D(10000, 10000, 0),
+                500,
+                Material.GOLD);
     }
 
     public synchronized void changeTime() {
@@ -103,6 +109,12 @@ public class Space {
         polyhedrons.add(new PhysicalPolyhedron(this, v, w, new PhysicalPolyhedronBuilder(shape, zero), Material.CONSTANTIN));
     }
 
+    public void addGravityPlate(Space space, Point3D a, Point3D b, Point3D c, Point3D d, double g, Material material){
+        GravityPlate plate = new GravityPlate(space, a, b, c, d, g, material);
+        gravityPlates.add(plate);
+        walls.add(plate);
+    }
+
     public double getDT() {
         return DT;
     }
@@ -110,7 +122,7 @@ public class Space {
     public Vector3D getG(AbstractBody body) {
         Vector3D g = new Vector3D(0,0,0);
         for (GravityPlate plate : gravityPlates)
-            g.add(plate.getG(body.getPositionOfCentre(false)));
+            g = g.add(plate.getG(body.getPositionOfCentre(false)));
         return g;
     }
 

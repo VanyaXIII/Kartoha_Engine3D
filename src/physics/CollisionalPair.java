@@ -37,14 +37,20 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
         methodsMap.addFirstKey(PhysicalSphere.class);
         methodsMap.addFirstKey(PhysicalPolyhedron.class);
         methodsMap.addFirstKey(Wall.class);
+        methodsMap.addFirstKey(GravityPlate.class);
+
 
         methodsMap.putByFirstKey(PhysicalSphere.class, PhysicalSphere.class, CollisionalPair::sphereToSphere);
         methodsMap.putByFirstKey(PhysicalSphere.class, Wall.class, CollisionalPair::sphereToWall);
+        methodsMap.putByFirstKey(PhysicalSphere.class, GravityPlate.class, CollisionalPair::sphereToWall);
 
         methodsMap.putByFirstKey(Wall.class, PhysicalSphere.class, CollisionalPair::sphereToWall);
         methodsMap.putByFirstKey(Wall.class, PhysicalPolyhedron.class, CollisionalPair::polyhedronToWall);
+        methodsMap.putByFirstKey(GravityPlate.class, PhysicalPolyhedron.class, CollisionalPair::polyhedronToWall);
+        methodsMap.putByFirstKey(GravityPlate.class, PhysicalPolyhedron.class, CollisionalPair::polyhedronToWall);
 
         methodsMap.putByFirstKey(PhysicalPolyhedron.class, Wall.class, CollisionalPair::polyhedronToWall);
+        methodsMap.putByFirstKey(PhysicalPolyhedron.class, GravityPlate.class, CollisionalPair::polyhedronToWall);
     }
 
     private static void polyhedronToWall(Collisional thing1, Collisional thing2) {
@@ -68,13 +74,11 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
 
         for (Point3D point : polyhedron.getPoints(true)) {
             for (Triangle triangle : wall.getTriangles())
-            if (triangle.isIntersectedWithSegment(new Segment(point, polyhedron.getPositionOfCentre(true)))) {
-                collisionPoints.add(point);
-                break;
-            }
+                if (triangle.isIntersectedWithSegment(new Segment(point, polyhedron.getPositionOfCentre(true)))) {
+                    collisionPoints.add(point);
+                    break;
+                }
         }
-
-        System.out.println(collisionPoints.size());
 
         for (Point3D collisionPoint : collisionPoints) {
             Vector3D vel = polyhedron.getVelOfPoint(collisionPoint, true);
@@ -108,11 +112,9 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
             double w2 = (J * w1 + rx * m * (-k * vy - vc)) / (J + rx * rx * m);
             double s = Math.abs(J * (w2 - w1) / rx);
 
-            Vector3D normalizedVel1= vel1.normalize();
+            Vector3D normalizedVel1 = vel1.normalize();
 
             double r1 = r.subtract(normalizedVel1.multiply(normalizedVel1.scalarProduct(r))).getLength();
-
-
 
 
             Plane3D frictionAndRadPlane = new Plane3D(collisionPoint,
@@ -123,7 +125,7 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
                     true);
 
             Vector3D friction1 = normalizedVel1.multiply(-1d * Math.abs(fr * s));
-            Vector3D friction2 = vel1.multiply(-1d * (1d / (1d / m + r1 * r1 / J1 )));
+            Vector3D friction2 = vel1.multiply(-1d * (1d / (1d / m + r1 * r1 / J1)));
 
             if (friction1.getLength() > friction2.getLength())
                 polyhedron.applyImpulse(friction2, collisionPoint, true);
@@ -132,9 +134,8 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
 
 
             polyhedron.applyImpulse(axisY.multiply(s), collisionPoint, true);
-
-
         }
+
     }
 
 
@@ -187,14 +188,12 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
         final Vector3D vel1 = Tools.calcProjectionOfVectorOnPlane(sphere1.getVelOfPoint(collisionPoint1, true), frictionPlane);
         final Vector3D vel2 = Tools.calcProjectionOfVectorOnPlane(sphere2.getVelOfPoint(collisionPoint2, true), frictionPlane);
 
-        Vector3D relativeVel1 = vel1.subtract(vel2);
         Vector3D relativeVel2 = vel2.subtract(vel1);
 
         Vector3D firstSphereFriction1 = relativeVel2.multiply(fr * s / relativeVel2.getLength());
         Vector3D firstSphereFriction2 = relativeVel2.multiply(m1 * m2 / (3.5 * (m1 + m2)));
 
         if (firstSphereFriction1.getLength() < firstSphereFriction2.getLength()) {
-            System.out.println(1234);
             sphere1.applyFriction(collisionPoint1, firstSphereFriction1.multiply(-1));
             sphere2.applyFriction(collisionPoint1, firstSphereFriction1);
         } else {
@@ -230,7 +229,6 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
         final double k = Tools.countAverage(sphere.getMaterial().coefOfReduction, wall.getMaterial().coefOfReduction);
         final double fr = Tools.countAverage(sphere.getMaterial().coefOfFriction, wall.getMaterial().coefOfFriction);
         final double m = sphere.getM();
-        final double J = sphere.getJ();
 
         Vector3D axisY = wall.getPlane().vector;
 
@@ -241,7 +239,7 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
 
         final Point3D collisionPoint = axisY.multiply(-sphere.getR() / axisYLen).addToPoint(sphere.getPositionOfCentre(true));
 
-        final double vy = (double) Math.abs(sphere.getV().scalarProduct(axisY) / axisY.getLength());
+        final double vy = Math.abs(sphere.getV().scalarProduct(axisY) / axisY.getLength());
         final double s = (1f + k) * sphere.getM() * vy;
 
 

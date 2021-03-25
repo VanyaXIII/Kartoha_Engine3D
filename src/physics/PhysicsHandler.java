@@ -61,10 +61,9 @@ public class PhysicsHandler {
             for (Wall wall : walls) {
                 try {
                     for (Triangle triangle : wall.getTriangles())
-                    if (new IntersectionalPair<>(polyhedron, triangle).areIntersected()) {
-                        System.out.println(11111111);
-                        new CollisionalPair<>(polyhedron, wall).collide();
-                    }
+                        if (new IntersectionalPair<>(polyhedron, triangle).areIntersected()) {
+                            new CollisionalPair<>(polyhedron, wall).collide();
+                        }
                 } catch (ImpossiblePairException e) {
                     e.printStackTrace();
                 }
