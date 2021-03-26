@@ -105,7 +105,7 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
             final double m1 = sphere.getM();
             final double ratio = m1 / m2;
             final double J1 = sphere.getJ();
-            final double J2 = polyhedron.getJ(new Line3D(polyhedron.getPositionOfCentre(true), collisionPlane.vector), true);
+            double J2 = polyhedron.getJ(new Line3D(polyhedron.getPositionOfCentre(true), collisionPlane.vector), true);
 
             Line3D collisionLine = new Line3D(sphere.getPositionOfCentre(true), axisX);
             Point3D collisionPoint2 = collisionLine.getIntersection(edgePlane).get();
@@ -123,6 +123,28 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
 
             double u1cx = ((ratio - k) * v1cx + v2x * (1 + k) + wr2 + (m1 * ry * ry * v1cx) / J2) / (1d + ratio + m1 * ry * ry / J2);
             double s = m1 * (u1cx - v1cx);
+
+            Vector3D vel1 = Tools.calcProjectionOfVectorOnPlane(sphere.getVelOfPoint(collisionPoint1, true), edgePlane);
+            Vector3D vel2 = Tools.calcProjectionOfVectorOnPlane(polyhedron.getVelOfPoint(collisionPoint2, true), edgePlane);
+            Vector3D relativeVel1 = vel1.subtract(vel2);
+            Vector3D relativeVel2 = vel2.subtract(vel1);
+
+            Plane3D frictionAndRadPlane = new Plane3D(polyhedron.getPositionOfCentre(true), collisionPoint2, vel2.addToPoint(collisionPoint2));
+            J2 = polyhedron.getJ(new Line3D(polyhedron.getPositionOfCentre(true), frictionAndRadPlane.vector), true);
+
+            double r2 = pRadV.subtract(vel2.normalize().multiply(vel2.normalize().scalarProduct(pRadV))).getLength();
+
+            Vector3D polyhedronFriction1 = relativeVel2.normalize().multiply(-1d * fr * s);
+            Vector3D polyhedronFriction2 = relativeVel2.multiply(-1d / (1d / m1 + 1d / m2 + r2 * r2 / J2 + sphere.getR() * sphere.getR() / J1));
+
+            if (polyhedronFriction1.getLength() < polyhedronFriction2.getLength()) {
+                polyhedron.applyImpulse(polyhedronFriction1, collisionPoint2, true);
+                sphere.applyFriction(collisionPoint1, polyhedronFriction1.multiply(-1d));
+            } else {
+                polyhedron.applyImpulse(polyhedronFriction2, collisionPoint2, true);
+                sphere.applyFriction(collisionPoint1, polyhedronFriction2.multiply(-1d));
+            }
+
 
             Vector3D sphereImpulse = new Vector3D(sphere.getPositionOfCentre(true), collisionPoint1).normalize().multiply(-s);
 

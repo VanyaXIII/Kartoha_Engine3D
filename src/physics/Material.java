@@ -8,9 +8,9 @@ public enum Material {
     WOOD(500, new Color(124, 67, 11),1f, 0f),
     STONE(2500, new Color(90, 90, 90),1f, 0.5f),
     GOLD(19300, new Color(238, 198, 0),0.6f, 0.05f),
-    LAPIS_LAZULI(2500, new Color(0, 34, 255), 0.9f, 0.1f),
+    LAZULI(2500, new Color(0, 34, 255), 0.9f, 0.1f),
     OSMIUM(22500, new Color(148, 157, 191),1f, 0f),
-    CONSTANTIN(1000, Color.GREEN, 0.4f, 0.1f);
+    CONSTANTIN(1000, Color.GREEN, 0.4f, 0.05f);
 
     public final double p;
     public final Color fillColor;
