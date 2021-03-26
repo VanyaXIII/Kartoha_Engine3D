@@ -65,7 +65,27 @@ public class PhysicsHandler {
             });
         });
 
-        Thread polyhedronThread = new Thread(() -> polyhedrons.forEach(polyhedron -> {
+        Thread polyhedronThread = new Thread(() -> {
+
+            for (int i = 0; i < polyhedrons.size() - 1; i++) {
+                for (int j = i + 1; j < polyhedrons.size(); j++) {
+                    synchronized (polyhedrons.get(i)) {
+                        synchronized (polyhedrons.get(j)) {
+                            try {
+                                if (new IntersectionalPair<>(polyhedrons.get(i), polyhedrons.get(j)).areIntersected()) {
+                                    new CollisionalPair<>(polyhedrons.get(i), polyhedrons.get(j)).collide();
+                                }
+                            } catch (ImpossiblePairException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }
+                }
+            }
+
+
+            polyhedrons.forEach(polyhedron -> {
             for (Wall wall : walls) {
                 try {
                     for (Triangle triangle : wall.getTriangles())
@@ -87,7 +107,7 @@ public class PhysicsHandler {
                     e.printStackTrace();
                 }
             }
-        }));
+        });});
 
         sphereThread.start();
         polyhedronThread.start();

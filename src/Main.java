@@ -13,6 +13,7 @@ import geometry.Shape;
 import javax.swing.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Main {
 

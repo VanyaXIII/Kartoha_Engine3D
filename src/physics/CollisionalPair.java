@@ -55,6 +55,7 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
         methodsMap.putByFirstKey(PhysicalPolyhedron.class, Wall.class, CollisionalPair::polyhedronToWall);
         methodsMap.putByFirstKey(PhysicalPolyhedron.class, GravityPlate.class, CollisionalPair::polyhedronToWall);
         methodsMap.putByFirstKey(PhysicalPolyhedron.class, PhysicalSphere.class, CollisionalPair::sphereToPolyhedron);
+        methodsMap.putByFirstKey(PhysicalPolyhedron.class, PhysicalPolyhedron.class, CollisionalPair::polyhedronToPolyhedron);
     }
 
     /**
@@ -63,6 +64,11 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
 
     public void collide() {
         methodsMap.getElement(firstThing.getClass(), secondThing.getClass()).collide(firstThing, secondThing);
+    }
+
+    private static void polyhedronToPolyhedron(Collisional thing1, Collisional thing2) {
+        PhysicalPolyhedron polyhedron1 = (PhysicalPolyhedron) thing1;
+        PhysicalPolyhedron polyhedron2 = (PhysicalPolyhedron) thing2;
     }
 
     private static void sphereToPolyhedron(Collisional thing1, Collisional thing2) {
@@ -122,6 +128,7 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
 
             sphere.applyStrikeImpulse(new Vector3D(sphere.getPositionOfCentre(true), collisionPoint1).normalize().multiply(-s));
             polyhedron.applyImpulse(sphereImpulse.multiply(-1d), collisionPoint2, true);
+
 
         }
 

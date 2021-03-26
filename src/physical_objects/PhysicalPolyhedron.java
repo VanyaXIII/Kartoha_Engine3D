@@ -11,9 +11,7 @@ import physics.Material;
 import physics.Space;
 import utils.Tools;
 
-import java.util.ArrayList;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 public class PhysicalPolyhedron extends AbstractBody implements Collisional, Intersectional {
 
@@ -123,17 +121,17 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
         applyImpulse(impulse, applicationPoint, false);
     }
 
-    public ArrayList<Point3D> getPoints(boolean mode) {
+    public Set<Point3D> getPoints(boolean mode) {
         if (!mode) {
-            return points;
+            return new HashSet<>(points);
         }
         else {
-            ArrayList<Point3D> newPoints = new ArrayList<>();
+            HashSet<Point3D> newPoints = new HashSet<>();
 
             Vector3D movement = getMovement();
 
-            for (int i = 0; i < points.size(); i++)
-                newPoints.add(i, movement.addToPoint(points.get(i)).rotate(w.multiply(space.getDT()), getPositionOfCentre(true)));
+            for (Point3D point : points)
+                newPoints.add(movement.addToPoint(point).rotate(w.multiply(space.getDT()), getPositionOfCentre(true)));
 
             return newPoints;
         }
@@ -154,6 +152,13 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
             return newTriangles;
 
         }
+    }
+
+    public Set<Segment> getSegments(boolean mode){
+        HashSet<Segment> segments = new HashSet<>();
+        for (Triangle triangle : getTriangles(mode))
+            segments.addAll(triangle.getSegments());
+        return segments;
     }
 
     private Vector3D getMovement() {

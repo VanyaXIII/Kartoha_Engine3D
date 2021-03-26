@@ -52,7 +52,28 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
         methodsMap.putByFirstKey(PhysicalPolyhedron.class, PhysicalPolyhedron.class, IntersectionalPair::polyhedronToPolyhedron);
     }
 
-    private static boolean polyhedronToPolyhedron(Intersectional intersectional, Intersectional intersectional1) {
+    public boolean areIntersected() {
+        return methodsMap.getElement(firstThing.getClass(), secondThing.getClass()).areIntersected(firstThing, secondThing);
+    }
+
+    private static boolean polyhedronToPolyhedron(Intersectional thing1, Intersectional thing2) {
+        PhysicalPolyhedron polyhedron1 = (PhysicalPolyhedron) thing1;
+        PhysicalPolyhedron polyhedron2 = (PhysicalPolyhedron) thing2;
+
+        if (!new AABB(polyhedron1, dynamicCollisionMode).isIntersectedWith(new AABB(polyhedron2, dynamicCollisionMode)))
+            return false;
+
+        for (Segment segment : polyhedron1.getSegments(dynamicCollisionMode))
+            for (Triangle triangle : polyhedron2.getTriangles(dynamicCollisionMode))
+                if (triangle.isIntersectedWithSegment(segment))
+                    return true;
+
+        for (Segment segment : polyhedron2.getSegments(dynamicCollisionMode))
+            for (Triangle triangle : polyhedron1.getTriangles(dynamicCollisionMode))
+                if (triangle.isIntersectedWithSegment(segment))
+                    return true;
+
+
         return false;
     }
 
@@ -108,10 +129,6 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
             }
         }
         return intersected;
-    }
-
-    public boolean areIntersected() {
-        return methodsMap.getElement(firstThing.getClass(), secondThing.getClass()).areIntersected(firstThing, secondThing);
     }
 
     /**

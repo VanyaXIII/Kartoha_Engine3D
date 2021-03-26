@@ -13,6 +13,7 @@ import utils.Tools;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Set;
 
 public class Space {
 
@@ -38,20 +39,21 @@ public class Space {
         G = g;
         this.canvas = canvas;
         try {
-//            spheres.add(new PhysicalSphere(this, new Vector3D(-240, 0, 0), new Vector3D(1, 1, 1), 1550, 550, 1000, 100, Material.CONSTANTIN));
+            spheres.add(new PhysicalSphere(this, new Vector3D(-240, 0, 0), new Vector3D(1, 1, 1), 1550, 550, 1000, 100, Material.CONSTANTIN));
 //            spheres.add(new PhysicalSphere(this, new Vector3D(140, 0, 0), new Vector3D(1, 1, 1), -510, -50, 50, 100, Material.Constantin));
             polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0.001, 0.001, 0.001),
-                    new PhysicalPolyhedronBuilder(Primitive.OCTAHEDRON.get(), new Point3D(410, 410, 900)), Material.CONSTANTIN));
+                    new PhysicalPolyhedronBuilder(Primitive.CUBE.get(), new Point3D(410, 410, 900)), Material.CONSTANTIN));
 
         } catch (ImpossibleObjectException | IOException e) {
             e.printStackTrace();
         }
+
         addGravityPlate(this,
                 new Point3D(0, 0, 0),
                 new Point3D(10000, 0, 0),
                 new Point3D(0, 10000, 0),
                 new Point3D(10000, 10000, 0),
-                550,
+                0,
                 Material.GOLD);
     }
 

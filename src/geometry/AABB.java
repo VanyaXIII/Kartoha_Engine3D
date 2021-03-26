@@ -43,7 +43,7 @@ public class AABB {
     }
 
     public AABB(PhysicalPolyhedron polyhedron, boolean mode){
-        this(polyhedron.getPoints(mode));
+        this(new ArrayList<>(polyhedron.getPoints(mode)));
     }
 
     public AABB(ArrayList<Point3D> points){
