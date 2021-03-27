@@ -1,6 +1,7 @@
 
 
 import com.aparapi.Kernel;
+import com.google.gson.Gson;
 import geometry.Triangle;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
@@ -67,7 +68,8 @@ public class Main {
         triangles.add(t7);
         triangles.add(t8);
 //
-        Shape shape = new Shape(points, triangles);
+        Gson gson = new Gson();
+        System.out.println(gson.toJson(space.getWalls()));
 
 //        shape.toJson("src\\shapes\\assets\\octahedron.json");
 
@@ -75,7 +77,6 @@ public class Main {
 //        for(Point3D point : shape.getPoints()) System.out.println(point);
 
 
-        System.currentTimeMillis();
 
 //        new ShapeReader("src\\shapes\\assets\\tetrahedron.json").read().toJson("src\\shapes\\assets\\tetrahedron1.json");
 

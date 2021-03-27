@@ -10,7 +10,7 @@ public enum Material {
     GOLD(19300, new Color(238, 198, 0),0.6f, 0.05f),
     LAZULI(2500, new Color(0, 34, 255), 0.9f, 0.1f),
     OSMIUM(22500, new Color(148, 157, 191),1f, 0f),
-    CONSTANTIN(1000, Color.GREEN, 0.4f, 0.05f);
+    CONSTANTIN(1000, Color.GREEN, 0.4f, 0.001f);
 
     public final double p;
     public final Color fillColor;

@@ -69,6 +69,117 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
     private static void polyhedronToPolyhedron(Collisional thing1, Collisional thing2) {
         PhysicalPolyhedron polyhedron1 = (PhysicalPolyhedron) thing1;
         PhysicalPolyhedron polyhedron2 = (PhysicalPolyhedron) thing2;
+
+        Plane3D edgePlane = null;
+        Point3D collisionPoint = null;
+        boolean bTF = true;
+        boolean vInters = true;
+
+        checkingPoints:
+        {
+
+            for (Point3D point : polyhedron1.getPoints(true))
+                for (Triangle triangle : polyhedron2.getTriangles(true))
+                    if (triangle.isIntersectedWithSegment(new Segment(point, polyhedron1.getPositionOfCentre(true)))) {
+                        collisionPoint = point;
+                        edgePlane = triangle.getPlane();
+                        break checkingPoints;
+                    }
+
+            for (Point3D point : polyhedron2.getPoints(true))
+                for (Triangle triangle : polyhedron1.getTriangles(true))
+                    if (triangle.isIntersectedWithSegment(new Segment(point, polyhedron2.getPositionOfCentre(true)))) {
+                        edgePlane = triangle.getPlane();
+                        collisionPoint = point;
+                        bTF = false;
+                        break checkingPoints;
+                    }
+        }
+
+        if (collisionPoint == null) {
+            vInters = false;
+            checkingSegments:
+            {
+                for (Segment segment : polyhedron1.getSegments(true))
+                    for (Triangle triangle : polyhedron2.getTriangles(true))
+                        if (triangle.isIntersectedWithSegment(segment)) {
+                            edgePlane = triangle.getPlane();
+                            collisionPoint = segment.getIntersection(triangle.getPlane()).get();
+                            break checkingSegments;
+                        }
+
+                for (Segment segment : polyhedron2.getSegments(true))
+                    for (Triangle triangle : polyhedron1.getTriangles(true))
+                        if (triangle.isIntersectedWithSegment(segment)) {
+                            edgePlane = triangle.getPlane();
+                            collisionPoint = segment.getIntersection(triangle.getPlane()).get();
+                            bTF = false;
+                            break checkingSegments;
+                        }
+            }
+        }
+
+        if (collisionPoint != null) {
+            Vector3D axisX = edgePlane.vector.normalize();
+            Point3D collisionPoint1 = null;
+            Point3D collisionPoint2 = null;
+
+            if (!vInters) {
+                collisionPoint2 = collisionPoint;
+                collisionPoint1 = collisionPoint;
+            }
+
+            if (bTF && vInters) {
+                collisionPoint1 = collisionPoint;
+                collisionPoint2 = edgePlane.getIntersection(new Line3D(polyhedron2.getPositionOfCentre(true), collisionPoint1)).get();
+            } else if(vInters) {
+                collisionPoint2 = collisionPoint;
+                collisionPoint1 = edgePlane.getIntersection(new Line3D(polyhedron1.getPositionOfCentre(true), collisionPoint2)).get();
+            }
+
+            Vector3D r1 = new Vector3D(polyhedron1.getPositionOfCentre(true), collisionPoint1);
+            Vector3D r2 = new Vector3D(polyhedron2.getPositionOfCentre(true), collisionPoint2);
+            Vector3D vel1 = polyhedron1.getVelOfPoint(collisionPoint1, true);
+            Vector3D vel2 = polyhedron2.getVelOfPoint(collisionPoint2, true);
+            Vector3D cVel1 = polyhedron1.getV();
+            Vector3D cVel2 = polyhedron2.getV();
+
+            Plane3D plane1 = new Plane3D(collisionPoint1, axisX.addToPoint(collisionPoint1), polyhedron1.getPositionOfCentre(true));
+            Plane3D plane2 = new Plane3D(collisionPoint2, axisX.addToPoint(collisionPoint2), polyhedron2.getPositionOfCentre(true));
+
+
+            final double k = Tools.countAverage(polyhedron1.getMaterial().coefOfReduction, polyhedron2.getMaterial().coefOfReduction);
+            final double fr = Tools.countAverage(polyhedron1.getMaterial().coefOfFriction, polyhedron2.getMaterial().coefOfFriction);
+            final double m1 = polyhedron1.getM();
+            final double m2 = polyhedron2.getM();
+            double J1 = polyhedron1.getJ(new Line3D(polyhedron1.getPositionOfCentre(true), plane1.vector), true);
+            double J2 = polyhedron2.getJ(new Line3D(polyhedron2.getPositionOfCentre(true), plane2.vector), true);
+            final double ratio = m1 / m2;
+            double ry1 = r1.subtract(axisX.multiply(axisX.scalarProduct(r1))).getLength();
+            double ry2 = r2.subtract(axisX.multiply(axisX.scalarProduct(r2))).getLength();
+
+            double v2x = vel2.scalarProduct(axisX);
+            double v1x = vel1.scalarProduct(axisX);
+            double v1cx = cVel1.scalarProduct(axisX);
+            double v2cx = cVel2.scalarProduct(axisX);
+            double w1x = polyhedron1.getAngularVelOfPoint(collisionPoint1, true).scalarProduct(axisX) / ry1;
+            double w2x = polyhedron2.getAngularVelOfPoint(collisionPoint2, true).scalarProduct(axisX) / ry2;
+
+            double fw1x = (-k * (v1x - v2x) + v2cx - v1cx + (ratio + 1) * J1 * w1x / (m1 * ry1) + w2x * ry2 + J1 * ry2 * ry2 * w1x / (J2 * ry1)) /
+                    ((ratio + 1) * J1 / (m1 * ry1) + ry1 + J1 * ry2 * ry2 / (J2 * ry1));
+
+            double s = J1 * (fw1x - w1x) / ry1;
+
+            System.out.println(axisX);
+            System.out.println(bTF);
+            System.out.println(polyhedron1.getPoints(true).size());
+
+            polyhedron1.applyImpulse(axisX.multiply(s), collisionPoint1, true);
+            polyhedron2.applyImpulse(axisX.multiply(-s), collisionPoint2, true);
+
+        }
+
+
     }
 
     private static void sphereToPolyhedron(Collisional thing1, Collisional thing2) {
@@ -99,8 +210,8 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
                     polyhedron.getPositionOfCentre(true),
                     axisX.addToPoint(sphere.getPositionOfCentre(true)));
 
-            final double k = Tools.countAverage(polyhedron.getMaterial().coefOfReduction, polyhedron.getMaterial().coefOfReduction);
-            final double fr = Tools.countAverage(polyhedron.getMaterial().coefOfFriction, polyhedron.getMaterial().coefOfFriction);
+            final double k = Tools.countAverage(polyhedron.getMaterial().coefOfReduction, sphere.getMaterial().coefOfReduction);
+            final double fr = Tools.countAverage(polyhedron.getMaterial().coefOfFriction, sphere.getMaterial().coefOfFriction);
             final double m2 = polyhedron.getM();
             final double m1 = sphere.getM();
             final double ratio = m1 / m2;
@@ -126,7 +237,6 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
 
             Vector3D vel1 = Tools.calcProjectionOfVectorOnPlane(sphere.getVelOfPoint(collisionPoint1, true), edgePlane);
             Vector3D vel2 = Tools.calcProjectionOfVectorOnPlane(polyhedron.getVelOfPoint(collisionPoint2, true), edgePlane);
-            Vector3D relativeVel1 = vel1.subtract(vel2);
             Vector3D relativeVel2 = vel2.subtract(vel1);
 
             Plane3D frictionAndRadPlane = new Plane3D(polyhedron.getPositionOfCentre(true), collisionPoint2, vel2.addToPoint(collisionPoint2));

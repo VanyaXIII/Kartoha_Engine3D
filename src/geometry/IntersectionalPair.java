@@ -92,13 +92,11 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
         if (!new AABB(polyhedron, dynamicCollisionMode).isIntersectedWith(new AABB(triangle)))
             return false;
 
-        boolean intersected = false;
+        for (Segment segment : polyhedron.getSegments(dynamicCollisionMode))
+            if (triangle.isIntersectedWithSegment(segment))
+                return true;
 
-        for (Point3D point : polyhedron.getPoints(dynamicCollisionMode))
-            if (triangle.isIntersectedWithSegment(new Segment(point, polyhedron.getPositionOfCentre(dynamicCollisionMode))))
-                intersected = true;
-
-        return intersected;
+        return false;
     }
 
     private static boolean sphereToPolyhedron(Intersectional thing1, Intersectional thing2) {

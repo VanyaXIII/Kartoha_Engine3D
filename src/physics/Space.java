@@ -40,10 +40,13 @@ public class Space {
         G = g;
         this.canvas = canvas;
         try {
-            spheres.add(new PhysicalSphere(this, new Vector3D(-240, 0, 0), new Vector3D(0, 4, 0), 1550, 550, 1000, 100, Material.CONSTANTIN));
+//            spheres.add(new PhysicalSphere(this, new Vector3D(-240, 0, 0), new Vector3D(0, 4, 0), 1550, 550, 1000, 50, Material.CONSTANTIN));
 //            spheres.add(new PhysicalSphere(this, new Vector3D(140, 0, 0), new Vector3D(1, 1, 1), -510, -50, 50, 100, Material.Constantin));
-            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0.001, 0.001, 0.001),
+            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0.001, 0.001, 0),
                     new PhysicalPolyhedronBuilder(Primitive.CUBE.get(), new Point3D(410, 410, 900)), Material.CONSTANTIN));
+
+            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(-290, 0, 0), new Vector3D(1, 1,0 ),
+                    new PhysicalPolyhedronBuilder(Primitive.CUBE.get(), new Point3D(2510, 410, 1000)), Material.CONSTANTIN));
 
         } catch (ImpossibleObjectException | IOException e) {
             e.printStackTrace();
