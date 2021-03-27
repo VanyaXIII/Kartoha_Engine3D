@@ -170,10 +170,6 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
 
             double s = J1 * (fw1x - w1x) / ry1;
 
-            System.out.println(axisX);
-            System.out.println(bTF);
-            System.out.println(polyhedron1.getPoints(true).size());
-
             polyhedron1.applyImpulse(axisX.multiply(s), collisionPoint1, true);
             polyhedron2.applyImpulse(axisX.multiply(-s), collisionPoint2, true);
 

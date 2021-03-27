@@ -1,6 +1,7 @@
 package geometry;
 
 import exceptions.ImpossiblePairException;
+import geometry.intersections.SpheresIntersection;
 import geometry.objects3D.Line3D;
 import geometry.objects3D.Plane3D;
 import geometry.objects3D.Point3D;
@@ -197,5 +198,33 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
         }
 
         return false;
+    }
+
+    public SpheresIntersection getSpheresIntersection() {
+        if (!(firstThing instanceof PhysicalSphere && secondThing instanceof PhysicalSphere))
+            return new SpheresIntersection(false);
+
+        if (!new AABB((PhysicalSphere) firstThing, staticCollisionMode).isIntersectedWith(new AABB((PhysicalSphere) secondThing, staticCollisionMode)))
+            return new SpheresIntersection(false);
+
+        PhysicalSphere sphere1 = (PhysicalSphere) firstThing;
+        PhysicalSphere sphere2 = (PhysicalSphere) secondThing;
+        Point3D sphere1Pos = sphere1.getPositionOfCentre(staticCollisionMode);
+        Point3D sphere2Pos = sphere2.getPositionOfCentre(staticCollisionMode);
+        Vector3D distanceVector = new Vector3D(sphere2Pos, sphere1Pos);
+        double distance = distanceVector.getLength();
+
+        if (distance < sphere1.getR() + sphere2.getR()) {
+            if (sphere2.equals(sphere1)) {
+                return new SpheresIntersection(false);
+            } else {
+                if (distanceVector.getLength() != 0)
+                    return new SpheresIntersection(true, distanceVector, sphere2.getR() + sphere1.getR() - distance);
+                else
+                    return new SpheresIntersection(true, distanceVector, 0);
+            }
+        }
+
+        return new SpheresIntersection(false);
     }
 }

@@ -32,7 +32,7 @@ public class Space {
         spheres = new ArrayList<>();
         walls = new ArrayList<>();
         gravityPlates = new ArrayList<>();
-        physicsHandler = new PhysicsHandler(this, 1);
+        physicsHandler = new PhysicsHandler(this, 2);
     }
 
     public Space(double dt, double g, CanvasPanel canvas) {
@@ -45,8 +45,8 @@ public class Space {
             polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0.001, 0.001, 0),
                     new PhysicalPolyhedronBuilder(Primitive.CUBE.get(), new Point3D(410, 410, 900)), Material.CONSTANTIN));
 
-            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(-290, 0, 0), new Vector3D(1, 1,0 ),
-                    new PhysicalPolyhedronBuilder(Primitive.CUBE.get(), new Point3D(2510, 410, 1000)), Material.CONSTANTIN));
+            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(-290, 0, 0), new Vector3D(0.01, 0,0.5 ),
+                    new PhysicalPolyhedronBuilder(Primitive.TETRAHEDRON.get(), new Point3D(2510, 410, 1000)), Material.CONSTANTIN));
 
         } catch (ImpossibleObjectException | IOException e) {
             e.printStackTrace();
@@ -57,7 +57,7 @@ public class Space {
                 new Point3D(10000, 0, 0),
                 new Point3D(0, 10000, 0),
                 new Point3D(10000, 10000, 0),
-                0,
+                00,
                 Material.GOLD);
     }
 
@@ -84,7 +84,7 @@ public class Space {
         }
 
 
-        Collections.shuffle(Collections.singletonList(spheres));
+        Collections.shuffle(spheres);
     }
 
     public void addSphere(Vector3D v, Vector3D w, double x0, double y0, double z0, double r, Material material) throws ImpossibleObjectException {

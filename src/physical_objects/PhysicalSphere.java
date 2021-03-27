@@ -1,7 +1,8 @@
 package physical_objects;
 
-import drawing.Drawable;
 import exceptions.ImpossibleObjectException;
+import geometry.intersections.SphereToPlaneIntersection;
+import geometry.intersections.SpheresIntersection;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 import geometry.polygonal.Sphere;
@@ -18,11 +19,36 @@ public class PhysicalSphere extends AbstractBody implements Intersectional, Coll
     private final Sphere drawableInterpretation;
 
     public PhysicalSphere(Space space, Vector3D v, Vector3D w, double x0, double y0, double z0, double r, Material material) throws ImpossibleObjectException {
-        super(space, x0, y0, z0, v, w,  material, (4 * Math.PI * r * r * r / 3d) * material.p);
+        super(space, x0, y0, z0, v, w, material, (4 * Math.PI * r * r * r / 3d) * material.p);
         this.r = r;
         J = 0.4d * m * r * r;
         drawableInterpretation = new Sphere(new Point3D(x0, y0, z0), r, 15, material.fillColor);
         pushToCanvas(space.getCanvas());
+    }
+
+    public synchronized void pullFromSphere(SpheresIntersection intersection) {
+        if (intersection.getValue() != 0) {
+            Point3D nCords = intersection.getCentralLine().normalize()
+                    .multiply(intersection.getValue())
+                    .addToPoint(getPositionOfCentre(false));
+            this.x0 = nCords.x;
+            this.y0 = nCords.y;
+            this.z0 = nCords.z;
+            drawableInterpretation.setCenter(getPositionOfCentre(false));
+        }
+    }
+
+    public synchronized void pullFromPlane(SphereToPlaneIntersection intersection) {
+        if (intersection.getValue() != 0) {
+            Vector3D movementVector = new Vector3D(intersection.getCollisionPoint(), getPositionOfCentre(false));
+            Point3D nCords = movementVector.normalize()
+                    .multiply(intersection.getValue())
+                    .addToPoint(getPositionOfCentre(false));
+            this.x0 = nCords.x;
+            this.y0 = nCords.y;
+            this.z0 = nCords.z;
+            drawableInterpretation.setCenter(getPositionOfCentre(false));
+        }
     }
 
     public synchronized void applyStrikeImpulse(Vector3D impulse) {
@@ -61,7 +87,7 @@ public class PhysicalSphere extends AbstractBody implements Intersectional, Coll
 
     @Override
     public void updateDrawingInterpretation() {
-        drawableInterpretation.setCenter(new Point3D(x0, y0, z0));
+        drawableInterpretation.setCenter(getPositionOfCentre(false));
         drawableInterpretation.rotate(w.multiply(space.getDT()), getPositionOfCentre(false));
     }
 }

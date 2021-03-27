@@ -78,11 +78,11 @@ public abstract class AbstractBody implements Drawable{
         return space;
     }
 
-    public void setV(Vector3D v) {
+    public synchronized void setV(Vector3D v) {
         this.v = v;
     }
 
-    public void setW(Vector3D w) {
+    public synchronized void setW(Vector3D w) {
         this.w = w;
     }
 }

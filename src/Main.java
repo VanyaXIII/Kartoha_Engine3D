@@ -21,7 +21,7 @@ public class Main {
     public static final int FocusLength = 300;
     public static final int Distance = 500;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args){
         Camera.Resolution resolution = new Camera.Resolution(1920, 1080);
         Camera camera = new Camera(new Screen(new Vector3D(FocusLength, 0, 0), new Point3D(-Distance, 500, 2000)), resolution, 0);
         CanvasPanel canvas = new CanvasPanel(camera, Kernel.EXECUTION_MODE.JTP);
@@ -67,14 +67,8 @@ public class Main {
         triangles.add(t6);
         triangles.add(t7);
         triangles.add(t8);
-//
-        Gson gson = new Gson();
-        System.out.println(gson.toJson(space.getWalls()));
 
-//        shape.toJson("src\\shapes\\assets\\octahedron.json");
 
-//        Shape shape = new ShapeReader("src\\shapes\\assets\\tetrahedron.json").read();
-//        for(Point3D point : shape.getPoints()) System.out.println(point);
 
 
 
@@ -87,7 +81,7 @@ public class Main {
                     space.changeTime();
                 }
                 try {
-                    Thread.sleep(8);
+                    Thread.sleep(5);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
