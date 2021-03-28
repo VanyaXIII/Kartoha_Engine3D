@@ -32,7 +32,7 @@ public class Space {
         spheres = new ArrayList<>();
         walls = new ArrayList<>();
         gravityPlates = new ArrayList<>();
-        physicsHandler = new PhysicsHandler(this, 2);
+        physicsHandler = new PhysicsHandler(this, 1);
     }
 
     public Space(double dt, double g, CanvasPanel canvas) {
@@ -40,15 +40,12 @@ public class Space {
         G = g;
         this.canvas = canvas;
         try {
-//            spheres.add(new PhysicalSphere(this, new Vector3D(-240, 0, 0), new Vector3D(0, 4, 0), 1550, 550, 1000, 50, Material.CONSTANTIN));
+            spheres.add(new PhysicalSphere(this, new Vector3D(-24, 0, 0), new Vector3D(0, 4, 0), 1550, 550, 1000, 50, Material.CONSTANTIN));
 //            spheres.add(new PhysicalSphere(this, new Vector3D(140, 0, 0), new Vector3D(1, 1, 1), -510, -50, 50, 100, Material.Constantin));
-            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0.001, 0.001, 0),
-                    new PhysicalPolyhedronBuilder(Primitive.CUBE.get(), new Point3D(410, 410, 900)), Material.CONSTANTIN));
+//            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0.001, 0.001, 0),
+//                    new PhysicalPolyhedronBuilder(Primitive.CUBE.get(), new Point3D(410, 410, 900)), Material.CONSTANTIN));
 
-            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(-290, 0, 0), new Vector3D(0.01, 0,0.5 ),
-                    new PhysicalPolyhedronBuilder(Primitive.TETRAHEDRON.get(), new Point3D(2510, 410, 1000)), Material.CONSTANTIN));
-
-        } catch (ImpossibleObjectException | IOException e) {
+        } catch (ImpossibleObjectException  e) {
             e.printStackTrace();
         }
 
@@ -57,7 +54,7 @@ public class Space {
                 new Point3D(10000, 0, 0),
                 new Point3D(0, 10000, 0),
                 new Point3D(10000, 10000, 0),
-                00,
+                500,
                 Material.GOLD);
     }
 

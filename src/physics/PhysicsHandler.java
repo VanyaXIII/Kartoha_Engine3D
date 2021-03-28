@@ -4,7 +4,8 @@ package physics;
 import exceptions.ImpossiblePairException;
 import geometry.IntersectionalPair;
 import geometry.Triangle;
-import geometry.objects3D.Vector3D;
+import geometry.intersections.SphereToPlaneIntersection;
+import geometry.intersections.SpheresIntersection;
 import physical_objects.PhysicalPolyhedron;
 import physical_objects.PhysicalSphere;
 import physical_objects.Wall;
@@ -42,6 +43,10 @@ public class PhysicsHandler {
                                 if (new IntersectionalPair<>(spheres.get(i), spheres.get(j)).areIntersected()) {
                                     new CollisionalPair<>(spheres.get(i), spheres.get(j)).collide();
                                 }
+                                SpheresIntersection spherePair = new IntersectionalPair<>(spheres.get(i), spheres.get(j)).getSpheresIntersection();
+                                if (spherePair.areIntersected) {
+                                    spheres.get(i).pullFromSphere(spherePair);
+                                }
                             } catch (ImpossiblePairException e) {
                                 e.printStackTrace();
                             }
@@ -53,11 +58,14 @@ public class PhysicsHandler {
             spheres.forEach(sphere -> {
                 for (Wall wall : walls) {
                     try {
-                        for (Triangle triangle : wall.getTriangles())
+                        for (Triangle triangle : wall.getTriangles()) {
                             if (new IntersectionalPair<>(sphere, triangle).areIntersected()) {
                                 new CollisionalPair<>(sphere, wall).collide();
-                                break;
                             }
+                            SphereToPlaneIntersection pair = new IntersectionalPair<>(sphere, triangle).getSphereToPlaneIntersection();
+                            if (pair.areIntersected)
+                                sphere.pullFromPlane(pair);
+                        }
                     } catch (ImpossiblePairException e) {
                         e.printStackTrace();
                     }

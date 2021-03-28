@@ -2,6 +2,7 @@ package physical_objects;
 
 import exceptions.ImpossibleObjectException;
 import geometry.*;
+import geometry.intersections.PolyhedronToPlaneIntersection;
 import geometry.objects3D.*;
 import geometry.polygonal.Polyhedron;
 import graph.CanvasPanel;
@@ -20,6 +21,10 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
     private final ArrayList<Triangle> triangles;
     private final static long depth = 30;
 
+    {
+        triangles = new ArrayList<>();
+    }
+
 
     public PhysicalPolyhedron(Space space, Vector3D v, Vector3D w, PhysicalPolyhedronBuilder builder, Material material) throws ImpossibleObjectException {
 
@@ -28,7 +33,7 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
                 v, w, material, builder.getVolume() * material.p);
 
         this.points = builder.getPoints();
-        this.triangles = builder.getTriangles();
+        this.triangles.addAll(builder.getTriangles());
         pushToCanvas(space.getCanvas());
     }
 
@@ -63,7 +68,7 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
     }
 
 
-    public double getJ(Line3D line, boolean mode) {
+    public synchronized double getJ(Line3D line, boolean mode) {
 
         double J = 0d;
 
@@ -73,7 +78,7 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
         double movement = projectionVector.getLength() / (double) (depth - 1);
 
         projectionVector = projectionVector.multiply(movement / projectionVector.getLength());
-        ArrayList<Segment> segments = new ArrayList<>();
+        Set<Segment> segments = new HashSet<>();
         currentPoint = projectionVector.addToPoint(currentPoint);
         Plane3D plane = new Plane3D(projectionVector, currentPoint);
 
@@ -92,10 +97,6 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
                 J += shape.getRelativeJ(line) * material.p * movement;
 
 
-//                System.out.println(shape.getRelativeJ(line) * material.p * movement);
-//
-//            System.out.println("+++++++++++++++++++++");
-
                 if (i == depth - 1) J += shape.getRelativeJ(line) * material.p * movement;
             }
 
@@ -109,7 +110,7 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
         return J;
     }
 
-    public void applyImpulse(Vector3D impulse, Point3D applicationPoint, boolean mode){
+    public synchronized void applyImpulse(Vector3D impulse, Point3D applicationPoint, boolean mode){
         v = v.add(impulse.multiply(1d / m));
         Vector3D radVector = new Vector3D(getPositionOfCentre(mode), applicationPoint);
         Plane3D impulsePlane = new Plane3D(getPositionOfCentre(mode), applicationPoint, impulse.addToPoint(applicationPoint));
@@ -117,8 +118,25 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
         w = w.add(radVector.vectorProduct(impulse).multiply(1d / J));
     }
 
-    public void applyImpulse(Vector3D impulse, Point3D applicationPoint){
+    public synchronized void applyImpulse(Vector3D impulse, Point3D applicationPoint){
         applyImpulse(impulse, applicationPoint, false);
+    }
+
+    public synchronized void pullFromPlane(PolyhedronToPlaneIntersection intersection){
+        if (intersection.getValue() != 0){
+            Vector3D movementVector = new Vector3D(intersection.getPointOfPolygon(), intersection.getCollisionPoint());
+            if (movementVector.getLength() != 0d){
+                movementVector = movementVector.normalize();
+                move(movementVector.multiply(intersection.getValue()));
+            }
+        }
+    }
+
+    public synchronized void move(Vector3D movement){
+        for (int i = 0; i < triangles.size(); i++) triangles.set(i, triangles.get(i).move(movement));
+        for (int i = 0; i < points.size(); i++) points.set(i, movement.addToPoint(points.get(i)));
+        Point3D oldZero = drawableInterpretation.getZero();
+        drawableInterpretation.setZero(movement.addToPoint(oldZero));
     }
 
     public Set<Point3D> getPoints(boolean mode) {
@@ -137,22 +155,23 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
         }
     }
 
-    public ArrayList<Triangle> getTriangles(boolean mode){
+    public Set<Triangle> getTriangles(boolean mode){
         if (!mode) {
-            return triangles;
+            return new HashSet<>(triangles);
         }
         else {
-            ArrayList<Triangle> newTriangles = new ArrayList<>();
+            Set<Triangle> newTriangles = new HashSet<>();
 
             Vector3D movement = getMovement();
 
-            for (int i = 0; i < triangles.size(); i++)
-                newTriangles.add(i, triangles.get(i).move(movement).rotate(w.multiply(space.getDT()), getPositionOfCentre(true)));
+            for (Triangle triangle : triangles)
+                newTriangles.add(triangle.move(movement).rotate(w.multiply(space.getDT()), getPositionOfCentre(true)));
 
             return newTriangles;
 
         }
     }
+
 
     public Set<Segment> getSegments(boolean mode){
         HashSet<Segment> segments = new HashSet<>();
@@ -177,7 +196,7 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
 
     @Override
     public void pushToCanvas(CanvasPanel canvas) {
-        ArrayList<Polygon3D> polygons = new ArrayList<>();
+        Set<Polygon3D> polygons = new HashSet<>();
         triangles.forEach(triangle -> polygons.add(triangle.toPolygon(Tools.getRandomColor())));
         drawableInterpretation = new Polyhedron(Point3D.ZERO, polygons);
         canvas.getPolygonals().add(drawableInterpretation);

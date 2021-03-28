@@ -2,7 +2,7 @@ package geometry.intersections;
 
 import geometry.objects3D.Point3D;
 
-public class PolyhedronToPlaneIntersection extends Intersection{
+public class PolyhedronToPlaneIntersection extends AbstractIntersection {
     
     private Point3D collisionPoint;
     private Point3D pointOfPolygon;

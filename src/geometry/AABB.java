@@ -89,8 +89,8 @@ public class AABB {
         return true;
     }
 
-    public ArrayList<Point3D> getAllPoints(){
-        ArrayList<Point3D> points = new ArrayList<>();
+    public Set<Point3D> getAllPoints(){
+        Set<Point3D> points = new HashSet<>();
         points.add(min);
         points.add(max);
         points.add(new Point3D(max.x, min.y, min.z));

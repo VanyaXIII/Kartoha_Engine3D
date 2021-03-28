@@ -69,11 +69,6 @@ public class Main {
         triangles.add(t8);
 
 
-
-
-
-//        new ShapeReader("src\\shapes\\assets\\tetrahedron.json").read().toJson("src\\shapes\\assets\\tetrahedron1.json");
-
         new Thread(() -> {
             while (true) {
                 synchronized (canvas) {

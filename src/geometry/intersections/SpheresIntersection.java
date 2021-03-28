@@ -2,7 +2,7 @@ package geometry.intersections;
 
 import geometry.objects3D.Vector3D;
 
-public class SpheresIntersection extends Intersection{
+public class SpheresIntersection extends AbstractIntersection {
 
     private Vector3D centralLine;
     private double value;

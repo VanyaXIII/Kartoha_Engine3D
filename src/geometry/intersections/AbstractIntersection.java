@@ -1,10 +1,10 @@
 package geometry.intersections;
 
-public abstract class Intersection {
+public abstract class AbstractIntersection {
 
     public final boolean areIntersected;
 
-    public Intersection(boolean areIntersected) {
+    public AbstractIntersection(boolean areIntersected) {
         this.areIntersected = areIntersected;
     }
 }

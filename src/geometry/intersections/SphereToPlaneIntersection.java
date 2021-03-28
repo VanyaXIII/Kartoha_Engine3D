@@ -2,7 +2,7 @@ package geometry.intersections;
 
 import geometry.objects3D.Point3D;
 
-public class SphereToPlaneIntersection extends Intersection{
+public class SphereToPlaneIntersection extends AbstractIntersection {
 
     private Point3D collisionPoint;
     private double value;
@@ -11,7 +11,7 @@ public class SphereToPlaneIntersection extends Intersection{
         super(areIntersected);
     }
 
-    public SphereToPlaneIntersection(boolean areIntersected, Point3D collisionPoint, float value) {
+    public SphereToPlaneIntersection(boolean areIntersected, Point3D collisionPoint, double value) {
         super(areIntersected);
         this.value = value;
         this.collisionPoint = collisionPoint;

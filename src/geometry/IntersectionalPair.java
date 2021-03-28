@@ -1,6 +1,7 @@
 package geometry;
 
 import exceptions.ImpossiblePairException;
+import geometry.intersections.SphereToPlaneIntersection;
 import geometry.intersections.SpheresIntersection;
 import geometry.objects3D.Line3D;
 import geometry.objects3D.Plane3D;
@@ -226,5 +227,34 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
         }
 
         return new SpheresIntersection(false);
+    }
+
+    public SphereToPlaneIntersection getSphereToPlaneIntersection(){
+
+        if (!(firstThing instanceof PhysicalSphere && secondThing instanceof Triangle))
+            return new SphereToPlaneIntersection(false);
+
+        PhysicalSphere sphere = (PhysicalSphere) firstThing;
+        Triangle triangle = (Triangle) secondThing;
+
+        if (!new AABB(sphere, staticCollisionMode).isIntersectedWith(new AABB(triangle)))
+            return new SphereToPlaneIntersection(false);
+        else {
+            try {
+                if (new IntersectionalPair<>(sphere, triangle).areIntersected()){
+                    Line3D line = new Line3D(sphere.getPositionOfCentre(staticCollisionMode), triangle.getPlane().vector);
+                    return new SphereToPlaneIntersection(true,
+                            line.getIntersection(triangle.getPlane()).get(),
+                            sphere.getR() - triangle.getPlane().distance(sphere.getPositionOfCentre(staticCollisionMode)));
+                }
+
+            } catch (ImpossiblePairException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return new SphereToPlaneIntersection(false);
+
+
     }
 }

@@ -5,23 +5,26 @@ import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 public class FlatShape {
 
-    private final ArrayList<Segment> segments;
-    private final ArrayList<Triangle> triangles;
+    private final Set<Segment> segments;
+    private final Set<Triangle> triangles;
 
     {
-        triangles = new ArrayList<>();
+        triangles = new HashSet<>();
     }
 
-    public FlatShape(ArrayList<Segment> segments){
+    public FlatShape(Set<Segment> segments){
         this.segments = segments;
         triangulate();
     }
 
     public void triangulate(){
-        Point3D zeroPoint = segments.get(0).point1;
+        Point3D zeroPoint = segments.iterator().next().point1;
         for (Segment segment : segments) triangles.add(new Triangle(zeroPoint, segment));
     }
 

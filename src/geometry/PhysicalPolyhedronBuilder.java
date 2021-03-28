@@ -4,20 +4,22 @@ import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class PhysicalPolyhedronBuilder {
 
     private ArrayList<Point3D> points;
-    private final ArrayList<Tetrahedron> tetrahedrons;
-    private ArrayList<Triangle> triangles;
+    private final Set<Tetrahedron> tetrahedrons;
+    private Set<Triangle> triangles;
 
     {
         points = new ArrayList<>();
-        triangles = new ArrayList<>();
-        tetrahedrons = new ArrayList<>();
+        triangles = new HashSet<>();
+        tetrahedrons = new HashSet<>();
     }
 
-    public PhysicalPolyhedronBuilder(ArrayList<Point3D> points, ArrayList<Triangle> triangles){
+    public PhysicalPolyhedronBuilder(ArrayList<Point3D> points, Set<Triangle> triangles){
         this.points = points;
         this.triangles = triangles;
         tetrahedral();
@@ -67,7 +69,7 @@ public class PhysicalPolyhedronBuilder {
         return points;
     }
 
-    public ArrayList<Triangle> getTriangles() {
+    public Set<Triangle> getTriangles() {
         return triangles;
     }
 }
