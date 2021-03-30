@@ -40,12 +40,21 @@ public class Space {
         G = g;
         this.canvas = canvas;
         try {
-            spheres.add(new PhysicalSphere(this, new Vector3D(-24, 0, 0), new Vector3D(0, 4, 0), 1550, 550, 1000, 50, Material.CONSTANTIN));
+//            spheres.add(new PhysicalSphere(this, new Vector3D(-24, 0, 0), new Vector3D(0, 4, 0), 1550, 550, 1000, 50, Material.CONSTANTIN));
 //            spheres.add(new PhysicalSphere(this, new Vector3D(140, 0, 0), new Vector3D(1, 1, 1), -510, -50, 50, 100, Material.Constantin));
 //            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0.001, 0.001, 0),
 //                    new PhysicalPolyhedronBuilder(Primitive.CUBE.get(), new Point3D(410, 410, 900)), Material.CONSTANTIN));
+    for (int i = 0; i < 2; i++) {
+//        polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0.001, 0.001, 0),
+//                new PhysicalPolyhedronBuilder(Primitive.CUBE.get(), new Point3D(410, 410 + 1000 * i, 900)), Material.CONSTANTIN));
+//
+//        polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(-290, 0, 0), new Vector3D(0.01, 0, 0.5),
+//                new PhysicalPolyhedronBuilder(Primitive.TETRAHEDRON.get(), new Point3D(2810, 410 + 1000 * i, 1000)), Material.CONSTANTIN));
+    }
+            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0.5, 0, 0),
+                new PhysicalPolyhedronBuilder(Primitive.OCTAHEDRON.get(), new Point3D(3500, 410, 1000)), Material.CONSTANTIN));
 
-        } catch (ImpossibleObjectException  e) {
+        } catch (ImpossibleObjectException | IOException e) {
             e.printStackTrace();
         }
 
@@ -62,17 +71,21 @@ public class Space {
 
         long time1 = System.nanoTime();
 
+//        System.out.println("----------------");
         try {
             physicsHandler.update();
         } catch (Exception ignored) {
         }
 
         double cTime = ((System.nanoTime() - time1) / 1000000.0);
+//        System.out.println("Всего: " + cTime);
+//        System.out.println("----------------");
         double sleepTime = 0;
 
         if (DT * 1000.0 - cTime > 0) {
             sleepTime = DT * 1000.0f - cTime;
         }
+
 
         try {
             Thread.sleep(Tools.transformdouble(sleepTime));
@@ -96,7 +109,7 @@ public class Space {
         polyhedrons.add(new PhysicalPolyhedron(this, v, w, builder, material));
     }
 
-    public void addPolyhedron(Vector3D v, Vector3D w,  PhysicalPolyhedronBuilder builder) throws ImpossibleObjectException {
+    public void addPolyhedron(Vector3D v, Vector3D w, PhysicalPolyhedronBuilder builder) throws ImpossibleObjectException {
         polyhedrons.add(new PhysicalPolyhedron(this, v, w, builder, Material.CONSTANTIN));
     }
 
@@ -108,7 +121,7 @@ public class Space {
         polyhedrons.add(new PhysicalPolyhedron(this, v, w, new PhysicalPolyhedronBuilder(shape, zero), Material.CONSTANTIN));
     }
 
-    public void addGravityPlate(Space space, Point3D a, Point3D b, Point3D c, Point3D d, double g, Material material){
+    public void addGravityPlate(Space space, Point3D a, Point3D b, Point3D c, Point3D d, double g, Material material) {
         GravityPlate plate = new GravityPlate(space, a, b, c, d, g, material);
         gravityPlates.add(plate);
         walls.add(plate);
@@ -119,7 +132,7 @@ public class Space {
     }
 
     public Vector3D getG(AbstractBody body) {
-        Vector3D g = new Vector3D(0,0,0);
+        Vector3D g = new Vector3D(0, 0, 0);
         for (GravityPlate plate : gravityPlates)
             g = g.add(plate.getG(body.getPositionOfCentre(false)));
         return g;

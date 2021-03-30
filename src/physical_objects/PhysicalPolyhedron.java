@@ -41,7 +41,7 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
     @Override
     public synchronized void update() {
         super.update();
-
+        
         Vector3D movement = getMovement();
 
         for (int i =0; i < points.size(); i++)
@@ -133,6 +133,9 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
     }
 
     public synchronized void move(Vector3D movement){
+        x0 += movement.x;
+        y0 += movement.y;
+        z0 += movement.z;
         for (int i = 0; i < triangles.size(); i++) triangles.set(i, triangles.get(i).move(movement));
         for (int i = 0; i < points.size(); i++) points.set(i, movement.addToPoint(points.get(i)));
         Point3D oldZero = drawableInterpretation.getZero();

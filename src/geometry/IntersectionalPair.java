@@ -1,6 +1,7 @@
 package geometry;
 
 import exceptions.ImpossiblePairException;
+import geometry.intersections.PolyhedronToPlaneIntersection;
 import geometry.intersections.SphereToPlaneIntersection;
 import geometry.intersections.SpheresIntersection;
 import geometry.objects3D.Line3D;
@@ -15,7 +16,7 @@ import physical_objects.Wall;
 import utils.TripleMap;
 
 /**
- * @param <FirstThingType> - type of first thing, that can be intersected with others
+ * @param <FirstThingType>  - type of first thing, that can be intersected with others
  * @param <SecondThingType> - type of second thing, that can be intersected with others
  * @author Ivan
  */
@@ -184,8 +185,8 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
                 return true;
             else {
 
-                for (Segment segment : triangle.getSegments()){
-                    if (segment.distance(spherePos) <= sphere.getR()){
+                for (Segment segment : triangle.getSegments()) {
+                    if (segment.distance(spherePos) <= sphere.getR()) {
                         Point3D point = new Plane3D(segment.vector, spherePos).getIntersection(segment).get();
                         if (new AABB(segment).isPointIn(point))
                             return true;
@@ -229,7 +230,7 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
         return new SpheresIntersection(false);
     }
 
-    public SphereToPlaneIntersection getSphereToPlaneIntersection(){
+    public SphereToPlaneIntersection getSphereToPlaneIntersection() {
 
         if (!(firstThing instanceof PhysicalSphere && secondThing instanceof Triangle))
             return new SphereToPlaneIntersection(false);
@@ -241,7 +242,7 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
             return new SphereToPlaneIntersection(false);
         else {
             try {
-                if (new IntersectionalPair<>(sphere, triangle).areIntersected()){
+                if (new IntersectionalPair<>(sphere, triangle).areIntersected()) {
                     Line3D line = new Line3D(sphere.getPositionOfCentre(staticCollisionMode), triangle.getPlane().vector);
                     return new SphereToPlaneIntersection(true,
                             line.getIntersection(triangle.getPlane()).get(),
@@ -254,6 +255,36 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
         }
 
         return new SphereToPlaneIntersection(false);
+    }
+
+    public PolyhedronToPlaneIntersection getPolyhedronToPlaneIntersection() {
+        if (!(firstThing instanceof PhysicalPolyhedron && secondThing instanceof Triangle))
+            return new PolyhedronToPlaneIntersection(false);
+
+        if (!new AABB((PhysicalPolyhedron) firstThing, staticCollisionMode).isIntersectedWith(new AABB((Triangle) secondThing)))
+            return new PolyhedronToPlaneIntersection(false);
+
+        PhysicalPolyhedron polyhedron = (PhysicalPolyhedron) firstThing;
+        Triangle triangle = (Triangle) secondThing;
+        Point3D position = polyhedron.getPositionOfCentre(staticCollisionMode);
+        Point3D farPoint = null;
+
+        for (Point3D point : polyhedron.getPoints(staticCollisionMode)) {
+            boolean intersects = triangle.isIntersectedWithSegment(new Segment(point, position));
+            if (farPoint == null && intersects) {
+                farPoint = point;
+            }
+            if (intersects && triangle.getPlane().distance(point) > triangle.getPlane().distance(farPoint)) {
+                farPoint = point;
+            }
+        }
+
+        if (farPoint != null) {
+            Point3D collisionPoint = triangle.getPlane().getIntersection(new Line3D(farPoint, triangle.getPlane().vector)).get();
+            return new PolyhedronToPlaneIntersection(true, collisionPoint, farPoint, triangle.getPlane().distance(farPoint));
+        }
+
+        return new PolyhedronToPlaneIntersection(false);
 
 
     }

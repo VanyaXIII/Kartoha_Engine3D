@@ -4,6 +4,7 @@ package physics;
 import exceptions.ImpossiblePairException;
 import geometry.IntersectionalPair;
 import geometry.Triangle;
+import geometry.intersections.PolyhedronToPlaneIntersection;
 import geometry.intersections.SphereToPlaneIntersection;
 import geometry.intersections.SpheresIntersection;
 import physical_objects.PhysicalPolyhedron;
@@ -34,6 +35,7 @@ public class PhysicsHandler {
     }
 
     private void handlePhysics() throws InterruptedException, ConcurrentModificationException {
+        long time1 = System.nanoTime();
         Thread sphereThread = new Thread(() -> {
             for (int i = 0; i < spheres.size() - 1; i++) {
                 for (int j = i + 1; j < spheres.size(); j++) {
@@ -96,11 +98,14 @@ public class PhysicsHandler {
             polyhedrons.forEach(polyhedron -> {
             for (Wall wall : walls) {
                 try {
-                    for (Triangle triangle : wall.getTriangles())
+                    for (Triangle triangle : wall.getTriangles()) {
                         if (new IntersectionalPair<>(polyhedron, triangle).areIntersected()) {
                             new CollisionalPair<>(polyhedron, wall).collide();
-                            break;
                         }
+                        PolyhedronToPlaneIntersection pair = new IntersectionalPair<>(polyhedron, triangle).getPolyhedronToPlaneIntersection();
+                        if (pair.areIntersected)
+                            polyhedron.pullFromPlane(pair);
+                    }
                 } catch (ImpossiblePairException e) {
                     e.printStackTrace();
                 }
@@ -122,6 +127,8 @@ public class PhysicsHandler {
         sphereThread.join();
         polyhedronThread.join();
 
+//        System.out.println("Физика: " + ((System.nanoTime() - time1) / 1000000.0));
+
         sphereThread = new Thread(() -> {
             synchronized (spheres) {
                 spheres.forEach(PhysicalSphere::update);
@@ -134,11 +141,11 @@ public class PhysicsHandler {
             }
         });
 
-
         sphereThread.start();
         polyhedronThread.start();
         polyhedronThread.join();
         sphereThread.join();
+
     }
 
 

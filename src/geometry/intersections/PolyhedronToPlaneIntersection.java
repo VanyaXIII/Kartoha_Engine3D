@@ -12,7 +12,7 @@ public class PolyhedronToPlaneIntersection extends AbstractIntersection {
         super(areIntersected);
     }
 
-    public PolyhedronToPlaneIntersection(boolean areIntersected, Point3D collisionPoint, Point3D pointOfPolygon, float value){
+    public PolyhedronToPlaneIntersection(boolean areIntersected, Point3D collisionPoint, Point3D pointOfPolygon, double value){
         super(areIntersected);
         this.collisionPoint = collisionPoint;
         this.pointOfPolygon = pointOfPolygon;
