@@ -1,6 +1,6 @@
 package shapes;
 
-import geometry.Shape;
+import geometry.objects.Shape;
 
 import java.io.IOException;
 

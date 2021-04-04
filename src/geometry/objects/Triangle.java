@@ -1,11 +1,14 @@
-package geometry;
+package geometry.objects;
 
+import geometry.AABB;
 import geometry.objects3D.*;
 import limiters.Intersectional;
 import utils.FloatComparator;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Triangle implements Intersectional {
     public Point3D A, B, C;
@@ -94,8 +97,8 @@ public class Triangle implements Intersectional {
         return intersectionPoints;
     }
 
-    public ArrayList<Segment> getSegments(){
-        ArrayList<Segment> segments = new ArrayList<>();
+    public Set<Segment> getSegments(){
+        Set<Segment> segments = new HashSet<>();
         segments.add(new Segment(A, B));
         segments.add(new Segment(C, B));
         segments.add(new Segment(A, C));

@@ -1,9 +1,9 @@
-package geometry;
+package geometry.intersections;
 
 import exceptions.ImpossiblePairException;
-import geometry.intersections.PolyhedronToPlaneIntersection;
-import geometry.intersections.SphereToPlaneIntersection;
-import geometry.intersections.SpheresIntersection;
+import geometry.AABB;
+import geometry.objects.Segment;
+import geometry.objects.Triangle;
 import geometry.objects3D.Line3D;
 import geometry.objects3D.Plane3D;
 import geometry.objects3D.Point3D;

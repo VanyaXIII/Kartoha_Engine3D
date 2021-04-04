@@ -6,15 +6,13 @@ import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 import graph.CanvasPanel;
 import physical_objects.*;
-import geometry.Shape;
+import geometry.objects.Shape;
 import shapes.Primitive;
 import utils.Tools;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 public class Space {
 
@@ -40,20 +38,8 @@ public class Space {
         G = g;
         this.canvas = canvas;
         try {
-//            spheres.add(new PhysicalSphere(this, new Vector3D(-24, 0, 0), new Vector3D(0, 4, 0), 1550, 550, 1000, 50, Material.CONSTANTIN));
-//            spheres.add(new PhysicalSphere(this, new Vector3D(140, 0, 0), new Vector3D(1, 1, 1), -510, -50, 50, 100, Material.Constantin));
-//            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0.001, 0.001, 0),
-//                    new PhysicalPolyhedronBuilder(Primitive.CUBE.get(), new Point3D(410, 410, 900)), Material.CONSTANTIN));
-    for (int i = 0; i < 2; i++) {
-//        polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0.001, 0.001, 0),
-//                new PhysicalPolyhedronBuilder(Primitive.CUBE.get(), new Point3D(410, 410 + 1000 * i, 900)), Material.CONSTANTIN));
-//
-//        polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(-290, 0, 0), new Vector3D(0.01, 0, 0.5),
-//                new PhysicalPolyhedronBuilder(Primitive.TETRAHEDRON.get(), new Point3D(2810, 410 + 1000 * i, 1000)), Material.CONSTANTIN));
-    }
             polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0.5, 0, 0),
-                new PhysicalPolyhedronBuilder(Primitive.OCTAHEDRON.get(), new Point3D(3500, 410, 1000)), Material.CONSTANTIN));
-
+                    new PhysicalPolyhedronBuilder(Primitive.OCTAHEDRON.get(), new Point3D(3500, 410, 1000)), Material.CONSTANTIN));
         } catch (ImpossibleObjectException | IOException e) {
             e.printStackTrace();
         }
@@ -71,15 +57,12 @@ public class Space {
 
         long time1 = System.nanoTime();
 
-//        System.out.println("----------------");
         try {
             physicsHandler.update();
         } catch (Exception ignored) {
         }
 
         double cTime = ((System.nanoTime() - time1) / 1000000.0);
-//        System.out.println("Всего: " + cTime);
-//        System.out.println("----------------");
         double sleepTime = 0;
 
         if (DT * 1000.0 - cTime > 0) {
@@ -88,7 +71,7 @@ public class Space {
 
 
         try {
-            Thread.sleep(Tools.transformdouble(sleepTime));
+            Thread.sleep(Tools.transformDouble(sleepTime));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

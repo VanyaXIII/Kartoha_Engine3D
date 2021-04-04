@@ -2,8 +2,8 @@ package physics;
 
 
 import exceptions.ImpossiblePairException;
-import geometry.IntersectionalPair;
-import geometry.Triangle;
+import geometry.intersections.IntersectionalPair;
+import geometry.objects.Triangle;
 import geometry.intersections.PolyhedronToPlaneIntersection;
 import geometry.intersections.SphereToPlaneIntersection;
 import geometry.intersections.SpheresIntersection;
@@ -35,7 +35,6 @@ public class PhysicsHandler {
     }
 
     private void handlePhysics() throws InterruptedException, ConcurrentModificationException {
-        long time1 = System.nanoTime();
         Thread sphereThread = new Thread(() -> {
             for (int i = 0; i < spheres.size() - 1; i++) {
                 for (int j = i + 1; j < spheres.size(); j++) {

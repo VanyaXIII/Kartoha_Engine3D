@@ -1,9 +1,9 @@
 package physics;
 
 import exceptions.ImpossiblePairException;
-import geometry.IntersectionalPair;
-import geometry.Segment;
-import geometry.Triangle;
+import geometry.intersections.IntersectionalPair;
+import geometry.objects.Segment;
+import geometry.objects.Triangle;
 import geometry.objects3D.Line3D;
 import geometry.objects3D.Plane3D;
 import geometry.objects3D.Point3D;

@@ -1,4 +1,4 @@
-package geometry;
+package geometry.objects;
 
 import geometry.objects3D.Line3D;
 import geometry.objects3D.Point3D;

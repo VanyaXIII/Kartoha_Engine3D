@@ -6,13 +6,11 @@ import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 
 import java.awt.*;
-import java.util.Optional;
 import java.util.Random;
-import java.util.function.Supplier;
 
 public final class Tools {
 
-    public static int transformdouble(double d) {
+    public static int transformDouble(double d) {
         return (int) java.lang.Math.round(d);
     }
 
@@ -20,16 +18,8 @@ public final class Tools {
         return (a + b) / 2.0f;
     }
 
-    public static double sign(double a) {
-        return a >= 0f ? 1f : -1f;
-    }
-
-    public static boolean isNaN(double a) {
-        return a - a != 0.0f;
-    }
-
     public static Vector3D calcProjectionOfVectorOnPlane(Vector3D vector, Plane3D plane) {
-        final double projection = (double) (vector.scalarProduct(plane.vector) / plane.vector.getLength());
+        double projection = (vector.scalarProduct(plane.vector) / plane.vector.getLength());
         return vector.add(plane.vector.multiply(-projection / plane.vector.getLength()));
     }
 

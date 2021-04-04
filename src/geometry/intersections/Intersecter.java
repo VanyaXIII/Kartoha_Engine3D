@@ -1,4 +1,4 @@
-package geometry;
+package geometry.intersections;
 
 import limiters.Intersectional;
 

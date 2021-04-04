@@ -1,6 +1,6 @@
 package physical_objects;
 
-import geometry.Triangle;
+import geometry.objects.Triangle;
 import geometry.objects3D.Line3D;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;

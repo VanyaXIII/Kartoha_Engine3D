@@ -1,5 +1,8 @@
 package geometry;
 
+import geometry.objects.Shape;
+import geometry.objects.Tetrahedron;
+import geometry.objects.Triangle;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 

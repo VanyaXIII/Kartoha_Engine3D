@@ -1,7 +1,6 @@
-package geometry;
+package geometry.objects;
 
 import com.google.gson.Gson;
-import geometry.Triangle;
 import geometry.objects3D.Point3D;
 
 import java.io.*;

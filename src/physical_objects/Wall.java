@@ -1,7 +1,7 @@
 package physical_objects;
 
 import drawing.Drawable;
-import geometry.Triangle;
+import geometry.objects.Triangle;
 import geometry.objects3D.Plane3D;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Polygon3D;
@@ -62,6 +62,7 @@ public class Wall implements Drawable, Collisional, Intersectional {
         points.add(a);
         points.add(b);
         points.add(c);
+        points.add(d);
         return points;
     }
 
