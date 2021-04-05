@@ -14,6 +14,9 @@ import physical_objects.Wall;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 
+/**
+ * Обработчик физики
+ */
 public class PhysicsHandler {
 
     private final ArrayList<PhysicalSphere> spheres;
@@ -21,6 +24,11 @@ public class PhysicsHandler {
     private final ArrayList<PhysicalPolyhedron> polyhedrons;
     private final int depth;
 
+    /**
+     * Конструктор по пространству, физику в котором надо рассчитать и глубине просчета
+     * @param space пространство
+     * @param depth глубина просчета
+     */
     PhysicsHandler(Space space, int depth) {
         spheres = space.getSpheres();
         walls = space.getWalls();
@@ -28,12 +36,21 @@ public class PhysicsHandler {
         this.depth = depth;
     }
 
+    /**
+     * Метод, обрабатывающий всю физику <b>depth</b> раз
+     * @throws InterruptedException исключение в случае прерывания потока
+     */
     public void update() throws InterruptedException {
         for (int i = 0; i< depth; i++){
             handlePhysics();
         }
     }
 
+    /**
+     * Метод, обрабатывающий физику
+     * @throws InterruptedException исключение в случае прерывания потока
+     * @throws ConcurrentModificationException исключение в случае изменения коллекции при ее итерации
+     */
     private void handlePhysics() throws InterruptedException, ConcurrentModificationException {
         Thread sphereThread = new Thread(() -> {
             for (int i = 0; i < spheres.size() - 1; i++) {

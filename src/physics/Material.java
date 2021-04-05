@@ -2,6 +2,9 @@ package physics;
 
 import java.awt.*;
 
+/**
+ * Все доступные материалы
+ */
 public enum Material {
 
     STEEL(7900, new Color(175, 175, 175),0.5f, 0.1f),
@@ -17,6 +20,13 @@ public enum Material {
     public final double coefOfReduction;
     public final double coefOfFriction;
 
+    /**
+     * Констуктор, принимающий все необходимые параметры, создающий новый материал
+     * @param p плотность материала
+     * @param fillColor цвет материала
+     * @param coefOfReduction коэффициент восстановления материала
+     * @param coefOfFriction коэффициент трения материала
+     */
     Material(double p, Color fillColor, double coefOfReduction, double coefOfFriction) {
         this.p = p;
         this.coefOfReduction = coefOfReduction;

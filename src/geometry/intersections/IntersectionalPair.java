@@ -15,10 +15,7 @@ import physical_objects.PhysicalSphere;
 import physical_objects.Wall;
 import utils.TripleMap;
 
-/**
- * @param <FirstThingType>  - type of first thing, that can be intersected with others
- * @param <SecondThingType> - type of second thing, that can be intersected with others
- * @author Ivan
+/**Класс, реализующий обработку и проверку пересечений между объектами {@link limiters.Intersectional}
  */
 
 public final class IntersectionalPair<FirstThingType extends Intersectional, SecondThingType extends Intersectional> {
@@ -29,12 +26,21 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
     private final static boolean staticCollisionMode = false;
     private final static TripleMap<Class, Class, Intersecter> methodsMap;
 
+    /**
+     *Конструктор, принимающиий предметы, исследуемые на пересечение
+     * @param firstThing объект {@link limiters.Intersectional}, пересечение которого с другим объектом нужно найти или проверить
+     * @param secondThing объект {@link limiters.Intersectional}, пересечение с которым нужно найти или проверить
+     * @throws ImpossiblePairException исключение в случае попытки проверить пересечение треугольника с треугольком
+     */
     public IntersectionalPair(@NotNull FirstThingType firstThing, @NotNull SecondThingType secondThing) throws ImpossiblePairException {
         this.firstThing = firstThing;
         this.secondThing = secondThing;
         if (firstThing instanceof Wall && secondThing instanceof Wall)
-            throw new ImpossiblePairException("Trying to check wall to wall intersection");
+            throw new ImpossiblePairException("Trying to check triangle with triangle intersection");
     }
+
+    /*Статический иницализатор, создающий таблицу переходов, содержащую методы для исследования пересчений конкретных пар объектов
+     */
 
     static {
         methodsMap = new TripleMap<>();
@@ -55,9 +61,17 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
         methodsMap.putByFirstKey(PhysicalPolyhedron.class, PhysicalPolyhedron.class, IntersectionalPair::polyhedronToPolyhedron);
     }
 
+    /**Метод, распределящий все поиски пересечений между объектами типа {@link limiters.Intersectional}, вызывает метод для определенной пары объектов
+     */
+
     public boolean areIntersected() {
         return methodsMap.getElement(firstThing.getClass(), secondThing.getClass()).areIntersected(firstThing, secondThing);
     }
+
+    /**@param thing1 многогранник 1
+      @param thing2 многогранник 2
+     * @return Пересекаются ли два многогранника
+     */
 
     private static boolean polyhedronToPolyhedron(Intersectional thing1, Intersectional thing2) {
         PhysicalPolyhedron polyhedron1 = (PhysicalPolyhedron) thing1;
@@ -80,6 +94,11 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
         return false;
     }
 
+    /**@param thing1 многогранник или треугольник
+     * @param thing2 треугольник или многогранник
+     * @return Пересекаются ли многогранник и треугольник
+     */
+
     private static boolean polyhedronToTriangle(Intersectional thing1, Intersectional thing2) {
         PhysicalPolyhedron polyhedron;
         Triangle triangle;
@@ -101,6 +120,11 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
 
         return false;
     }
+
+    /**@param thing1 сфера или многогранник
+     * @param thing2 многогранник или сфера
+     * @return  Пересекается ли сфера и многогрaнник
+     */
 
     private static boolean sphereToPolyhedron(Intersectional thing1, Intersectional thing2) {
         PhysicalSphere sphere;
@@ -132,10 +156,9 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
         return intersected;
     }
 
-    /**
-     * @param thing1 - first thing to check intersection
-     * @param thing2 - second thing to check intersection
-     * @return - boolean statement(are things intersected)
+    /**@param thing1 сфера 1
+     * @param thing2 сфера 2
+     * @return Пересекаются ли две сферы
      */
 
     private static boolean sphereToSphere(Intersectional thing1, Intersectional thing2) {
@@ -156,6 +179,11 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
 
         return false;
     }
+
+    /**@param thing1 сфера или треугольник
+     * @param thing2 треугольник или сфера
+     * @return Пересекаются ли сфера и треугольник
+     */
 
     private static boolean sphereToTriangle(Intersectional thing1, Intersectional thing2) {
 
@@ -202,6 +230,10 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
         return false;
     }
 
+    /**
+     *
+     * @return Пересечение двух сфер
+     */
     public SpheresIntersection getSpheresIntersection() {
         if (!(firstThing instanceof PhysicalSphere && secondThing instanceof PhysicalSphere))
             return new SpheresIntersection(false);
@@ -230,6 +262,9 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
         return new SpheresIntersection(false);
     }
 
+    /**
+     * @return Пересечение сферы и плоскости
+     */
     public SphereToPlaneIntersection getSphereToPlaneIntersection() {
 
         if (!(firstThing instanceof PhysicalSphere && secondThing instanceof Triangle))
@@ -256,6 +291,11 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
 
         return new SphereToPlaneIntersection(false);
     }
+
+    /**
+     *
+     * @return Пересечение многогранник и плоскости
+     */
 
     public PolyhedronToPlaneIntersection getPolyhedronToPlaneIntersection() {
         if (!(firstThing instanceof PhysicalPolyhedron && secondThing instanceof Triangle))

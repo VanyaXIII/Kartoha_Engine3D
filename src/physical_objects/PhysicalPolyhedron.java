@@ -17,6 +17,9 @@ import utils.Tools;
 
 import java.util.*;
 
+/**
+ * Физичный многогранник
+ */
 public class PhysicalPolyhedron extends AbstractBody implements Collisional, Intersectional {
 
     private Polyhedron drawableInterpretation;
@@ -29,6 +32,15 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
     }
 
 
+    /**
+     * Конструктор по создателю многогранников
+     * @param space пространство, в котором находится многогранник
+     * @param v начальная скорость многогранника
+     * @param w начальная угловая скорость многогранника
+     * @param builder создатель многогранников
+     * @param material материал, из которого сделан многогранник
+     * @throws ImpossibleObjectException исключение в случае попытки создания объекта с нулевой массой
+     */
     public PhysicalPolyhedron(Space space, Vector3D v, Vector3D w, PhysicalPolyhedronBuilder builder, Material material) throws ImpossibleObjectException {
 
         super(space,
@@ -41,6 +53,9 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
     }
 
 
+    /**
+     * Метод, обновляющий положение многогранника и др данные
+     */
     @Override
     public synchronized void update() {
         super.update();
@@ -62,6 +77,11 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
 
     }
 
+    /**
+     * @param line прямая
+     * @param mode считать ли относительно будущего положения
+     * @return Проекция многогранника на данную прямую
+     */
     public Segment getProjectionOnLine(Line3D line, boolean mode){
         ArrayList<Point3D> points = new ArrayList<>();
         getPoints(mode).forEach(point -> points.add(Tools.countProjectionOfPoint(point, line)));
@@ -71,6 +91,11 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
     }
 
 
+    /**
+     * @param line прямая, относительно которой вычисляется момент инерции
+     * @param mode считать ли относительно будщего положенния
+     * @return Момент инерции многогранника относительно произвольной оси
+     */
     public synchronized double getJ(Line3D line, boolean mode) {
 
         double J = 0d;
@@ -113,6 +138,12 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
         return J;
     }
 
+    /**
+     * Метод, обрабатывающий приложения импульса силы к многограннику
+     * @param impulse прикладываемый к многограннику импульс
+     * @param applicationPoint точка приложения импульса
+     * @param mode считать ли относительно будущего положения
+     */
     public synchronized void applyImpulse(Vector3D impulse, Point3D applicationPoint, boolean mode){
         v = v.add(impulse.multiply(1d / m));
         Vector3D radVector = new Vector3D(getPositionOfCentre(mode), applicationPoint);
@@ -121,13 +152,22 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
         w = w.add(radVector.vectorProduct(impulse).multiply(1d / J));
     }
 
+    /**
+     *Метод, обрабатывающий приложения импульса силы к многограннику
+     * @param impulse прикладываемый к многограннику импульс
+     * @param applicationPoint точка приложения импульса
+     */
     public synchronized void applyImpulse(Vector3D impulse, Point3D applicationPoint){
         applyImpulse(impulse, applicationPoint, false);
     }
 
+    /**
+     * Метод, смещающий многогранник от плоскости
+     * @param intersection пересчение многогранника и плоскости
+     */
     public synchronized void pullFromPlane(PolyhedronToPlaneIntersection intersection){
         if (intersection.getValue() != 0){
-            Vector3D movementVector = new Vector3D(intersection.getPointOfPolygon(), intersection.getCollisionPoint());
+            Vector3D movementVector = new Vector3D(intersection.getPointOfPolygon(), intersection.getIntersectionPoint());
             if (movementVector.getLength() != 0d){
                 movementVector = movementVector.normalize();
                 move(movementVector.multiply(intersection.getValue()));
@@ -135,6 +175,10 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
         }
     }
 
+    /**
+     * Метод, перемещающий многогранник на заданный вектор
+     * @param movement вектор перемещения
+     */
     public synchronized void move(Vector3D movement){
         x0 += movement.x;
         y0 += movement.y;
@@ -145,6 +189,10 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
         drawableInterpretation.setZero(movement.addToPoint(oldZero));
     }
 
+    /**
+     * @param mode считать ли относительно будушего положения
+     * @return Вершины многогранника
+     */
     public Set<Point3D> getPoints(boolean mode) {
         if (!mode) {
             return new HashSet<>(points);
@@ -161,6 +209,10 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
         }
     }
 
+    /**
+     * @param mode считать ли относительно юудущего положения
+     * @return Треугольники граней многогранника
+     */
     public Set<Triangle> getTriangles(boolean mode){
         if (!mode) {
             return new HashSet<>(triangles);
@@ -179,6 +231,10 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
     }
 
 
+    /**
+     * @param mode считать ли относительно будущего положения
+     * @return Ребра многогранника
+     */
     public Set<Segment> getSegments(boolean mode){
         HashSet<Segment> segments = new HashSet<>();
         for (Triangle triangle : getTriangles(mode))
@@ -186,20 +242,37 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
         return segments;
     }
 
+    /**
+     * @return Смещение многогоугольника за момент времени <b>dt</b> (см {@link physics.Space})
+     */
     private Vector3D getMovement() {
         return new Vector3D(v.x * space.getDT() + a.x * space.getDT() * space.getDT() / 2d,
                 v.y * space.getDT() + a.y * space.getDT() * space.getDT() / 2d,
                 v.z * space.getDT() + a.z * space.getDT() * space.getDT() / 2d);
     }
 
+    /**
+     * @param point точка
+     * @param mode считать ли относительно будущего положения
+     * @return Полная скорость данной точки
+     */
     public Vector3D getVelOfPoint(Point3D point, boolean mode){
-        return v.add(getAngularVelOfPoint(point, mode));
+        return v.add(getRotationVelOfPoint(point, mode));
     }
 
-    public Vector3D getAngularVelOfPoint(Point3D point, boolean mode){
+    /**
+     * @param point точка
+     * @param mode считать ли относительно юудущего положения
+     * @return Скорость вращения данной точки
+     */
+    public Vector3D getRotationVelOfPoint(Point3D point, boolean mode){
         return w.vectorProduct(new Vector3D(getPositionOfCentre(mode), point));
     }
 
+    /**
+     * Метод, добавляющий многогранник на канвас, на котором его нужно отрисовать
+     * @param canvas канвас, на котором нужном отрисовывать многогранник
+     */
     @Override
     public void pushToCanvas(CanvasPanel canvas) {
         Set<Polygon3D> polygons = new HashSet<>();
@@ -208,6 +281,9 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
         canvas.getPolygonals().add(drawableInterpretation);
     }
 
+    /**
+     * Метод, обновляющий графическую интерпритацию многогранника
+     */
     @Override
     public void updateDrawingInterpretation() {
         drawableInterpretation.rotate(w.multiply(space.getDT()), getPositionOfCentre(false));

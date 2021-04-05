@@ -14,6 +14,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * Пространство
+ */
 public class Space {
 
     private final ArrayList<PhysicalSphere> spheres;
@@ -33,6 +36,12 @@ public class Space {
         physicsHandler = new PhysicsHandler(this, 1);
     }
 
+    /**
+     * Конструктор
+     * @param dt временной шаг
+     * @param g величина ускорения свободного падения
+     * @param canvas канвас, на котором отрисовывается пространство
+     */
     public Space(double dt, double g, CanvasPanel canvas) {
         DT = dt;
         G = g;
@@ -53,6 +62,9 @@ public class Space {
                 Material.GOLD);
     }
 
+    /**
+     * Сделать шаг во времени
+     */
     public synchronized void changeTime() {
 
         long time1 = System.nanoTime();
@@ -80,40 +92,65 @@ public class Space {
         Collections.shuffle(spheres);
     }
 
+    /**
+     Метод, добавляющий новую сферу в пространство
+     */
     public void addSphere(Vector3D v, Vector3D w, double x0, double y0, double z0, double r, Material material) throws ImpossibleObjectException {
         spheres.add(new PhysicalSphere(this, v, w, x0, y0, z0, r, material));
     }
-
+    /**
+     Метод, добавляющий новую сферу в пространство
+     */
     public void addSphere(Vector3D v, Vector3D w, double x0, double y0, double z0, double r) throws ImpossibleObjectException {
         addSphere(v, w, x0, y0, z0, r, Material.CONSTANTIN);
     }
-
+    /**
+     Метод, добавляющий новый многогранник в пространство
+     */
     public void addPolyhedron(Vector3D v, Vector3D w, PhysicalPolyhedronBuilder builder, Material material) throws ImpossibleObjectException {
         polyhedrons.add(new PhysicalPolyhedron(this, v, w, builder, material));
     }
 
+    /**
+     Метод, добавляющий новый многогранник в пространство
+     */
     public void addPolyhedron(Vector3D v, Vector3D w, PhysicalPolyhedronBuilder builder) throws ImpossibleObjectException {
         polyhedrons.add(new PhysicalPolyhedron(this, v, w, builder, Material.CONSTANTIN));
     }
 
+    /**
+     Метод, добавляющий новый многогранник в пространство
+     */
     public void addPolyhedron(Vector3D v, Vector3D w, Shape shape, Point3D zero, Material material) throws ImpossibleObjectException {
         polyhedrons.add(new PhysicalPolyhedron(this, v, w, new PhysicalPolyhedronBuilder(shape, zero), material));
     }
 
+    /**
+     Метод, добавляющий новый многогранник в пространство
+     */
     public void addPolyhedron(Vector3D v, Vector3D w, Shape shape, Point3D zero) throws ImpossibleObjectException {
         polyhedrons.add(new PhysicalPolyhedron(this, v, w, new PhysicalPolyhedronBuilder(shape, zero), Material.CONSTANTIN));
     }
-
+    /**
+     Метод, добавляющий новую гравитационную пластину в пространство
+     */
     public void addGravityPlate(Space space, Point3D a, Point3D b, Point3D c, Point3D d, double g, Material material) {
         GravityPlate plate = new GravityPlate(space, a, b, c, d, g, material);
         gravityPlates.add(plate);
         walls.add(plate);
     }
 
+    /**
+     * @return Временной шаг
+     */
     public double getDT() {
         return DT;
     }
 
+    /**
+     * @param body тело, для которого нужно найти ускорение свободного падения
+     * @return Вектор ускорения свободного падения, действует на данное тело в пространстве
+     */
     public Vector3D getG(AbstractBody body) {
         Vector3D g = new Vector3D(0, 0, 0);
         for (GravityPlate plate : gravityPlates)
@@ -121,18 +158,30 @@ public class Space {
         return g;
     }
 
+    /**
+     * @return Сферы в пространстве
+     */
     public ArrayList<PhysicalSphere> getSpheres() {
         return spheres;
     }
 
+    /**
+     * @return Многогранники в пространстве
+     */
     public ArrayList<PhysicalPolyhedron> getPolyhedrons() {
         return polyhedrons;
     }
 
+    /**
+     * @return Стены в пространстве
+     */
     public ArrayList<Wall> getWalls() {
         return walls;
     }
 
+    /**
+     * @return Канвас, на котором отрисовывается пространство
+     */
     public CanvasPanel getCanvas() {
         return canvas;
     }

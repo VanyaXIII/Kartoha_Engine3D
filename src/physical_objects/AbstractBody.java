@@ -7,8 +7,9 @@ import geometry.objects3D.Vector3D;
 import physics.Material;
 import physics.Space;
 
-import java.awt.image.ImagingOpException;
-
+/**
+ * Абстарктное физическое тело
+ */
 public abstract class AbstractBody implements Drawable{
 
     protected double x0, y0, z0;
@@ -19,6 +20,18 @@ public abstract class AbstractBody implements Drawable{
     protected final double m;
     protected final Space space;
 
+    /**
+     *Конструктор
+     * @param space пространство, в котором находится тело
+     * @param x0 начальная координата по Ox
+     * @param y0 начальная координата по Oy
+     * @param z0 начальная координата по Oz
+     * @param v начальная скорость
+     * @param w начальная угловая скорость
+     * @param material материал, из которого сделано тело
+     * @param m масса тела
+     * @throws ImpossibleObjectException исключение в случае попытки создания тела с нулевой массой
+     */
     protected AbstractBody(Space space, double x0, double y0, double z0, Vector3D v, Vector3D w, Material material, double m) throws ImpossibleObjectException {
         this.space = space;
         this.v = v;
@@ -32,10 +45,23 @@ public abstract class AbstractBody implements Drawable{
         if (m <= 0d) throw new ImpossibleObjectException("Impossible object; mass is null");
     }
 
+    /**
+     *Конструктор
+     * @param space пространство, в котором находится тело
+     * @param x0 начальная координата по Ox
+     * @param y0 начальная координата по Oy
+     * @param z0 начальная координата по Oz
+     * @param material материал, из которого сделано тело
+     * @param m масса тела
+     * @throws ImpossibleObjectException исключение в случае попытки создания тела с нулевой массой
+     */
     protected AbstractBody(Space space, double x0, double y0, double z0, Material material, double m) throws ImpossibleObjectException {
         this(space, x0, y0, z0, new Vector3D(0,0,0), new Vector3D(0,0,0), material, m);
     }
 
+    /**
+     * Метод, обновляющий положение тела и др данные
+     */
     public synchronized void update() {
         changeSpeed();
         updateDrawingInterpretation();
@@ -45,12 +71,19 @@ public abstract class AbstractBody implements Drawable{
         a = space.getG(this);
     }
 
+    /**
+     * Метод, обноляющий скорость тела
+     */
     private synchronized void changeSpeed() {
         v = new Vector3D(v.x + a.x * space.getDT(),
                 v.y + a.y * space.getDT(),
                 v.z + a.z * space.getDT());
     }
 
+    /**
+     * @param mode считать ли в будущем положении
+     * @return Точка - центр масс тела
+     */
     public final synchronized Point3D getPositionOfCentre(boolean mode) {
         double m = mode ? 1.0f : 0.0f;
         return new Point3D(x0 + m * v.x * space.getDT() + m * a.x * space.getDT() * space.getDT() / 2d,
@@ -58,30 +91,52 @@ public abstract class AbstractBody implements Drawable{
                 z0 + m * v.z * space.getDT() + m * a.z * space.getDT() * space.getDT() / 2d);
     }
 
+    /**
+     * @return Масса тела
+     */
     public double getM() {
         return m;
     }
 
+    /**
+     * @return Скорость тела
+     */
     public Vector3D getV() {
         return v;
     }
 
+    /**
+     * @return Угловая скорость тела
+     */
     public Vector3D getW() {
         return w;
     }
 
+    /**
+     * @return Материал, из которого сделано тело
+     */
     public Material getMaterial() {
         return material;
     }
 
+    /**
+     * @return Пространство, в котором находится тело
+     */
     public Space getSpace() {
         return space;
     }
 
+    /** Метод, задающий новую скорость телу
+     * @param v новая скорость
+     */
     public synchronized void setV(Vector3D v) {
         this.v = v;
     }
 
+    /**
+     *Метод, задающий новую угловую скорость телу
+     * @param w новая угловая скорость
+     */
     public synchronized void setW(Vector3D w) {
         this.w = w;
     }

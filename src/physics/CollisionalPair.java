@@ -19,19 +19,33 @@ import utils.TripleMap;
 
 import java.util.ArrayList;
 
+/**
+ * Класс, обрабатывающий коллизию между объектам {@link limiters.Collisional}
+ */
+
 public final class CollisionalPair<FirstThingType extends Collisional, SecondThingType extends Collisional> {
     private final FirstThingType firstThing;
 
     private final SecondThingType secondThing;
     private final static TripleMap<Class, Class, Collider> methodsMap;
 
+
+    /**
+     *Конструктор, принимающиий предметы, коллизию которых нужно обработать
+     * @param firstThing объект {@link limiters.Collisional}, коллизию которого с другим объектом нужно обработать
+     * @param secondThing объект {@link limiters.Collisional}, коллизию с которым нужно обработать
+     * @throws ImpossiblePairException исключение в случае попытки обработать коллизии стены со стеной
+     */
     public CollisionalPair(@NotNull FirstThingType firstThing, @NotNull SecondThingType secondThing) throws ImpossiblePairException {
         this.firstThing = firstThing;
         this.secondThing = secondThing;
         if (firstThing instanceof Wall && secondThing instanceof Wall)
-            throw new ImpossiblePairException("Trying to collide wall to wall");
+            throw new ImpossiblePairException("Trying to collide wall with wall");
     }
 
+
+    /*Статический иницализатор, создающий таблицу переходов, содержащую методы для обработки коллизии конкретных пар объектов
+     */
 
     static {
         methodsMap = new TripleMap<>();
@@ -59,12 +73,17 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
     }
 
     /**
-     * Main method that dispatches all collisions
+     * Метод, распределяющий все коллизии между двумя объектами типа {@link limiters.Collisional}, вызывает метод непосредественно для определеннтй пары
      */
 
     public void collide() {
         methodsMap.getElement(firstThing.getClass(), secondThing.getClass()).collide(firstThing, secondThing);
     }
+
+    /**Метод, обрабатывающий коллизию между двумя многогранниками
+     * @param thing1 многогранник 1
+     * @param thing2 многогранник 2
+     */
 
     private static void polyhedronToPolyhedron(Collisional thing1, Collisional thing2) {
         PhysicalPolyhedron polyhedron1 = (PhysicalPolyhedron) thing1;
@@ -162,8 +181,8 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
             double v1x = vel1.scalarProduct(axisX);
             double v1cx = cVel1.scalarProduct(axisX);
             double v2cx = cVel2.scalarProduct(axisX);
-            double w1x = polyhedron1.getAngularVelOfPoint(collisionPoint1, true).scalarProduct(axisX) / ry1;
-            double w2x = polyhedron2.getAngularVelOfPoint(collisionPoint2, true).scalarProduct(axisX) / ry2;
+            double w1x = polyhedron1.getRotationVelOfPoint(collisionPoint1, true).scalarProduct(axisX) / ry1;
+            double w2x = polyhedron2.getRotationVelOfPoint(collisionPoint2, true).scalarProduct(axisX) / ry2;
 
             double fw1x = (-k * (v1x - v2x) + v2cx - v1cx + (ratio + 1) * J1 * w1x / (m1 * ry1) + w2x * ry2 + J1 * ry2 * ry2 * w1x / (J2 * ry1)) /
                     ((ratio + 1) * J1 / (m1 * ry1) + ry1 + J1 * ry2 * ry2 / (J2 * ry1));
@@ -177,6 +196,11 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
 
 
     }
+
+    /**Метод, обрабатывающий коллизию между сферой и многогранником.
+     * @param thing1 сфера или многогранник
+     * @param thing2 многогранник или сфера
+     */
 
     private static void sphereToPolyhedron(Collisional thing1, Collisional thing2) {
         PhysicalPolyhedron polyhedron;
@@ -226,7 +250,7 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
             double ry = pRadV.subtract(axisX.multiply(axisX.scalarProduct(pRadV))).getLength();
             double v1cx = sphere.getV().scalarProduct(axisX);
             double v2x = polyhedron.getVelOfPoint(collisionPoint2, true).scalarProduct(axisX);
-            double wr2 = polyhedron.getAngularVelOfPoint(collisionPoint2, true).scalarProduct(axisX);
+            double wr2 = polyhedron.getRotationVelOfPoint(collisionPoint2, true).scalarProduct(axisX);
 
             double u1cx = ((ratio - k) * v1cx + v2x * (1 + k) + wr2 + (m1 * ry * ry * v1cx) / J2) / (1d + ratio + m1 * ry * ry / J2);
             double s = m1 * (u1cx - v1cx);
@@ -262,6 +286,11 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
 
 
     }
+
+    /**Метод, обрабатывающий коллизию между многогранником и стеной
+     * @param thing1 многогранник или стена
+     * @param thing2 стена или многогранник
+     */
 
     private static void polyhedronToWall(Collisional thing1, Collisional thing2) {
         PhysicalPolyhedron polyhedron;
@@ -314,7 +343,7 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
 
             double J = polyhedron.getJ(new Line3D(polyhedron.getPositionOfCentre(true), collisionPlane.vector), true);
             double rx = r.subtract(axisY.multiply(r.scalarProduct(axisY))).getLength();
-            double w1 = polyhedron.getAngularVelOfPoint(collisionPoint, true).scalarProduct(axisY) / rx;
+            double w1 = polyhedron.getRotationVelOfPoint(collisionPoint, true).scalarProduct(axisY) / rx;
 
             double vy = vel.scalarProduct(axisY);
             double vc = polyhedron.getV().scalarProduct(axisY);
@@ -349,12 +378,9 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
     }
 
 
-    /**
-     * This method processes collision between two <b>Spheres</b>;
-     * changes their velocity
-     *
-     * @param thing1 - first sphere
-     * @param thing2 - second sphere
+    /**Метод, обрабатывающий коллизию между двумя сферами
+     * @param thing1 сфера 1
+     * @param thing2 сфера 2
      */
 
     private static void sphereToSphere(Collisional thing1, Collisional thing2) {
@@ -408,12 +434,9 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
         sphere2.applyStrikeImpulse(axisX.multiply(m2 * (u2x - v2x) / axisXLen));
     }
 
-    /**
-     * This method processes collision between <b>Sphere</b> and <b>Wall</b>;
-     * changes <b>Sphere's</b> velocity
-     *
-     * @param thing1 - sphere or wall (PhysicalSphere or Wall)
-     * @param thing2 - sphere or wall (PhysicalSphere or Wall)
+    /**Метод, обрабатывающий коллизию между сферой и стеной
+     * @param thing1 сфера или стена
+     * @param thing2 стена или сфера
      */
 
     private static void sphereToWall(Collisional thing1, Collisional thing2) {
@@ -446,7 +469,7 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
 
 
         Vector3D v = Tools.calcProjectionOfVectorOnPlane(sphere.getV(), wall.getPlane());
-        Vector3D angularVel = sphere.getAngularVelOfPoint(collisionPoint, true);
+        Vector3D angularVel = sphere.getRotationVelOfPoint(collisionPoint, true);
 
         final Vector3D velOfCollisionPoint = v.add(angularVel);
 

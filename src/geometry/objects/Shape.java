@@ -1,42 +1,39 @@
 package geometry.objects;
 
-import com.google.gson.Gson;
 import geometry.objects3D.Point3D;
+import utils.JsonAble;
 
-import java.io.*;
 import java.util.ArrayList;
 
-public class Shape {
+/**
+ * Трехмерная форма(многогранник)
+ */
+public class Shape implements JsonAble {
 
-    private ArrayList<Point3D> points;
-    private ArrayList<Triangle> triangles;
+    private final ArrayList<Point3D> points;
+    private final ArrayList<Triangle> triangles;
 
-    {
-        points = new ArrayList<>();
-        triangles = new ArrayList<>();
-    }
 
+    /** Конструктор формы по вершинам и граням
+     * @param points вершины
+     * @param triangles треугольники, образующие многогранник
+     */
     public Shape(ArrayList<Point3D> points, ArrayList<Triangle> triangles) {
         this.points = points;
         this.triangles = triangles;
     }
 
+    /**
+     * @return Вершины
+     */
     public ArrayList<Point3D> getPoints() {
         return points;
     }
 
+    /**
+     * @return Грани
+     */
     public ArrayList<Triangle> getTriangles() {
         return triangles;
-    }
-
-    public void toJson(String path) throws IOException {
-        File jsonFile = new File(path);
-        FileOutputStream fileOutputStream = new FileOutputStream(jsonFile);
-        OutputStreamWriter writer = new OutputStreamWriter(fileOutputStream);
-
-        Gson gson = new Gson();
-        writer.append(gson.toJson(this));
-        writer.close();
-        fileOutputStream.close();
     }
 }

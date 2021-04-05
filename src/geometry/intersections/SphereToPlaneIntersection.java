@@ -2,27 +2,41 @@ package geometry.intersections;
 
 import geometry.objects3D.Point3D;
 
+
+/**
+ * Пересечение сферы с плоскостью
+ */
 public class SphereToPlaneIntersection extends AbstractIntersection {
 
-    private Point3D collisionPoint;
+    private Point3D intersectionPoint;
     private double value;
 
+    /**
+     * Конструктор по информации, есть ли пересечение
+     * @param areIntersected пересекаются ли объекты
+     */
     public SphereToPlaneIntersection(boolean areIntersected) {
         super(areIntersected);
     }
 
-    public SphereToPlaneIntersection(boolean areIntersected, Point3D collisionPoint, double value) {
+    /**
+     * Основной коструктор, принимающий всю необходимую информацию о пересечении
+     * @param areIntersected пересекаются ли объекты
+     * @param intersectionPoint точка пересечения
+     * @param value величина пересечения
+     */
+    public SphereToPlaneIntersection(boolean areIntersected, Point3D intersectionPoint, double value) {
         super(areIntersected);
         this.value = value;
-        this.collisionPoint = collisionPoint;
+        this.intersectionPoint = intersectionPoint;
     }
 
     public double getValue() {
         return value;
     }
 
-    public Point3D getCollisionPoint() {
-        return collisionPoint;
+    public Point3D getIntersectionPoint() {
+        return intersectionPoint;
     }
 }
 

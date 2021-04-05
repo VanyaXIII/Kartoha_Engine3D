@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
+/**
+ * Стена
+ */
 public class Wall implements Drawable, Collisional, Intersectional {
 
     private final Point3D a;
@@ -33,6 +36,15 @@ public class Wall implements Drawable, Collisional, Intersectional {
         triangles = new ArrayList<>(2);
     }
 
+    /**
+     * Конструктор по четырем точкам
+     * @param space пространство, в котором находится стена
+     * @param a точка 1
+     * @param b точка 2
+     * @param c точка 3
+     * @param d точка 4
+     * @param material материал, из которого сделана стена
+     */
     public Wall(@NotNull Space space, Point3D a, Point3D b, Point3D c, Point3D d, Material material) {
         this.a = a;
         this.b = b;
@@ -45,18 +57,30 @@ public class Wall implements Drawable, Collisional, Intersectional {
         pushToCanvas(space.getCanvas());
     }
 
+    /**
+     * @return Плоскость, в которой лежит стена
+     */
     public Plane3D getPlane() {
         return new Plane3D(a, b, c);
     }
 
+    /**
+     * @return Треугольники, на которые разбита стена
+     */
     public ArrayList<Triangle> getTriangles() {
         return triangles;
     }
 
+    /**
+     * @return Материал, из которого сделана стена
+     */
     public Material getMaterial() {
         return material;
     }
 
+    /**
+     * @return Точки, ограничивающие стену
+     */
     public ArrayList<Point3D> getPoints() {
         ArrayList<Point3D> points = new ArrayList<>();
         points.add(a);
@@ -66,6 +90,10 @@ public class Wall implements Drawable, Collisional, Intersectional {
         return points;
     }
 
+    /**
+     * Метод, добавлябщий стену на канвас для отрисовки
+     * @param canvas канвас, на котором нужном отрисовывать объект
+     */
     @Override
     public void pushToCanvas(CanvasPanel canvas) {
 
@@ -86,6 +114,9 @@ public class Wall implements Drawable, Collisional, Intersectional {
 
     }
 
+    /**
+     * Метод, реализующий обновление графической интерпретации
+     */
     @Override
     public void updateDrawingInterpretation() {
     }
