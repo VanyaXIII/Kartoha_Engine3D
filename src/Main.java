@@ -19,9 +19,9 @@ public class Main {
 
     public static void main(String[] args){
         Camera.Resolution resolution = new Camera.Resolution(1920, 1080);
-        Camera camera = new Camera(new Screen(new Vector3D(FocusLength, 0, 0), new Point3D(-Distance, 500, 2000)), resolution, 0);
+        Camera camera = new Camera(new Screen(new Vector3D(FocusLength, 0, 0), new Point3D(-Distance, 500, 2000)), resolution);
         CanvasPanel canvas = new CanvasPanel(camera, Kernel.EXECUTION_MODE.JTP);
-        canvas.prepare();
+        canvas.setTitle("Картоха Engine");
         canvas.setSize(1920, 1080);
         canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         canvas.setLocationRelativeTo(null);

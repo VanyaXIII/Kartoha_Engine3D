@@ -9,7 +9,6 @@ import geometry.objects3D.Plane3D;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 import limiters.Intersectional;
-import org.jetbrains.annotations.NotNull;
 import physical_objects.PhysicalPolyhedron;
 import physical_objects.PhysicalSphere;
 import physical_objects.Wall;
@@ -32,7 +31,7 @@ public final class IntersectionalPair<FirstThingType extends Intersectional, Sec
      * @param secondThing объект {@link limiters.Intersectional}, пересечение с которым нужно найти или проверить
      * @throws ImpossiblePairException исключение в случае попытки проверить пересечение треугольника с треугольком
      */
-    public IntersectionalPair(@NotNull FirstThingType firstThing, @NotNull SecondThingType secondThing) throws ImpossiblePairException {
+    public IntersectionalPair(FirstThingType firstThing, SecondThingType secondThing) throws ImpossiblePairException {
         this.firstThing = firstThing;
         this.secondThing = secondThing;
         if (firstThing instanceof Wall && secondThing instanceof Wall)

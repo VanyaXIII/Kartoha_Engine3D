@@ -4,7 +4,6 @@ import geometry.objects.Triangle;
 import geometry.objects3D.Line3D;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
-import org.jetbrains.annotations.NotNull;
 import physics.Material;
 import physics.Space;
 
@@ -25,7 +24,7 @@ public class GravityPlate extends Wall {
      * @param g величина ускорения свободного падения
      * @param material материал, из которого сделана пластина
      */
-    public GravityPlate(@NotNull Space space, Point3D a, Point3D b, Point3D c, Point3D d, double g, Material material) {
+    public GravityPlate(Space space, Point3D a, Point3D b, Point3D c, Point3D d, double g, Material material) {
         super(space, a, b, c, d, material);
         G = g;
     }

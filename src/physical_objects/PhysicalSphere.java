@@ -42,7 +42,7 @@ public class PhysicalSphere extends AbstractBody implements Intersectional, Coll
     }
 
     /**
-     * Метод, реалищующий смещение сферы от сферы
+     * Метод, реализующий смещение сферы от сферы
      * @param intersection пересечение сферы
      */
     public synchronized void pullFromSphere(SpheresIntersection intersection) {
@@ -132,7 +132,7 @@ public class PhysicalSphere extends AbstractBody implements Intersectional, Coll
 
     /**
      * Метод, добавляющий сферу на канвас, на котором ее нужно отрисовать
-     * @param canvas канвас, на котором нужном отрисовывать многогранник
+     * @param canvas канвас, на котором нужном отрисовывать сферу
      */
     @Override
     public void pushToCanvas(CanvasPanel canvas) {

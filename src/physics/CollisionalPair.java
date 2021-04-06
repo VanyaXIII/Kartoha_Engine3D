@@ -9,7 +9,6 @@ import geometry.objects3D.Plane3D;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 import limiters.Collisional;
-import org.jetbrains.annotations.NotNull;
 import physical_objects.GravityPlate;
 import physical_objects.PhysicalPolyhedron;
 import physical_objects.PhysicalSphere;
@@ -36,7 +35,7 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
      * @param secondThing объект {@link limiters.Collisional}, коллизию с которым нужно обработать
      * @throws ImpossiblePairException исключение в случае попытки обработать коллизии стены со стеной
      */
-    public CollisionalPair(@NotNull FirstThingType firstThing, @NotNull SecondThingType secondThing) throws ImpossiblePairException {
+    public CollisionalPair(FirstThingType firstThing, SecondThingType secondThing) throws ImpossiblePairException {
         this.firstThing = firstThing;
         this.secondThing = secondThing;
         if (firstThing instanceof Wall && secondThing instanceof Wall)

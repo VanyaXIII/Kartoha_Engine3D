@@ -10,7 +10,6 @@ import geometry.polygonal.Polygonal;
 import graph.CanvasPanel;
 import limiters.Collisional;
 import limiters.Intersectional;
-import org.jetbrains.annotations.NotNull;
 import physics.Material;
 import physics.Space;
 import utils.Pair;
@@ -45,13 +44,13 @@ public class Wall implements Drawable, Collisional, Intersectional {
      * @param d точка 4
      * @param material материал, из которого сделана стена
      */
-    public Wall(@NotNull Space space, Point3D a, Point3D b, Point3D c, Point3D d, Material material) {
+    public Wall(Space space, Point3D a, Point3D b, Point3D c, Point3D d, Material material) {
         this.a = a;
         this.b = b;
         this.c = c;
         this.d = d;
         this.material = material;
-        Pair<Polygon3D, Polygon3D> polygonPair = Polygon3D.getPolygons(Tools.getRandomColor(), a, b, c, d);
+        Pair<Polygon3D, Polygon3D> polygonPair = Polygon3D.getPolygons(Tools.getRandomColor(), a, b, c, d).get();
         triangles.add(new Triangle(polygonPair.first));
         triangles.add(new Triangle(polygonPair.second));
         pushToCanvas(space.getCanvas());
