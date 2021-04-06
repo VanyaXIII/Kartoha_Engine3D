@@ -7,7 +7,7 @@ import geometry.objects3D.Vector3D;
 import graph.CanvasPanel;
 import physical_objects.*;
 import geometry.objects.Shape;
-import shapes.Primitive;
+import primitives.Primitive;
 import utils.Tools;
 
 import java.io.IOException;
