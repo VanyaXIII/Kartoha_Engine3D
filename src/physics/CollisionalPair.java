@@ -17,6 +17,7 @@ import utils.Tools;
 import utils.TripleMap;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Класс, обрабатывающий коллизию между объектам {@link limiters.Collisional}
@@ -162,8 +163,11 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
             Vector3D cVel1 = polyhedron1.getV();
             Vector3D cVel2 = polyhedron2.getV();
 
-            Plane3D plane1 = new Plane3D(collisionPoint1, axisX.addToPoint(collisionPoint1), polyhedron1.getPositionOfCentre(true));
-            Plane3D plane2 = new Plane3D(collisionPoint2, axisX.addToPoint(collisionPoint2), polyhedron2.getPositionOfCentre(true));
+            Point3D pos1 = polyhedron1.getPositionOfCentre(true);
+            Point3D pos2 = polyhedron2.getPositionOfCentre(true);
+
+            Plane3D plane1 = new Plane3D(collisionPoint1, axisX.addToPoint(collisionPoint1), pos1);
+            Plane3D plane2 = new Plane3D(collisionPoint2, axisX.addToPoint(collisionPoint2), pos2);
 
 
             final double k = Tools.countAverage(polyhedron1.getMaterial().coefOfReduction, polyhedron2.getMaterial().coefOfReduction);
@@ -187,6 +191,33 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
                     ((ratio + 1) * J1 / (m1 * ry1) + ry1 + J1 * ry2 * ry2 / (J2 * ry1));
 
             double s = J1 * (fw1x - w1x) / ry1;
+
+            Vector3D v1 = vel1.subtract(axisX.multiply(axisX.scalarProduct(vel1)));
+            Vector3D v2 = vel2.subtract(axisX.multiply(axisX.scalarProduct(vel2)));
+
+            Vector3D relativeVel1 = v1.subtract(v2);
+            Vector3D relativeVel2 = v2.subtract(v1);
+
+            Plane3D frictionPlane1 = new Plane3D(pos1, r1.addToPoint(pos1), v1.addToPoint(pos1));
+            Plane3D frictionPlane2 = new Plane3D(pos2, r2.addToPoint(pos2), v2.addToPoint(pos2));
+
+            J1 = polyhedron1.getJ(new Line3D(pos1, frictionPlane1.vector), true);
+            J2 = polyhedron1.getJ(new Line3D(pos2, frictionPlane2.vector), true);
+            double frictionRad1 = r1.subtract(relativeVel2.normalize().multiply(relativeVel2.normalize().scalarProduct(r1))).getLength();
+            double frictionRad2 = r2.subtract(relativeVel1.normalize().multiply(relativeVel1.normalize().scalarProduct(r2))).getLength();
+
+
+            Vector3D polyhedron1Friction1 = relativeVel1.multiply(-1d).multiply(s * fr);
+            Vector3D polyhedron1Friction2 = relativeVel1.multiply(-1d / (1d / m1 + 1d / m2 + frictionRad2 * frictionRad2 / J2 + frictionRad1 * frictionRad1 / J1));
+
+            if (polyhedron1Friction1.getLength() < polyhedron1Friction2.getLength()){
+                polyhedron1.applyImpulse(polyhedron1Friction1, collisionPoint1, true);
+                polyhedron2.applyImpulse(polyhedron1Friction1.multiply(-1d),collisionPoint2, true);
+            }
+            else{
+                polyhedron1.applyImpulse(polyhedron1Friction2, collisionPoint1, true);
+                polyhedron2.applyImpulse(polyhedron1Friction2.multiply(-1d),collisionPoint2, true);
+            }
 
             polyhedron1.applyImpulse(axisX.multiply(s), collisionPoint1, true);
             polyhedron2.applyImpulse(axisX.multiply(-s), collisionPoint2, true);
@@ -213,17 +244,21 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
             polyhedron = (PhysicalPolyhedron) thing2;
         }
 
-        Plane3D edgePlane = null;
+//        Plane3D edgePlane = null;
+        HashSet<Plane3D> planes = new HashSet<>();
 
         try {
             for (Triangle triangle : polyhedron.getTriangles(true))
-                if (new IntersectionalPair<>(sphere, triangle).areIntersected())
-                    edgePlane = triangle.getPlane();
+                if (new IntersectionalPair<>(sphere, triangle).areIntersected()) {
+//                    edgePlane = triangle.getPlane();
+                    planes.add(triangle.getPlane());
+                }
         } catch (Exception ignored) {
         }
 
-        if (edgePlane != null) {
+        for (Plane3D edgePlane : planes){
             Vector3D axisX = edgePlane.vector.normalize();
+            System.out.println(axisX);
 
             Plane3D collisionPlane = new Plane3D(sphere.getPositionOfCentre(true),
                     polyhedron.getPositionOfCentre(true),
@@ -275,11 +310,12 @@ public final class CollisionalPair<FirstThingType extends Collisional, SecondThi
             }
 
 
-            Vector3D sphereImpulse = new Vector3D(sphere.getPositionOfCentre(true), collisionPoint1).normalize().multiply(-s);
+            Vector3D sphereImpulse = new Vector3D(sphere.getPositionOfCentre(true), collisionPoint1).normalize().multiply(s);
 
-            sphere.applyStrikeImpulse(new Vector3D(sphere.getPositionOfCentre(true), collisionPoint1).normalize().multiply(-s));
+            sphere.applyStrikeImpulse(sphereImpulse);
             polyhedron.applyImpulse(sphereImpulse.multiply(-1d), collisionPoint2, true);
 
+            break;
 
         }
 
