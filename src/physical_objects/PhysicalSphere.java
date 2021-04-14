@@ -11,6 +11,10 @@ import limiters.Collisional;
 import limiters.Intersectional;
 import physics.Material;
 import physics.Space;
+import utils.Pair;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Физичная сфера
@@ -20,6 +24,13 @@ public class PhysicalSphere extends AbstractBody implements Intersectional, Coll
     private final double r;
     private final double J;
     private final Sphere drawableInterpretation;
+    private final Set<Vector3D> impulses;
+    private final Set<Pair<Vector3D, Point3D>> frictionImpulses;
+
+    {
+        frictionImpulses = new HashSet<>();
+        impulses = new HashSet<>();
+    }
 
     /**
      * Конструктор
@@ -39,6 +50,15 @@ public class PhysicalSphere extends AbstractBody implements Intersectional, Coll
         J = 0.4d * m * r * r;
         drawableInterpretation = new Sphere(new Point3D(x0, y0, z0), r, 15, material.fillColor);
         pushToCanvas(space.getCanvas());
+    }
+
+    @Override
+    public synchronized void update() {
+        for (Vector3D impulse : impulses) applyStrikeImpulse(impulse);
+        impulses.clear();
+        for (Pair<Vector3D, Point3D> impulse : frictionImpulses) applyFriction(impulse.second, impulse.first);
+        frictionImpulses.clear();
+        super.update();
     }
 
     /**
@@ -89,7 +109,7 @@ public class PhysicalSphere extends AbstractBody implements Intersectional, Coll
      */
     public synchronized void applyFriction(Point3D applicationPoint, Vector3D impulse) {
         applyStrikeImpulse(impulse);
-        Vector3D radVector = new Vector3D(getPositionOfCentre(false), applicationPoint);
+        Vector3D radVector = new Vector3D(getPositionOfCentre(true), applicationPoint);
         radVector.multiply(r / radVector.getLength());
         w = w.add(radVector.vectorProduct(impulse).multiply(1d / J));
     }
@@ -128,6 +148,23 @@ public class PhysicalSphere extends AbstractBody implements Intersectional, Coll
      */
     public double getJ() {
         return J;
+    }
+
+
+    /**
+     * @return Импульсы, прикладываемые к телу в данный временной шаг
+     */
+
+    public Set<Vector3D> getImpulses() {
+        return impulses;
+    }
+
+    /**
+     * @return Импульсы сил трения, прикладываемые к телу в данный временой шаг
+     */
+
+    public Set<Pair<Vector3D, Point3D>> getFrictionImpulses() {
+        return frictionImpulses;
     }
 
     /**

@@ -41,9 +41,8 @@ public class PhysicsHandler {
      * @throws InterruptedException исключение в случае прерывания потока
      */
     public void update() throws InterruptedException {
-        for (int i = 0; i< depth; i++){
+        for (int i = 0; i< depth; i++)
             handlePhysics();
-        }
     }
 
     /**
@@ -98,9 +97,22 @@ public class PhysicsHandler {
                     synchronized (polyhedrons.get(i)) {
                         synchronized (polyhedrons.get(j)) {
                             try {
-                                if (new IntersectionalPair<>(polyhedrons.get(i), polyhedrons.get(j)).areIntersected()) {
-                                    new CollisionalPair<>(polyhedrons.get(i), polyhedrons.get(j)).collide();
+                                try {
+                                    if (new IntersectionalPair<>(polyhedrons.get(i), polyhedrons.get(j)).areIntersected())
+                                        new CollisionalPair<>(polyhedrons.get(i), polyhedrons.get(j)).collide();
                                 }
+                                catch (Exception ignored){}
+                                for (Triangle triangle : polyhedrons.get(i).getTriangles(false)){
+                                    PolyhedronToPlaneIntersection pair = new IntersectionalPair<>(polyhedrons.get(j), triangle).getPolyhedronToPlaneIntersection();
+                                    if (pair.areIntersected)
+                                        polyhedrons.get(j).pullFromPlane(pair);
+                                }
+                                for (Triangle triangle : polyhedrons.get(j).getTriangles(false)){
+                                    PolyhedronToPlaneIntersection pair = new IntersectionalPair<>(polyhedrons.get(i), triangle).getPolyhedronToPlaneIntersection();
+                                    if (pair.areIntersected)
+                                        polyhedrons.get(i).pullFromPlane(pair);
+                                }
+
                             } catch (ImpossiblePairException e) {
                                 e.printStackTrace();
                             }
@@ -122,20 +134,19 @@ public class PhysicsHandler {
                         if (pair.areIntersected)
                             polyhedron.pullFromPlane(pair);
                     }
-                } catch (ImpossiblePairException e) {
-                    e.printStackTrace();
                 }
+                catch (Exception ignored){}
             }
             for (PhysicalSphere sphere : spheres) {
                 try {
-                    if (new IntersectionalPair<>(polyhedron, sphere).areIntersected()){
-                        new CollisionalPair<>(polyhedron, sphere).collide();
-                    }
-                    for(Triangle triangle : polyhedron.getTriangles(false)) {
-                        SphereToPlaneIntersection pair = new IntersectionalPair<>(sphere, triangle).getSphereToPlaneIntersection();
-                        if (pair.areIntersected)
-                            sphere.pullFromPlane(pair);
-                    }
+                        if (new IntersectionalPair<>(polyhedron, sphere).areIntersected()) {
+                            new CollisionalPair<>(polyhedron, sphere).collide();
+                        }
+//                    for(Triangle triangle : polyhedron.getTriangles(false)) {
+//                        SphereToPlaneIntersection pair = new IntersectionalPair<>(sphere, triangle).getSphereToPlaneIntersection();
+//                        if (pair.areIntersected)
+//                            sphere.pullFromPlane(pair);
+//                    }
                 } catch (ImpossiblePairException e) {
                     e.printStackTrace();
                 }

@@ -13,6 +13,7 @@ import limiters.Collisional;
 import limiters.Intersectional;
 import physics.Material;
 import physics.Space;
+import utils.Pair;
 import utils.Tools;
 
 import java.util.*;
@@ -26,8 +27,10 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
     private final ArrayList<Point3D> points;
     private final ArrayList<Triangle> triangles;
     private final static long depth = 30;
+    private final Set<Pair<Vector3D, Point3D>> impulses;
 
     {
+        impulses = new HashSet<>();
         triangles = new ArrayList<>();
     }
 
@@ -58,8 +61,11 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
      */
     @Override
     public synchronized void update() {
+
+        for (Pair<Vector3D, Point3D> impulse : impulses) applyImpulse(impulse.first, impulse.second, true);
+        impulses.clear();
+
         super.update();
-        
         Vector3D movement = getMovement();
 
         for (int i =0; i < points.size(); i++)
@@ -145,6 +151,7 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
      * @param mode считать ли относительно будущего положения
      */
     public synchronized void applyImpulse(Vector3D impulse, Point3D applicationPoint, boolean mode){
+        if (impulse.getLength() == 0d) return;
         v = v.add(impulse.multiply(1d / m));
         Vector3D radVector = new Vector3D(getPositionOfCentre(mode), applicationPoint);
         Plane3D impulsePlane = new Plane3D(getPositionOfCentre(mode), applicationPoint, impulse.addToPoint(applicationPoint));
@@ -240,6 +247,14 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
         for (Triangle triangle : getTriangles(mode))
             segments.addAll(triangle.getSegments());
         return segments;
+    }
+
+    /**
+     * @return Импульсы, прикладываемые к объекту в данный временной шаг
+     */
+
+    public Set<Pair<Vector3D, Point3D>> getImpulses() {
+        return impulses;
     }
 
     /**
