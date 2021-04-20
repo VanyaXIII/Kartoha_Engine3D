@@ -8,7 +8,8 @@
     </content>
     <orderEntry type="jdk" jdkName="14" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="KartohaEngine_jar" level="project" />
     <orderEntry type="library" exported="" name="com.google.code.gson:gson:2.8.6" level="project" />
+    <orderEntry type="library" name="KartohaEngine" level="project" />
+    <orderEntry type="library" name="org.json:json:20210307" level="project" />
   </component>
 </module>

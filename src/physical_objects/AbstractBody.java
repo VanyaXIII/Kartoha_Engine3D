@@ -113,6 +113,20 @@ public abstract class AbstractBody implements Drawable{
     }
 
     /**
+     * @return Позиция тела
+     */
+    public Point3D getPos(){
+        return new Point3D(x0, y0, z0);
+    }
+
+    /**
+     * @return Ускорение тела
+     */
+    public Vector3D getA(){
+        return a;
+    }
+
+    /**
      * @return Материал, из которого сделано тело
      */
     public Material getMaterial() {
