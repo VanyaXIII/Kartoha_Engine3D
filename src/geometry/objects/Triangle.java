@@ -15,6 +15,7 @@ import java.util.Set;
  */
 public class Triangle implements Intersectional {
     public Point3D A, B, C;
+    public Color color;
 
     /**
      * Конструктор по трем точкам
@@ -22,10 +23,11 @@ public class Triangle implements Intersectional {
      * @param b точка 2
      * @param c точка 3
      */
-    public Triangle(Point3D a, Point3D b, Point3D c) {
+    public Triangle(Point3D a, Point3D b, Point3D c, Color color) {
         A = a;
         B = b;
         C = c;
+        this.color = color;
     }
 
     /**
@@ -36,6 +38,7 @@ public class Triangle implements Intersectional {
         A = polygon.a1;
         B = polygon.a2;
         C = polygon.a3;
+        color = polygon.color;
     }
 
     /**
@@ -43,10 +46,11 @@ public class Triangle implements Intersectional {
      * @param point точка
      * @param segment отрезок
      */
-    public Triangle(Point3D point, Segment segment){
+    public Triangle(Point3D point, Segment segment, Color color){
         A = point;
         B = segment.point1;
         C = segment.point2;
+        this.color = color;
     }
 
     /**
@@ -103,7 +107,7 @@ public class Triangle implements Intersectional {
                 b = movement.addToPoint(B),
                 c = movement.addToPoint(C);
 
-        return new Triangle(a, b, c);
+        return new Triangle(a, b, c, color);
     }
 
     /**
@@ -111,9 +115,9 @@ public class Triangle implements Intersectional {
      * @return Лежит ли данная точка внутри треугольника
      */
     public boolean contains(Point3D point) {
-        double s1 = new Triangle(point, A, B).getSquare();
-        double s2 = new Triangle(point, A, C).getSquare();
-        double s3 = new Triangle(point, B, C).getSquare();
+        double s1 = new Triangle(point, A, B, color).getSquare();
+        double s2 = new Triangle(point, A, C, color).getSquare();
+        double s3 = new Triangle(point, B, C, color).getSquare();
 
         return FloatComparator.equals(getSquare(), s1 + s2 + s3) &&
                 FloatComparator.equals(new Plane3D(A, B, C).distance(point), 0d);
@@ -166,7 +170,7 @@ public class Triangle implements Intersectional {
         Point3D a = A.rotate(vector, point);
         Point3D b = B.rotate(vector, point);
         Point3D c = C.rotate(vector, point);
-        return new Triangle(a,b,c);
+        return new Triangle(a,b,c, color);
     }
 
     /**

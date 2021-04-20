@@ -4,6 +4,7 @@ import geometry.objects3D.Line3D;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 
+import java.awt.Color;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,7 +33,7 @@ public class FlatShape {
      */
     public void triangulate(){
         Point3D zeroPoint = segments.iterator().next().point1;
-        for (Segment segment : segments) triangles.add(new Triangle(zeroPoint, segment));
+        for (Segment segment : segments) triangles.add(new Triangle(zeroPoint, segment, Color.BLACK));
     }
 
     /**

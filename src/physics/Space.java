@@ -2,15 +2,22 @@ package physics;
 
 import exceptions.ImpossibleObjectException;
 import geometry.PhysicalPolyhedronBuilder;
+import geometry.objects.Triangle;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 import graph.CanvasPanel;
+import java.awt.Color;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import physical_objects.*;
 import geometry.objects.Shape;
 import primitives.Primitive;
 import utils.Tools;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -42,38 +49,243 @@ public class Space{
      * @param g величина ускорения свободного падения
      * @param canvas канвас, на котором отрисовывается пространство
      */
-    public Space(double dt, double g, CanvasPanel canvas) {
+    public Space(double dt, double g, CanvasPanel canvas, File f) {
         DT = dt;
         G = g;
         this.canvas = canvas;
         try {
-            spheres.add(new PhysicalSphere(this, new Vector3D(0, -700, 0), new Vector3D(0, 0, 0.01), 300, 1000, 550, 100, Material.CONSTANTIN));
-//////            spheres.add(new PhysicalSphere(this, new Vector3D(140, 0, 0), new Vector3D(1, 1, 1), -510, -50, 50, 100, Material.Constantin));
-////            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, -100), new Vector3D(0, 0.5, 0),
-////                    new PhysicalPolyhedronBuilder(Primitive.OCTAHEDRON.get(), new Point3D(400, 400, 400)), Material.CONSTANTIN));
-            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0, 0, 0.01),
-                    new PhysicalPolyhedronBuilder(Primitive.CUBE.get(), new Point3D(100, 100, 0)), Material.CONSTANTIN));
-            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0, 0, 0.01),
-                    new PhysicalPolyhedronBuilder(Primitive.CUBE.get(), new Point3D(300, 100, 0)), Material.CONSTANTIN));
-            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0, 0, 0.01),
-                    new PhysicalPolyhedronBuilder(Primitive.CUBE.get(), new Point3D(500, 100, 0)), Material.CONSTANTIN));
-            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0, 0, 0.01),
-                    new PhysicalPolyhedronBuilder(Primitive.CUBE.get(), new Point3D(200, 100, 200)), Material.CONSTANTIN));
-            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0, 0, 0.01),
-                    new PhysicalPolyhedronBuilder(Primitive.CUBE.get(), new Point3D(400, 100, 200)), Material.CONSTANTIN));
-            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0, 0, 0.01),
-                    new PhysicalPolyhedronBuilder(Primitive.CUBE.get(), new Point3D(300, 100, 400)), Material.CONSTANTIN));
+            load(Tools.readFile(f));
+//            spheres.add(new PhysicalSphere(this, new Vector3D(0, -700, 0), new Vector3D(0, 0, 0.01), 300, 1000, 550, 100, Material.CONSTANTIN));
+////////            spheres.add(new PhysicalSphere(this, new Vector3D(140, 0, 0), new Vector3D(1, 1, 1), -510, -50, 50, 100, Material.Constantin));
+//////            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, -100), new Vector3D(0, 0.5, 0),
+//////                    new PhysicalPolyhedronBuilder(Primitive.OCTAHEDRON.get(), new Point3D(400, 400, 400)), Material.CONSTANTIN));
+//            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0, 0, 0.01),
+//                    new PhysicalPolyhedronBuilder(Primitive.CUBE.get(), new Point3D(100, 100, 0)), Material.CONSTANTIN));
+//            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0, 0, 0.01),
+//                    new PhysicalPolyhedronBuilder(Primitive.CUBE.get(), new Point3D(300, 100, 0)), Material.CONSTANTIN));
+//            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0, 0, 0.01),
+//                    new PhysicalPolyhedronBuilder(Primitive.CUBE.get(), new Point3D(500, 100, 0)), Material.CONSTANTIN));
+//            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0, 0, 0.01),
+//                    new PhysicalPolyhedronBuilder(Primitive.CUBE.get(), new Point3D(200, 100, 200)), Material.CONSTANTIN));
+//            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0, 0, 0.01),
+//                    new PhysicalPolyhedronBuilder(Primitive.CUBE.get(), new Point3D(400, 100, 200)), Material.CONSTANTIN));
+//            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0, 0, 0.01),
+//                    new PhysicalPolyhedronBuilder(Primitive.CUBE.get(), new Point3D(300, 100, 400)), Material.CONSTANTIN));
         } catch (ImpossibleObjectException | IOException e) {
             e.printStackTrace();
         }
+    }
 
-        addGravityPlate(this,
-                new Point3D(-1000, -1000, 0),
-                new Point3D(2000, -1000, 0),
-                new Point3D(-1000, 2000, 0),
-                new Point3D(2000, 2000, 0),
-                150,
-                Material.GOLD);
+    /**
+     * @return строка-конфигурация сцены
+     */
+    public String save(){
+        JSONObject jsonObject = new JSONObject();
+        JSONArray polyhedrons = new JSONArray();
+        for(PhysicalPolyhedron pp : this.polyhedrons){
+            JSONObject polyhedron = new JSONObject();
+            polyhedron.put("material", pp.getMaterial().ordinal());
+
+            JSONObject v = new JSONObject();
+            Vector3D v2 = pp.getV();
+            v.put("x",v2.x).put("y",v2.y).put("z",v2.z);
+            polyhedron.put("v",v);
+
+            JSONObject w = new JSONObject();
+            Vector3D w2 = pp.getW();
+            w.put("x",w2.x).put("y",w2.y).put("z",w2.z);
+            polyhedron.put("w",w);
+
+            JSONArray points = new JSONArray();
+            for(Point3D p : pp.getPoints(false)){
+                JSONObject point = new JSONObject();
+                point.put("x",p.x).put("y",p.y).put("z",p.z);
+                points.put(point);
+            }
+            polyhedron.put("points", points);
+
+            JSONArray triangles = new JSONArray();
+            for(Triangle t : pp.getTriangles(false)) {
+                JSONObject triangle = new JSONObject();
+                triangle.put("color", Integer.toString(t.color.getRGB()));
+                JSONArray points2 = new JSONArray();
+                for (Point3D p : t.getPoints()) {
+                    JSONObject point = new JSONObject();
+                    point.put("x",p.x).put("y",p.y).put("z",p.z);
+                    points2.put(point);
+                }
+                triangle.put("points",points2);
+                triangles.put(triangle);
+            }
+            polyhedron.put("polys", triangles);
+
+            polyhedrons.put(polyhedron);
+        }
+        jsonObject.put("polyhedrons", polyhedrons);
+
+
+        JSONArray spheres = new JSONArray();
+        for(PhysicalSphere pp : this.spheres){
+            JSONObject polyhedron = new JSONObject();
+            polyhedron.put("material", pp.getMaterial().ordinal());
+
+            JSONObject v = new JSONObject();
+            Vector3D v2 = pp.getV();
+            v.put("x",v2.x).put("y",v2.y).put("z",v2.z);
+            polyhedron.put("v",v);
+
+            JSONObject w = new JSONObject();
+            Vector3D w2 = pp.getW();
+            w.put("x",w2.x).put("y",w2.y).put("z",w2.z);
+            polyhedron.put("w",w);
+
+            polyhedron.put("r",pp.getR());
+
+            JSONObject pos = new JSONObject();
+            Point3D pos2 = pp.getPos();
+            pos.put("x",pos2.x).put("y",pos2.y).put("z",pos2.z);
+            polyhedron.put("pos",pos);
+            spheres.put(polyhedron);
+        }
+        jsonObject.put("spheres", spheres);
+
+        JSONArray plates = new JSONArray();
+        for(GravityPlate gp : this.gravityPlates){
+            JSONObject plate = new JSONObject();
+            JSONArray points2 = new JSONArray();
+            for (Point3D p : gp.getPoints()) {
+                JSONObject point = new JSONObject();
+                point.put("x",p.x).put("y",p.y).put("z",p.z);
+                points2.put(point);
+            }
+            plate.put("points", points2);
+            plate.put("material", gp.getMaterial().ordinal());
+            plate.put("g", gp.getG());
+            plates.put(plate);
+        }
+
+        jsonObject.put("plates", plates);
+
+
+        JSONArray walls = new JSONArray();
+        for(Wall wall : this.walls){
+            JSONObject plate = new JSONObject();
+            JSONArray points2 = new JSONArray();
+            for (Point3D p : wall.getPoints()) {
+                JSONObject point = new JSONObject();
+                point.put("x",p.x).put("y",p.y).put("z",p.z);
+                points2.put(point);
+            }
+            plate.put("points", points2);
+            plate.put("material", wall.getMaterial().ordinal());
+            walls.put(plate);
+        }
+
+        jsonObject.put("walls", walls);
+
+        return jsonObject.toString();
+    }
+
+
+    /**
+     * Загружает сцену
+     * @param string строка-конфигурация сцены
+     * @throws ImpossibleObjectException
+     */
+    public void load(String string) throws ImpossibleObjectException {
+        polyhedrons.clear();
+        spheres.clear();
+        walls.clear();
+        gravityPlates.clear();
+        JSONObject jsonObject = new JSONObject(string);
+        JSONArray polyhedrons = jsonObject.getJSONArray("polyhedrons");
+        for(int i = 0; i < polyhedrons.length(); i++){
+            JSONObject polyhedron = polyhedrons.getJSONObject(i);
+            Material material = Material.values()[polyhedron.getInt("material")];
+
+            JSONObject v = polyhedron.getJSONObject("v");
+            Vector3D v2 = new Vector3D(v.getDouble("x"),v.getDouble("y"),v.getDouble("z"));
+
+            JSONObject w = polyhedron.getJSONObject("w");
+            Vector3D w2 = new Vector3D(w.getDouble("x"), w.getDouble("y"), w.getDouble("z"));
+
+            JSONArray points = polyhedron.getJSONArray("points");
+            ArrayList<Point3D> ps = new ArrayList<>();
+            for(int j = 0; j < points.length(); j++){
+                JSONObject p = points.getJSONObject(j);
+                ps.add(new Point3D(p.getDouble("x"), p.getDouble("y"), p.getDouble("z")));
+            }
+
+            JSONArray triangles = polyhedron.getJSONArray("polys");
+            Set<Triangle> ts = new HashSet<>();
+            for(int j = 0; j < triangles.length(); j++){
+                JSONObject p = triangles.getJSONObject(j);
+                int color = p.getInt("color");
+                JSONObject A2 = p.getJSONArray("points").getJSONObject(0);
+                Point3D A = new Point3D(A2.getDouble("x"), A2.getDouble("y"), A2.getDouble("z"));
+                JSONObject B2 = p.getJSONArray("points").getJSONObject(1);
+                Point3D B = new Point3D(B2.getDouble("x"), B2.getDouble("y"), B2.getDouble("z"));
+                JSONObject C2 = p.getJSONArray("points").getJSONObject(2);
+                Point3D C = new Point3D(C2.getDouble("x"), C2.getDouble("y"), C2.getDouble("z"));
+                ts.add(new Triangle(A, B, C, new Color(color)));
+            }
+            this.polyhedrons.add(new PhysicalPolyhedron(this, v2, w2, new PhysicalPolyhedronBuilder(ps, ts), material));
+        }
+
+
+        JSONArray spheres = jsonObject.getJSONArray("spheres");
+        for(int i = 0; i < spheres.length(); i++){
+            JSONObject polyhedron = spheres.getJSONObject(i);
+            Material material = Material.values()[polyhedron.getInt("material")];
+
+            JSONObject v = polyhedron.getJSONObject("v");
+            Vector3D v2 = new Vector3D(v.getDouble("x"),v.getDouble("y"),v.getDouble("z"));
+
+            JSONObject w = polyhedron.getJSONObject("w");
+            Vector3D w2 = new Vector3D(w.getDouble("x"), w.getDouble("y"), w.getDouble("z"));
+
+            JSONObject pos = polyhedron.getJSONObject("pos");
+            Vector3D pos2 = new Vector3D(pos.getDouble("x"), pos.getDouble("y"), pos.getDouble("z"));
+
+            double r = polyhedron.getDouble("r");
+
+            this.spheres.add(new PhysicalSphere(this, v2, w2, pos2.x, pos2.y, pos2.z, r, material));
+        }
+
+        JSONArray walls = jsonObject.getJSONArray("walls");
+        for(int i = 0; i < walls.length(); i++){
+            JSONObject wall = walls.getJSONObject(i);
+            JSONObject A2 = wall.getJSONArray("points").getJSONObject(0);
+            Point3D A = new Point3D(A2.getDouble("x"), A2.getDouble("y"), A2.getDouble("z"));
+            JSONObject B2 = wall.getJSONArray("points").getJSONObject(1);
+            Point3D B = new Point3D(B2.getDouble("x"), B2.getDouble("y"), B2.getDouble("z"));
+            JSONObject C2 = wall.getJSONArray("points").getJSONObject(2);
+            Point3D C = new Point3D(C2.getDouble("x"), C2.getDouble("y"), C2.getDouble("z"));
+            JSONObject D2 = wall.getJSONArray("points").getJSONObject(3);
+            Point3D D = new Point3D(D2.getDouble("x"), D2.getDouble("y"), D2.getDouble("z"));
+
+            Material material = Material.values()[wall.getInt("material")];
+
+            this.walls.add(new Wall(this,A,B,C,D,material));
+        }
+
+        JSONArray plates = jsonObject.getJSONArray("plates");
+        for(int i = 0; i < plates.length(); i++){
+            JSONObject wall = plates.getJSONObject(i);
+            JSONObject A2 = wall.getJSONArray("points").getJSONObject(0);
+            Point3D A = new Point3D(A2.getDouble("x"), A2.getDouble("y"), A2.getDouble("z"));
+            JSONObject B2 = wall.getJSONArray("points").getJSONObject(1);
+            Point3D B = new Point3D(B2.getDouble("x"), B2.getDouble("y"), B2.getDouble("z"));
+            JSONObject C2 = wall.getJSONArray("points").getJSONObject(2);
+            Point3D C = new Point3D(C2.getDouble("x"), C2.getDouble("y"), C2.getDouble("z"));
+            JSONObject D2 = wall.getJSONArray("points").getJSONObject(3);
+            Point3D D = new Point3D(D2.getDouble("x"), D2.getDouble("y"), D2.getDouble("z"));
+
+            Material material = Material.values()[wall.getInt("material")];
+            double g = wall.getDouble("g");
+
+            gravityPlates.add(new GravityPlate(this,A,B,C,D,g,material));
+        }
     }
 
     /**
