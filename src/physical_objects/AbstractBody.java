@@ -36,6 +36,7 @@ public abstract class AbstractBody implements Drawable{
         this.space = space;
         this.v = v;
         this.w = w;
+        this.a = new Vector3D(0,0,0);
         this.a = space.getG(this);
         this.x0 = x0;
         this.y0 = y0;

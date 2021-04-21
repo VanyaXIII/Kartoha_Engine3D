@@ -1,27 +1,18 @@
 
 
 import com.aparapi.Kernel;
-import com.google.gson.Gson;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 import graph.Camera;
 import graph.CanvasPanel;
 import graph.Screen;
-import java.io.BufferedWriter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import physical_objects.PhysicalPolyhedron;
 import org.json.JSONException;
-import java.io.OutputStream;
-import java.io.IOException;
-import java.io.FileNotFoundException;
-import physics.PhysicsHandler;
 import physics.Space;
 
 import javax.swing.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.io.*;
 
 public class Main {
 
@@ -44,8 +35,8 @@ public class Main {
                 File file = fileopen.getSelectedFile();
                 Camera.Resolution resolution = new Camera.Resolution(1920, 1080);
                 Camera camera = new Camera(
-                    new Screen(new Vector3D(FocusLength, 0, 0), new Point3D(-Distance, 500, 2000)),
-                    resolution);
+                        new Screen(new Vector3D(FocusLength, 0, 0), new Point3D(-Distance, 500, 2000)),
+                        resolution);
                 CanvasPanel canvas = new CanvasPanel(camera, Kernel.EXECUTION_MODE.JTP);
                 canvas.setTitle("Картоха Engine");
                 canvas.setSize(1920, 1080);
@@ -63,65 +54,65 @@ public class Main {
 
                         }
 
-                                        fileNotFoundException.printStackTrace();
                         @Override
-                                        os.write(space.save());
-                                    } catch (IOException fileNotFoundException) {
-                                JFileChooser fileopen = new JFileChooser();
-                            if (e.getKeyCode() == KeyEvent.VK_B && e.isControlDown()) {
-                                    try (BufferedWriter os = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)))){
-                                        ioException.printStackTrace();
-                                    }
-                                        file.createNewFile();
                         public void keyPressed(KeyEvent e) {
+                            if (e.getKeyCode() == KeyEvent.VK_B && e.isControlDown()) {
+                                JFileChooser fileopen = new JFileChooser();
                                 int ret = fileopen.showSaveDialog(null);
                                 if (ret == JFileChooser.APPROVE_OPTION) {
                                     File file = fileopen.getSelectedFile();
                                     try {
+                                        file.createNewFile();
                                     } catch (IOException ioException) {
+                                        ioException.printStackTrace();
+                                    }
+                                    try (BufferedWriter os = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)))){
+                                        os.write(space.save());
+                                    } catch (IOException fileNotFoundException) {
+                                        fileNotFoundException.printStackTrace();
                                     }
                                 } else {
                                     System.exit(0);
                                 }
-                                try {
-                                    load();
-                                }
                             }
-                                } catch (InterruptedException interruptedException) {
-                        }
-                                    interruptedException.printStackTrace();
+                            if (e.getKeyCode() == KeyEvent.VK_N && e.isControlDown()) {
                                 canvas.setVisible(false);
                                 canvas.dispose();
-                            if (e.getKeyCode() == KeyEvent.VK_N && e.isControlDown()) {
+                                try {
+                                    load();
+                                } catch (InterruptedException interruptedException) {
+                                    interruptedException.printStackTrace();
+                                }
                             }
+                        }
 
+                        @Override
                         public void keyReleased(KeyEvent e) {
-                    Thread.sleep(2000);
+
                         }
                     });
 
+                    Thread.sleep(2000);
 
-                        @Override
-                        while (true) {
-                                canvas.repaint();
-                            }
-                                space.changeTime();
-                            synchronized (canvas) {
                     new Thread(() -> {
-
+                        while (true) {
+                            synchronized (canvas) {
+                                canvas.repaint();
+                                space.changeTime();
+                            }
                             try {
                                 Thread.sleep(5);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
-                        }
                             }
+                        }
                     }).start();
                     break;
-                    canvas.setVisible(false);
                 } catch (JSONException e) {
+                    canvas.setVisible(false);
                     canvas.dispose();
                     JOptionPane.showMessageDialog(new JFrame(), "Файл не содержит сцены", "Ошибка",
-                        JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.ERROR_MESSAGE);
                 }
             } else {
                 System.exit(0);

@@ -3,8 +3,9 @@
     <output-path>$PROJECT_DIR$/out/artifacts/3DPhysicalEngine_jar</output-path>
     <root id="archive" name="3DPhysicalEngine.jar">
       <element id="module-output" name="3DPhysicalEngine" />
-      <element id="extracted-dir" path="$USER_HOME$/Downloads/KartohaEngine-main (5)/KartohaEngine-main/out/artifacts/KartohaEngine_jar/KartohaEngine.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/KartohaEngine-main (6)/KartohaEngine-main/out/artifacts/KartohaEngine_jar/KartohaEngine.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/code/gson/gson/2.8.6/gson-2.8.6.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/json/json/20210307/json-20210307.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

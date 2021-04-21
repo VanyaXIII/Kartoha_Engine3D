@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="KartohaEngine">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../KartohaEngine/out/artifacts/KartohaEngine_jar/KartohaEngine.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/KartohaEngine-main (6)/KartohaEngine-main/out/artifacts/KartohaEngine_jar/KartohaEngine.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
