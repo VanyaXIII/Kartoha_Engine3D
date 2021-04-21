@@ -167,6 +167,7 @@ public class PhysicalSphere extends AbstractBody implements Intersectional, Coll
         return frictionImpulses;
     }
 
+
     /**
      * Метод, добавляющий сферу на канвас, на котором ее нужно отрисовать
      * @param canvas канвас, на котором нужном отрисовывать сферу

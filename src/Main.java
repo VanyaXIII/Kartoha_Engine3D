@@ -2,18 +2,14 @@
 
 import com.aparapi.Kernel;
 import com.google.gson.Gson;
-import geometry.objects.Triangle;
 import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 import graph.Camera;
 import graph.CanvasPanel;
 import graph.Screen;
-import physical_objects.PhysicalPolyhedron;
-import physics.PhysicsHandler;
 import physics.Space;
 
 import javax.swing.*;
-import java.util.ArrayList;
 
 public class Main {
 
@@ -37,8 +33,10 @@ public class Main {
 
         Gson gson = new Gson();
 
-        System.out.println(gson.toJson(new Vector3D(0,1,1)));
-        Thread.sleep(2000);
+//        PhysicalSphere sphere = gson.fromJson(gson.toJson(space.getSpheres().get(0)), PhysicalSphere.class);
+//        System.out.println(sphere.getSpace());
+
+
 
         new Thread(() -> {
             while (true) {

@@ -18,7 +18,7 @@ public abstract class AbstractBody implements Drawable{
     protected Vector3D w;
     protected final Material material;
     protected final double m;
-    protected final Space space;
+    protected transient Space space;
 
     /**
      *Конструктор
@@ -124,6 +124,13 @@ public abstract class AbstractBody implements Drawable{
      */
     public Space getSpace() {
         return space;
+    }
+
+    /** Метод, инициализирцющий пространство, в котором находится объект
+     * @param space пространство
+     */
+    public void initSpace(Space space){
+        this.space = space;
     }
 
     /** Метод, задающий новую скорость телу

@@ -47,10 +47,10 @@ public class Space{
         G = g;
         this.canvas = canvas;
         try {
-            spheres.add(new PhysicalSphere(this, new Vector3D(0, -700, 0), new Vector3D(0, 0, 0.01), 300, 1000, 550, 100, Material.CONSTANTIN));
+            spheres.add(new PhysicalSphere(this, new Vector3D(0, -1500, 0), new Vector3D(0, 0, 0.01), 300, 3000, 430, 100, Material.CONSTANTIN));
 //////            spheres.add(new PhysicalSphere(this, new Vector3D(140, 0, 0), new Vector3D(1, 1, 1), -510, -50, 50, 100, Material.Constantin));
-////            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, -100), new Vector3D(0, 0.5, 0),
-////                    new PhysicalPolyhedronBuilder(Primitive.OCTAHEDRON.get(), new Point3D(400, 400, 400)), Material.CONSTANTIN));
+//            polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, -1300, 0), new Vector3D(0,0, 1),
+//                    new PhysicalPolyhedronBuilder(Primitive.CUBE.get(), new Point3D(300, 2000, 350)), Material.STONE));
             polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0, 0, 0.01),
                     new PhysicalPolyhedronBuilder(Primitive.CUBE.get(), new Point3D(100, 100, 0)), Material.CONSTANTIN));
             polyhedrons.add(new PhysicalPolyhedron(this, new Vector3D(0, 0, 0), new Vector3D(0, 0, 0.01),
@@ -72,7 +72,7 @@ public class Space{
                 new Point3D(2000, -1000, 0),
                 new Point3D(-1000, 2000, 0),
                 new Point3D(2000, 2000, 0),
-                150,
+                100,
                 Material.GOLD);
     }
 

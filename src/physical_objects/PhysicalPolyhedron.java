@@ -62,6 +62,7 @@ public class PhysicalPolyhedron extends AbstractBody implements Collisional, Int
     @Override
     public synchronized void update() {
 
+
         for (Pair<Vector3D, Point3D> impulse : impulses) applyImpulse(impulse.first, impulse.second, true);
         impulses.clear();
 

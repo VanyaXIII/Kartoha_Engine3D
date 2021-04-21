@@ -142,11 +142,12 @@ public class PhysicsHandler {
                         if (new IntersectionalPair<>(polyhedron, sphere).areIntersected()) {
                             new CollisionalPair<>(polyhedron, sphere).collide();
                         }
-//                    for(Triangle triangle : polyhedron.getTriangles(false)) {
-//                        SphereToPlaneIntersection pair = new IntersectionalPair<>(sphere, triangle).getSphereToPlaneIntersection();
-//                        if (pair.areIntersected)
+                    for(Triangle triangle : polyhedron.getTriangles(false)) {
+                        SphereToPlaneIntersection pair = new IntersectionalPair<>(sphere, triangle).getSphereToPlaneIntersection();
+                        if (pair.areIntersected) {
 //                            sphere.pullFromPlane(pair);
-//                    }
+                        }
+                    }
                 } catch (ImpossiblePairException e) {
                     e.printStackTrace();
                 }
