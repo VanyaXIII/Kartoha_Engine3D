@@ -6,6 +6,13 @@ import geometry.objects3D.Point3D;
 import geometry.objects3D.Vector3D;
 
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Random;
 
 /**Различные полезные и не очень инструменты
@@ -62,6 +69,24 @@ public final class Tools {
     public static Point3D countProjectionOfPoint(Point3D point, Line3D line){
         Plane3D plane = new Plane3D(line.vector, point);
         return line.getIntersection(plane).get();
+    }
+
+    /**
+     * @param f файл
+     * @return возвращает содержимое файла в виде строки
+     * @throws IOException
+     */
+    public static String readFile(File f) throws IOException {
+        InputStream gsonStream = new FileInputStream(f);
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(gsonStream));
+        StringBuilder sb = new StringBuilder();
+        String line;
+
+        while ((line = bufferedReader.readLine()) != null) {
+            sb.append(line);
+        }
+
+        return sb.toString();
     }
 
 }

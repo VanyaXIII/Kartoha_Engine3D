@@ -12,6 +12,13 @@ import physics.Space;
  */
 public class GravityPlate extends Wall {
 
+    /**
+     * @return исходный параметр G
+     */
+    public double getG() {
+        return G;
+    }
+
     private final double G;
 
     /**

@@ -47,7 +47,8 @@ public class PhysicalPolyhedronBuilder {
 
         shape.getTriangles().forEach(triangle -> triangles.add(new Triangle(triangle.A.from(zero),
                 triangle.B.from(zero),
-                triangle.C.from(zero))));
+                triangle.C.from(zero),
+                triangle.color)));
 
         tetrahedral();
 

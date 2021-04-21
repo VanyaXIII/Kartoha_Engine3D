@@ -30,6 +30,6 @@ public enum Primitive {
      * @throws IOException исключение в случае проблем с открытием файла
      */
     public Shape get() throws IOException {
-        return (Shape) new JsonReader(path).read(Shape.class);
+        return (Shape) new JsonReader(path).read();
     }
 }
